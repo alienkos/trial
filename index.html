@@ -1,0 +1,2677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="html-title">PRAPATRA Quest - Pramuka SDN 4 Rambutan</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Menggunakan Fredoka (Ceria) & Nunito (Nyaman Dibaca) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Tone.js untuk Efek Suara Gamifikasi -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        body { font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
+        .title-font { font-family: 'Fredoka', sans-serif; }
+        
+        .app-container {
+            max-width: 480px; margin: 0 auto; background-color: #fdfdfd;
+            min-height: 100vh; position: relative; display: flex; flex-direction: column;
+            overflow-x: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Update Tombol Gamifikasi 3D: Lebih Empuk dan Responsif */
+        .btn-3d {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 56px; padding: 0.75rem 1.5rem; border-radius: 1.25rem;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+            transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; user-select: none;
+            border: 2px solid rgba(0,0,0,0.08); border-bottom-width: 6px;
+        }
+        .btn-3d:active { transform: translateY(4px); border-bottom-width: 2px; margin-top: 4px; }
+        
+        .btn-primary { background-color: #6366f1; color: white; border-bottom-color: #4338ca; }
+        .btn-amber { background-color: #f59e0b; color: white; border-bottom-color: #d97706; }
+        .btn-emerald { background-color: #10b981; color: white; border-bottom-color: #059669; }
+        .btn-rose { background-color: #f43f5e; color: white; border-bottom-color: #e11d48; }
+        .btn-sky { background-color: #0ea5e9; color: white; border-bottom-color: #0284c7; }
+        .btn-disabled { background-color: #e2e8f0; color: #94a3b8; border-bottom-color: #cbd5e1; cursor: not-allowed; pointer-events: none; }
+
+        /* Update Card Gamifikasi */
+        .card-3d { 
+            background: white; border-radius: 1.25rem; border: 2px solid #f1f5f9; 
+            border-bottom-width: 5px; border-bottom-color: #e2e8f0; 
+            transition: all 200ms ease; position: relative; overflow: hidden;
+        }
+        .card-3d:active { transform: scale(0.98); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; }
+        
+        #loading-overlay { backdrop-filter: blur(8px); }
+
+        /* Animasi Baru */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes slideUpFade { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUpFade 0.3s ease-out forwards; }
+        
+        @keyframes sunRay { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-sun { animation: sunRay 15s linear infinite; }
+
+        /* Confetti Effect for Popup */
+        .confetti { position: absolute; width: 10px; height: 10px; background-color: #f59e0b; opacity: 0; }
+        @keyframes fall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(300px) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Navbar Lebih Ceria -->
+    <div id="top-navbar" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-3 flex justify-between items-center z-30 shadow-lg border-b-4 border-amber-600">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl drop-shadow-md animate-float" id="nav-logo">⚜️</span>
+            <div>
+                <div class="font-extrabold tracking-wider text-sm title-font drop-shadow text-white leading-tight" id="nav-title">PRAPATRA QUEST</div>
+                <div class="text-[9px] font-bold text-amber-100 uppercase tracking-widest leading-tight" id="nav-school">SDN 4 Rambutan</div>
+            </div>
+        </div>
+        <!-- Sound Toggle Button -->
+        <button onclick="toggleSound()" class="w-10 h-10 bg-amber-600/50 rounded-xl flex items-center justify-center border border-amber-400 hover:bg-amber-600 transition-colors active:scale-90">
+            <i id="sound-icon" class="fa-solid fa-volume-high text-lg text-white"></i>
+        </button>
+    </div>
+
+    <div id="sanction-banner" class="hidden bg-rose-500 text-white px-4 py-2.5 text-center text-[11px] font-black tracking-wide flex items-center justify-center gap-2 z-25 relative shadow-md border-b-2 border-rose-700">
+        <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
+        <span id="sanction-banner-text">SANKSI AKTIF! BEBERAPA FITUR TERKUNCI.</span>
+    </div>
+
+    <main id="main-scene" class="flex-1 overflow-y-auto no-scrollbar relative pb-20"></main>
+
+    <!-- Global Toast Dipercantik -->
+    <div id="custom-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[150] transform translate-y-[-150%] transition-transform duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275) max-w-sm w-[90%] pointer-events-none">
+        <div class="card-3d bg-slate-800 text-white p-4 flex items-center gap-4 border-slate-900 shadow-2xl rounded-2xl">
+            <div id="toast-icon" class="text-3xl animate-bounce">💡</div>
+            <div id="toast-message" class="text-sm font-bold leading-tight">Pesan sistem...</div>
+        </div>
+    </div>
+
+    <!-- Motivation Celebration Popup Overlay -->
+    <div id="celebration-overlay" class="fixed inset-0 z-[200] bg-black/60 hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0">
+        <div id="celebration-card" class="bg-white rounded-[2rem] p-6 text-center shadow-2xl transform scale-50 transition-transform duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275) border-b-8 border-amber-400 max-w-[85%] w-full relative overflow-hidden">
+            <!-- Sunburst background -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTAwIDUwSDBMMTAwIDBaIiBmaWxsPSJyZ2JhKDI0NSwgMTU4LCAxMSwgMC4wNSkiLz48L3N2Zz4=')] bg-cover animate-sun opacity-50"></div>
+            
+            <div id="celebration-particles" class="absolute inset-0 pointer-events-none overflow-hidden rounded-[2rem]"></div>
+            <div id="celebration-emoji" class="text-[5rem] mb-4 relative z-10 animate-bounce drop-shadow-xl">🎉</div>
+            <h2 id="celebration-title" class="text-3xl font-black title-font text-amber-600 mb-2 relative z-10 drop-shadow-sm uppercase">Hebat!</h2>
+            <p id="celebration-desc" class="text-sm font-bold text-slate-600 relative z-10 mb-6 px-2">Kamu mendapatkan pencapaian baru.</p>
+            <button onclick="closeCelebration()" class="btn-3d btn-primary w-full relative z-10 text-sm">LANJUTKAN PETUALANGAN</button>
+        </div>
+    </div>
+
+    <!-- Dialog Konfirmasi Kustom -->
+    <div id="confirm-modal" class="fixed inset-0 z-[120] bg-black/60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="card-3d bg-white w-full max-w-xs p-6 relative text-center animate-pop border-b-8 border-rose-500">
+            <div class="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-rose-100"><i class="fa-solid fa-triangle-exclamation text-4xl text-rose-500 animate-float"></i></div>
+            <h3 class="title-font font-black text-xl text-slate-800 mb-2" id="confirm-title">Konfirmasi</h3>
+            <p class="text-xs font-bold text-slate-500 mb-6" id="confirm-desc">Apakah Anda yakin?</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeConfirmModal()" class="btn-3d bg-slate-100 text-slate-600 text-xs border-slate-200 border-b-4 hover:bg-slate-200">BATAL</button>
+                <button id="btn-confirm-yes" class="btn-3d btn-rose text-xs border-b-4">YAKIN</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="fixed inset-0 z-[100] bg-gradient-to-b from-amber-500 to-orange-600 flex flex-col items-center justify-center transition-opacity duration-300">
+        <div class="relative w-24 h-24 mb-6">
+            <div class="absolute inset-0 border-4 border-white/30 rounded-full border-t-white animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-4xl animate-bounce">🏕️</div>
+        </div>
+        <h2 class="title-font font-black text-2xl text-white tracking-widest drop-shadow-md">MEMUAT...</h2>
+        <p class="text-xs text-amber-100 font-bold uppercase mt-2 tracking-wide" id="loading-text">Menyambungkan ke Kemah</p>
+    </div>
+
+    <!-- Modals lainnya disembunyikan agar tidak terlalu panjang, logika CSS sudah di-update -->
+    <!-- ... existing code (Modal Panduan, Login Admin, Avatar, Reward, Admin Form Modals) ... -->
+    <!-- Panduan Modal -->
+    <div id="panduan-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative max-h-[85vh] flex flex-col animate-pop border-b-8 border-sky-400">
+            <button onclick="closePanduanModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center hover:bg-rose-100 hover:text-rose-500 transition-colors z-10"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="title-font font-black text-2xl text-slate-800 text-center mb-5 text-sky-600">📖 Panduan Kemah</h3>
+            <div class="overflow-y-auto no-scrollbar flex-1 space-y-4 pr-1">
+                
+                <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl">
+                    <h4 class="font-extrabold text-amber-800 text-sm mb-2 uppercase flex items-center gap-2"><i class="fa-solid fa-chart-line text-amber-500 text-lg animate-float"></i> Sistem Level</h4>
+                    <p class="text-[11px] text-slate-600 mb-3 font-bold">Kumpulkan Lifetime XP untuk naik tingkat:</p>
+                    <ul class="list-none text-[11px] text-slate-700 space-y-2 font-bold">
+                        <li class="flex justify-between items-center bg-white p-2 rounded-xl border border-amber-100"><span>🎒 Calon Penggalang</span> <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">0 - 199 XP</span></li>
+                        <li class="flex justify-between items-center bg-white p-2 rounded-xl border border-amber-100"><span>🛡️ Ramu Purwa</span> <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">200 - 399 XP</span></li>
+                        <li class="flex justify-between items-center bg-white p-2 rounded-xl border border-amber-100"><span>🏕️ Ramu Madya</span> <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">400 - 599 XP</span></li>
+                        <li class="flex justify-between items-center bg-white p-2 rounded-xl border border-amber-100"><span>🧭 Ramu Utama</span> <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">600 - 799 XP</span></li>
+                        <li class="flex justify-between items-center bg-white p-2 rounded-xl border border-amber-100"><span>🔥 Ramu Pratama</span> <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">800 - 999 XP</span></li>
+                        <li class="flex justify-between items-center bg-sky-50 p-2 rounded-xl border border-sky-200 text-sky-800"><span>⚜️ Penggalang Ramu</span> <span class="bg-sky-500 text-white px-2 py-1 rounded-lg shadow-sm">1000+ XP</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-indigo-50 border-2 border-indigo-200 p-4 rounded-2xl">
+                    <h4 class="font-extrabold text-indigo-800 text-sm mb-2 uppercase flex items-center gap-2"><i class="fa-solid fa-star text-indigo-500 text-lg animate-float"></i> Aturan XP & Koin</h4>
+                    <ul class="list-disc pl-4 text-xs text-slate-700 space-y-2 font-bold">
+                        <li>Selesaikan <strong>Misi SKU</strong> atau presensi untuk dapat XP Individu.</li>
+                        <li><strong>XP Sisa</strong> ditukar hadiah di Kedai (Level tidak turun!).</li>
+                        <li>Tiap terkumpul <strong>10 XP</strong>, Regumu mendapat <strong>1 Koin Regu</strong> untuk kas!</li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 border-2 border-rose-200 p-4 rounded-2xl">
+                    <h4 class="font-extrabold text-rose-800 text-sm mb-2 uppercase flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-500 text-lg animate-float"></i> Sanksi Disiplin</h4>
+                    <p class="text-[11px] text-slate-600 mb-3 font-bold">Pelanggaran dikategorikan menjadi 3:</p>
+                    <ul class="list-none text-xs text-slate-700 space-y-3 font-bold">
+                        <li class="bg-white p-2.5 rounded-xl border border-rose-100 border-l-4 border-l-rose-500 shadow-sm">
+                            <span class="text-rose-700 block mb-1">🚨 Sanksi Pribadi</span>
+                            <span class="font-semibold text-slate-500 block text-[10px]">Denda pengurangan XP individu.</span>
+                        </li>
+                        <li class="bg-white p-2.5 rounded-xl border border-rose-100 border-l-4 border-l-rose-500 shadow-sm">
+                            <span class="text-rose-700 block mb-1">🚨 Sanksi Berdampak</span>
+                            <span class="font-semibold text-slate-500 block text-[10px]">XP siswa dikurangi, Koin Regu dipotong, menu Regu terkunci.</span>
+                        </li>
+                        <li class="bg-white p-2.5 rounded-xl border border-rose-100 border-l-4 border-l-rose-500 shadow-sm">
+                            <span class="text-rose-700 block mb-1">🚨 Sanksi Kolektif</span>
+                            <span class="font-semibold text-slate-500 block text-[10px]">Denda potong Koin Regu & fitur regu terkunci untuk semua.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <button onclick="closePanduanModal()" class="btn-3d btn-sky w-full mt-5 text-sm">SAYA MENGERTI!</button>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="card-3d bg-white w-full max-w-sm p-8 relative animate-pop border-b-8 border-indigo-600">
+            <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center hover:bg-rose-100 hover:text-rose-500 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-indigo-100"><i class="fa-solid fa-user-shield text-4xl text-indigo-500 animate-float"></i></div>
+                <h3 class="title-font font-black text-2xl text-slate-800">Satelit Pembina</h3>
+                <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Akses Rahasia</p>
+            </div>
+            <div class="mb-5">
+                <input type="password" id="admin-pass-input" placeholder="••••" class="w-full text-center text-3xl tracking-[0.5em] font-black bg-slate-50 border-2 border-slate-200 rounded-2xl px-4 py-4 focus:outline-none focus:border-indigo-500 focus:bg-white transition-colors shadow-inner">
+            </div>
+            <button onclick="verifyAdminLogin()" class="btn-3d btn-indigo w-full text-sm"><i class="fa-solid fa-unlock mr-2"></i> BUKA AKSES</button>
+        </div>
+    </div>
+
+    <!-- Avatar Modal -->
+    <div id="avatar-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative max-h-[90vh] flex flex-col animate-pop border-b-8 border-amber-400">
+            <button onclick="closeAvatarModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center hover:bg-rose-100 hover:text-rose-500"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="title-font font-black text-xl text-slate-800 text-center mb-5 shrink-0 text-amber-600">Ganti Foto Profil</h3>
+            
+            <div class="overflow-y-auto no-scrollbar space-y-5 pr-1 pb-4">
+                <div class="bg-indigo-50 border-2 border-indigo-200 p-4 rounded-2xl flex items-center gap-4">
+                    <div id="student-avatar-upload-preview" class="w-16 h-16 bg-white rounded-full border-4 border-indigo-100 flex items-center justify-center overflow-hidden text-3xl shrink-0 shadow-md">👤</div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-extrabold text-indigo-900 mb-2">Unggah Foto Aslimu</label>
+                        <input type="file" id="student-photo-input" accept="image/*" class="w-full text-[10px] file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:bg-indigo-600 file:text-white cursor-pointer hover:file:bg-indigo-500 file:transition-colors">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="h-px bg-slate-200 flex-1"></div>
+                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Atau Pilih Karakter</div>
+                    <div class="h-px bg-slate-200 flex-1"></div>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-3" id="avatar-grid"></div>
+            </div>
+
+            <p class="text-[10px] text-center font-bold text-amber-700 mt-4 shrink-0 bg-amber-50 p-3 rounded-xl border border-amber-200"><i class="fa-solid fa-circle-info mr-1"></i> Perubahan foto dikirim ke antrean persetujuan Pembina terlebih dahulu.</p>
+        </div>
+    </div>
+
+    <!-- Chat Contacts / Room Modal UI -->
+    <div id="chat-modal" class="fixed inset-0 z-[130] bg-black/60 hidden flex flex-col justify-end sm:justify-center sm:p-4 transition-opacity duration-300">
+        <div class="bg-white w-full sm:max-w-md sm:mx-auto sm:rounded-[2rem] rounded-t-[2rem] h-[88vh] sm:h-[650px] flex flex-col relative shadow-2xl overflow-hidden animate-slide-up border-t-8 sm:border-b-8 sm:border-t-0 border-indigo-500">
+            
+            <div class="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-4 flex justify-between items-center shadow-md z-10 shrink-0">
+                <div class="flex items-center gap-3">
+                    <button id="chat-back-btn" onclick="openChatContacts()" class="hidden w-9 h-9 flex items-center justify-center bg-indigo-700/50 rounded-full hover:bg-indigo-700 transition-colors"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div id="chat-modal-avatar" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl border-2 border-white/50 overflow-hidden shadow-sm backdrop-blur-sm">💬</div>
+                    <div>
+                        <h3 class="font-black text-base title-font leading-tight drop-shadow-sm" id="chat-modal-name">Hubungi Seseorang</h3>
+                        <p class="text-[10px] text-indigo-100 font-bold uppercase tracking-wide" id="chat-modal-role">Daftar Kontak</p>
+                    </div>
+                </div>
+                <button onclick="closeChatModal()" class="w-9 h-9 flex items-center justify-center bg-indigo-700/50 rounded-full hover:bg-rose-500 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="chat-contacts-panel" class="flex-1 overflow-y-auto bg-slate-50 p-4 space-y-3 block"></div>
+
+            <div id="chat-room-panel" class="flex-1 flex flex-col hidden bg-[#f8fafc] relative">
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+                
+                <div id="chat-messages-container" class="flex-1 p-4 overflow-y-auto space-y-4 flex flex-col relative z-10"></div>
+                
+                <div class="p-4 bg-white border-t-2 border-slate-100 flex items-center gap-3 shrink-0 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] relative z-10 pb-6 sm:pb-4">
+                    <input type="text" id="chat-input-text" placeholder="Ketik pesan..." onkeypress="if(event.key === 'Enter') sendChatMessage()" class="flex-1 bg-slate-100 border-2 border-transparent rounded-2xl px-4 py-3.5 text-sm font-bold focus:outline-none focus:bg-white focus:border-indigo-400 transition-all shadow-inner">
+                    <button onclick="sendChatMessage()" class="w-12 h-12 bg-indigo-500 text-white rounded-2xl flex items-center justify-center shadow-md hover:bg-indigo-600 active:scale-90 transition-all shrink-0 border-b-4 border-indigo-700"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Form Admin CRUD diringkas untuk space, logika UI-nya otomatis mengaplikasikan btn-3d baru -->
+    <!-- Form Modals Admin ... (Siswa, Misi, Kedai, Regu, Sanksi, Restitusi) -->
+    <!-- Sama seperti versi sebelumnya, mereka menggunakan class card-3d dan btn-3d yang sudah diupdate gayanya -->
+    <div id="reward-purchase-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative animate-pop border-b-8 border-amber-500">
+            <button onclick="closeRewardModal()" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center hover:bg-rose-100 hover:text-rose-500"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-3 border-4 border-amber-100"><i class="fa-solid fa-gift text-3xl text-amber-500 animate-float"></i></div>
+            <h3 class="title-font font-black text-xl text-slate-800 text-center mb-1" id="reward-modal-title">Konfirmasi Hadiah</h3>
+            <p class="text-xs font-bold text-slate-500 text-center mb-5" id="reward-modal-desc"></p>
+            
+            <div id="reward-pinru-requirement" class="hidden bg-rose-50 border-2 border-rose-200 p-3 rounded-xl mb-4 text-xs font-black text-rose-700 flex items-center gap-2">
+                <i class="fa-solid fa-lock text-rose-500"></i> Khusus Pinru / Wapinru!
+            </div>
+            
+            <div class="space-y-3 mb-5">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">Pesan Persetujuan (Opsional)</label>
+                <textarea id="reward-claim-note" placeholder="Tulis alasan klaim..." class="w-full text-xs font-bold border-2 border-slate-200 bg-slate-50 rounded-xl p-3 focus:outline-none focus:bg-white focus:border-amber-400 h-20 transition-colors shadow-inner"></textarea>
+            </div>
+            <button id="btn-confirm-reward-action" class="btn-3d btn-amber w-full text-sm">AJUKAN SEKARANG</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONTAINER UNTUK ADMIN MODALS (Simplified for reading, UI applied globally via CSS) -->
+<div id="admin-modals-container">
+    <!-- Admin Form Modal: Student CRUD (With Photo) -->
+    <div id="admin-student-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative max-h-[90vh] flex flex-col">
+            <button onclick="closeAdminStudentModal()" class="absolute top-4 right-4 text-slate-400 z-10"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="title-font font-bold text-lg text-slate-800 text-center mb-4 shrink-0" id="student-modal-title">Tambah Siswa</h3>
+            <div class="overflow-y-auto no-scrollbar space-y-3 mb-4 pr-1">
+                <input type="hidden" id="form-student-id">
+                <input type="hidden" id="form-student-avatar-data">
+                
+                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div id="form-student-photo-preview" class="w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center overflow-hidden text-2xl shrink-0 shadow-inner">👤</div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Upload Foto Profil</label>
+                        <input type="file" id="form-student-photo" accept="image/*" class="w-full text-[10px] file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    </div>
+                </div>
+
+                <div><label class="block text-xs font-bold text-slate-600">Nama Lengkap</label><input type="text" id="form-student-name" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Kelas</label><input type="text" id="form-student-kelas" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"></div>
+                    <div><label class="block text-xs font-bold text-slate-600">Jenis Kelamin</label>
+                        <select id="form-student-gender" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"><option value="Putra">Putra</option><option value="Putri">Putri</option></select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Regu</label><input type="text" id="form-student-regu" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"></div>
+                    <div><label class="block text-xs font-bold text-slate-600">Jabatan</label>
+                        <select id="form-student-jabatan" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"><option value="Anggota">Anggota</option><option value="Wapinru">Wapinru</option><option value="Pinru">Pinru</option><option value="Pratama">Pratama</option></select>
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveStudentData()" class="btn-3d btn-primary w-full shrink-0" id="btn-save-student">SIMPAN DATA</button>
+        </div>
+    </div>
+    <div id="admin-mission-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative">
+            <button onclick="closeAdminMissionModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="title-font font-bold text-lg text-slate-800 text-center mb-4" id="mission-modal-title">Tambah Misi / SKU</h3>
+            <div class="space-y-3 mb-4">
+                <input type="hidden" id="form-mission-id">
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Poin/Kode</label><input type="text" id="form-mission-poin" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"></div>
+                    <div><label class="block text-xs font-bold text-slate-600">Reward XP</label><input type="number" id="form-mission-xp" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"></div>
+                </div>
+                <div><label class="block text-xs font-bold text-slate-600">Judul Misi</label><input type="text" id="form-mission-title" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"></div>
+                <div><label class="block text-xs font-bold text-slate-600">Deskripsi/Syarat</label><textarea id="form-mission-desc" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500 h-16"></textarea></div>
+                <div><label class="block text-xs font-bold text-slate-600">Tingkat Kesulitan</label>
+                    <select id="form-mission-diff" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-indigo-500"><option value="Mudah">Mudah</option><option value="Sedang">Sedang</option><option value="Sulit">Sulit</option></select>
+                </div>
+            </div>
+            <button onclick="saveMissionData()" class="btn-3d btn-primary w-full bg-indigo-600 text-white">SIMPAN MISI</button>
+        </div>
+    </div>
+    <div id="admin-shop-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative">
+            <button onclick="closeAdminShopModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="title-font font-bold text-lg text-slate-800 text-center mb-4" id="shop-modal-title">Tambah Hadiah Kedai</h3>
+            <div class="space-y-3 mb-4">
+                <input type="hidden" id="form-shop-id">
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Kategori</label>
+                        <select id="form-shop-type" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"><option value="Individu">Individu</option><option value="Regu">Regu</option></select>
+                    </div>
+                    <div><label class="block text-xs font-bold text-slate-600">Ikon Emoji</label><input type="text" id="form-shop-icon" placeholder="🎁" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                </div>
+                <div><label class="block text-xs font-bold text-slate-600">Nama Barang</label><input type="text" id="form-shop-name" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                <div><label class="block text-xs font-bold text-slate-600">Deskripsi</label><input type="text" id="form-shop-desc" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Harga Poin/Koin</label><input type="number" id="form-shop-cost" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-600">Syarat Min XP Level</label><input type="number" id="form-shop-xp" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                </div>
+            </div>
+            <button onclick="saveShopItemData()" class="btn-3d btn-amber w-full">SIMPAN HADIAH</button>
+        </div>
+    </div>
+    <div id="admin-sanc-rule-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative">
+            <button onclick="closeAdminSanctionRuleModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="title-font font-bold text-lg text-slate-800 text-center mb-4" id="sanc-rule-modal-title">Tambah Aturan Sanksi</h3>
+            <div class="space-y-3 mb-4">
+                <input type="hidden" id="form-sanc-rule-id">
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Kategori</label>
+                        <select id="form-sanc-rule-type" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"><option value="Pribadi">Pribadi</option><option value="Berdampak">Berdampak</option><option value="Kolektif">Kolektif</option></select>
+                    </div>
+                    <div><label class="block text-xs font-bold text-slate-600">Aturan Sanksi</label><input type="text" id="form-sanc-rule-label" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2" placeholder="Cth: Atribut tidak lengkap"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-600">Denda XP (Siswa)</label><input type="number" id="form-sanc-rule-xp" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                    <div><label class="block text-xs font-bold text-slate-600">Denda Koin (Regu)</label><input type="number" id="form-sanc-rule-coin" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+                </div>
+            </div>
+            <button onclick="saveSanctionRuleData()" class="btn-3d btn-rose w-full">SIMPAN ATURAN</button>
+        </div>
+    </div>
+    <div id="admin-regu-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative max-h-[90vh] flex flex-col">
+            <button onclick="closeAdminReguModal()" class="absolute top-4 right-4 text-slate-400 z-10"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="title-font font-bold text-lg text-slate-800 text-center mb-4 shrink-0">Edit Regu <span id="regu-modal-name-title" class="text-amber-600"></span></h3>
+            <input type="hidden" id="form-regu-name-id">
+            <input type="hidden" id="form-regu-logo-data">
+            <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
+                <div id="form-regu-logo-preview" class="w-16 h-16 rounded-xl bg-white border-2 border-amber-200 flex items-center justify-center overflow-hidden text-3xl shrink-0 shadow-inner">🛡️</div>
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Upload Logo Regu</label>
+                    <input type="file" id="form-regu-logo" accept="image/*" class="w-full text-[10px] file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 cursor-pointer">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-600 mb-1">Atau Emoji (jika tidak upload)</label>
+                <input type="text" id="form-regu-emoji" placeholder="Contoh: 🦅" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2 focus:border-amber-500 text-center text-lg">
+            </div>
+            <button onclick="saveReguData()" class="btn-3d btn-amber w-full shrink-0">SIMPAN LOGO</button>
+        </div>
+    </div>
+    <div id="admin-rest-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
+        <div class="card-3d bg-white w-full max-w-md p-6 relative">
+            <button onclick="closeAdminRestitutionModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="title-font font-bold text-lg text-slate-800 text-center mb-4" id="rest-modal-title">Tambah Restitusi</h3>
+            <div class="space-y-3 mb-4">
+                <input type="hidden" id="form-rest-id">
+                <div><label class="block text-xs font-bold text-slate-600">Nama Aksi Restitusi</label><input type="text" id="form-rest-label" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2" placeholder="Cth: Kerja Bakti"></div>
+                <div><label class="block text-xs font-bold text-slate-600">Reward Pemulihan (Koin)</label><input type="number" id="form-rest-coin" class="w-full text-xs font-semibold border-2 border-slate-200 rounded-xl p-2"></div>
+            </div>
+            <button onclick="saveRestitutionData()" class="btn-3d btn-emerald w-full">SIMPAN RESTITUSI</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 🔊 AUDIO ENGINE (TONE.JS)
+    // ==========================================
+    let sfxEnabled = localStorage.getItem('prapatra_sfx') !== 'false';
+    
+    function updateSoundIcon() {
+        const icon = document.getElementById('sound-icon');
+        if(icon) {
+            icon.className = sfxEnabled ? "fa-solid fa-volume-high text-lg text-white" : "fa-solid fa-volume-xmark text-lg text-amber-200 opacity-70";
+        }
+    }
+
+    function toggleSound() {
+        sfxEnabled = !sfxEnabled;
+        localStorage.setItem('prapatra_sfx', sfxEnabled);
+        updateSoundIcon();
+        if(sfxEnabled) { SoundEngine.playClick(); }
+    }
+
+    const SoundEngine = {
+        synth: null, poly: null,
+        init() {
+            if(this.synth) return;
+            // Simple synth for basic bleeps
+            this.synth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 1 } }).toDestination();
+            // PolySynth for chords
+            this.poly = new Tone.PolySynth(Tone.Synth).toDestination();
+            this.poly.set({ oscillator: { type: 'triangle' }, envelope: { attack: 0.05, decay: 0.2, sustain: 0.2, release: 1.5 } });
+            this.poly.volume.value = -6;
+        },
+        play(notes, durations, times) {
+            if(!sfxEnabled) return;
+            Tone.start(); this.init();
+            const now = Tone.now();
+            notes.forEach((n, i) => this.synth.triggerAttackRelease(n, durations[i], now + times[i]));
+        },
+        playClick() { this.play(['C6'], ['32n'], [0]); },
+        playSuccess() { this.play(['C5', 'E5', 'G5', 'C6'], ['16n','16n','16n','4n'], [0, 0.1, 0.2, 0.3]); },
+        playCoin() { this.play(['B5', 'E6'], ['16n', '8n'], [0, 0.1]); },
+        playLevelUp() { 
+            if(!sfxEnabled) return; Tone.start(); this.init();
+            const now = Tone.now();
+            this.poly.triggerAttackRelease(['C4','E4','G4'], '4n', now);
+            this.poly.triggerAttackRelease(['F4','A4','C5'], '4n', now + 0.3);
+            this.poly.triggerAttackRelease(['G4','B4','D5'], '4n', now + 0.6);
+            this.poly.triggerAttackRelease(['C5','E5','G5'], '2n', now + 0.9);
+        },
+        playError() { this.play(['G3', 'C3'], ['8n', '4n'], [0, 0.15]); }
+    };
+
+    // Listen to generic clicks for tactile feel
+    document.addEventListener('click', (e) => {
+        if(e.target.closest('button') || e.target.closest('.card-3d') && !e.target.closest('input')) {
+            // Don't override specific sounds if they are triggered in functions, but for simple clicks, play a tick
+            if (sfxEnabled && Tone.context.state === 'running') {
+                // Short click sound without starting Tone if it's not ready, to avoid audio pop on first load
+                if(SoundEngine.synth) SoundEngine.playClick();
+            }
+        }
+    });
+
+    // ==========================================
+    // 🎉 MOTIVATION POPUP SYSTEM
+    // ==========================================
+    function showCelebration(title, desc, emoji) {
+        const overlay = document.getElementById('celebration-overlay');
+        const card = document.getElementById('celebration-card');
+        const particles = document.getElementById('celebration-particles');
+        
+        document.getElementById('celebration-title').innerText = title;
+        document.getElementById('celebration-desc').innerText = desc;
+        document.getElementById('celebration-emoji').innerHTML = renderAvatar(emoji);
+        
+        // Generate simple CSS confetti
+        particles.innerHTML = '';
+        for(let i=0; i<30; i++) {
+            const conf = document.createElement('div');
+            conf.className = 'confetti rounded-sm';
+            conf.style.left = Math.random() * 100 + '%';
+            conf.style.backgroundColor = ['#f59e0b', '#10b981', '#6366f1', '#f43f5e', '#0ea5e9'][Math.floor(Math.random()*5)];
+            conf.style.animation = `fall ${Math.random() * 1 + 1}s linear forwards`;
+            conf.style.animationDelay = `${Math.random() * 0.5}s`;
+            particles.appendChild(conf);
+        }
+
+        overlay.classList.remove('hidden');
+        // Trigger reflow
+        void overlay.offsetWidth;
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+        card.classList.remove('scale-50');
+        card.classList.add('scale-100');
+    }
+
+    function closeCelebration() {
+        SoundEngine.playClick();
+        const overlay = document.getElementById('celebration-overlay');
+        const card = document.getElementById('celebration-card');
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        card.classList.remove('scale-100');
+        card.classList.add('scale-50');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    }
+
+    // ==========================================
+    // 🛡️ KONFIGURASI SUPABASE & LOCALSTORAGE
+    // ==========================================
+    let SUPABASE_URL = localStorage.getItem('prapatra_supabase_url') || "https://gvtgwimebnuwkslrcecs.supabase.co";        
+    let SUPABASE_ANON_KEY = localStorage.getItem('prapatra_supabase_key') || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dGd3aW1lYm51d2tzbHJjZWNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MTIzMTUsImV4cCI6MjA5NzI4ODMxNX0.QakYv2zelTMY23mkkkfmxSYwHhVDAYy_9Xh67MT7JVA";   
+    
+    let supabaseClient = null;
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        try { supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } 
+        catch (e) { console.error("Gagal inisialisasi Supabase:", e); }
+    }
+
+    const DatabaseService = {
+        async executeOperation(operationName, promise) {
+            if (!supabaseClient) return { data: null, error: "Supabase belum terhubung." };
+            try { const { data, error } = await promise; if (error) throw error; return { data, error: null }; } 
+            catch (err) { console.error(`Error pada [${operationName}]:`, err); return { data: null, error: err }; }
+        },
+        upsertStudent: (data) => DatabaseService.executeOperation('Upsert Student', supabaseClient.from('students').upsert(data)),
+        upsertRegu: (data) => DatabaseService.executeOperation('Upsert Regu', supabaseClient.from('regus').upsert(data)),
+        upsertQuest: (data) => DatabaseService.executeOperation('Upsert Quest', supabaseClient.from('quests').upsert(data)),
+        upsertShopItem: (data) => DatabaseService.executeOperation('Upsert Shop Item', supabaseClient.from('shop_items').upsert(data)),
+        upsertSanctionRule: (data) => DatabaseService.executeOperation('Upsert Sanction Rule', supabaseClient.from('sanction_rules').upsert(data)),
+        upsertAppConfig: (key, value) => DatabaseService.executeOperation('Upsert Config', supabaseClient.from('app_config').upsert({ key, value })),
+        upsertAttendanceLog: (data) => DatabaseService.executeOperation('Upsert Attendance Log', supabaseClient.from('attendance_logs').upsert(data)),
+        insertShopClaim: (data) => DatabaseService.executeOperation('Insert Shop Claim', supabaseClient.from('shop_claims').insert([data])),
+        insertLoggedSanction: (data) => DatabaseService.executeOperation('Insert Logged Sanction', supabaseClient.from('logged_sanctions').insert([data])),
+        updateShopClaimStatus: (id, status) => DatabaseService.executeOperation('Update Claim Status', supabaseClient.from('shop_claims').update({ status }).eq('id', id)),
+        updateSanctionResolved: (id) => DatabaseService.executeOperation('Resolve Sanction', supabaseClient.from('logged_sanctions').update({ resolved: true }).eq('id', id)),
+        deleteStudent: (id) => DatabaseService.executeOperation('Delete Student', supabaseClient.from('students').delete().eq('id', id)),
+        deleteQuest: (id) => DatabaseService.executeOperation('Delete Quest', supabaseClient.from('quests').delete().eq('id', id)),
+        deleteShopItem: (id) => DatabaseService.executeOperation('Delete Shop Item', supabaseClient.from('shop_items').delete().eq('id', id)),
+        deleteSanctionRule: (id) => DatabaseService.executeOperation('Delete Sanction Rule', supabaseClient.from('sanction_rules').delete().eq('id', id)),
+        deleteAttendanceForDate: (date) => DatabaseService.executeOperation('Delete Attendance', supabaseClient.from('attendance_logs').delete().eq('date', date)),
+        insertFinance: (data) => DatabaseService.executeOperation('Insert Finance', supabaseClient.from('regu_finances').insert([data])),
+        deleteFinance: (id) => DatabaseService.executeOperation('Delete Finance', supabaseClient.from('regu_finances').delete().eq('id', id)),
+        insertMessage: (data) => DatabaseService.executeOperation('Insert Message', supabaseClient.from('messages').insert([data])),
+        updateMessageRead: (receiverId, senderId) => DatabaseService.executeOperation('Update Message Read', supabaseClient.from('messages').update({ is_read: true }).eq('receiver_id', receiverId).eq('sender_id', senderId)),
+        updateGroupMessageRead: (receiverId) => DatabaseService.executeOperation('Update Group Message Read', supabaseClient.from('messages').update({ is_read: true }).eq('receiver_id', receiverId))
+    };
+
+    const defaultAppConfig = { appTitle: "PRAPATRA QUEST", appVersion: "4.5.0", schoolName: "SDN 4 Rambutan", appLogo: "⚜️", adminAvatar: "👮‍♂️" };
+    let currentAppConfig = {...defaultAppConfig};
+    
+    function loadAppIdentity() {
+        const localConfig = localStorage.getItem('prapatra_app_identity');
+        if (localConfig) currentAppConfig = JSON.parse(localConfig);
+        applyAppIdentity();
+    }
+    
+    function applyAppIdentity() {
+        document.getElementById('html-title').innerText = `${currentAppConfig.appTitle} - Pramuka ${currentAppConfig.schoolName}`;
+        document.getElementById('nav-logo').innerText = currentAppConfig.appLogo;
+        document.getElementById('nav-title').innerText = currentAppConfig.appTitle;
+        document.getElementById('nav-school').innerText = currentAppConfig.schoolName;
+    }
+
+    function renderAvatar(avatarData) {
+        if (!avatarData) return '👤';
+        if (avatarData.startsWith('data:image')) return `<img src="${avatarData}" class="w-full h-full object-cover rounded-full shadow-sm border border-slate-100" alt="Foto">`;
+        return avatarData;
+    }
+
+    function resizeImage(file, maxSize = 150) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width, height = img.height;
+                    if (width > height) { if (width > maxSize) { height *= maxSize / width; width = maxSize; } } 
+                    else { if (height > maxSize) { width *= maxSize / height; height = maxSize; } }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function handleAdminAvatarUpload(input) {
+        if (input.files && input.files[0]) {
+            const base64Data = await resizeImage(input.files[0]);
+            document.getElementById('cfg-admin-avatar-data').value = base64Data;
+            document.getElementById('cfg-admin-avatar-preview').innerHTML = renderAvatar(base64Data);
+            document.getElementById('cfg-admin-emoji').value = '';
+        }
+    }
+
+    function resetAdminAvatar() {
+        document.getElementById('cfg-admin-avatar-data').value = '👮‍♂️';
+        document.getElementById('cfg-admin-avatar-preview').innerHTML = renderAvatar('👮‍♂️');
+        document.getElementById('cfg-admin-emoji').value = '';
+    }
+
+    document.getElementById('form-student-photo').addEventListener('change', async function() {
+        const file = this.files[0];
+        if (file) {
+            const base64Data = await resizeImage(file);
+            document.getElementById('form-student-avatar-data').value = base64Data;
+            document.getElementById('form-student-photo-preview').innerHTML = renderAvatar(base64Data);
+        }
+    });
+
+    document.getElementById('student-photo-input').addEventListener('change', async function() {
+        const file = this.files[0];
+        if (file) {
+            const base64Data = await resizeImage(file);
+            document.getElementById('student-avatar-upload-preview').innerHTML = renderAvatar(base64Data);
+            submitAvatarChange(base64Data, true);
+        }
+    });
+
+    document.getElementById('form-regu-logo').addEventListener('change', async function() {
+        const file = this.files[0];
+        if (file) {
+            const base64Data = await resizeImage(file);
+            document.getElementById('form-regu-logo-data').value = base64Data;
+            document.getElementById('form-regu-logo-preview').innerHTML = renderAvatar(base64Data);
+            document.getElementById('form-regu-emoji').value = '';
+        }
+    });
+
+    const attendanceTypes = { 
+        'ontime': { label: 'Hadir', xp: 8, color: 'bg-emerald-500', border: 'border-emerald-600' }, 
+        'late': { label: 'Telat', xp: 4, color: 'bg-amber-500', border: 'border-amber-600' }, 
+        'excused': { label: 'Izin', xp: 2, color: 'bg-blue-500', border: 'border-blue-600' }, 
+        'absent': { label: 'Alpa', xp: 0, color: 'bg-rose-500', border: 'border-rose-600' } 
+    };
+
+    function getStudentAttendanceStats(studentId) {
+        let present = 0, late = 0, excused = 0, absent = 0;
+        const totalSessions = Object.keys(state.attendanceLog).length;
+        
+        for (let date in state.attendanceLog) {
+            const status = state.attendanceLog[date][studentId];
+            if (status === 'ontime') present++;
+            else if (status === 'late') late++;
+            else if (status === 'excused') excused++;
+            else if (status === 'absent') absent++;
+        }
+        
+        const percent = totalSessions === 0 ? 0 : Math.round((present / totalSessions) * 100);
+        return { present, late, excused, absent, totalSessions, percent };
+    }
+
+    const defaultRestitutionRules = [
+        { id: 'ro1', label: 'Kerja Bakti Lapangan', coinReward: 5 },
+        { id: 'ro2', label: 'Membantu latih baris-berbaris', coinReward: 10 },
+        { id: 'ro3', label: 'Memimpin Senam', coinReward: 10 }
+    ];
+
+    const state = {
+        currentView: 'dashboard', currentUser: null, adminSection: 'verification', 
+        quests: [], restitutionRules: [...defaultRestitutionRules], regus: {}, students: [],
+        attendanceLog: {}, shopItems: [], sanctionRules: [], reguSanctionsLog: [], shopClaims: [],
+        finances: [], messages: [],
+        activeChatContactId: null, activeChatContactType: null, chatSyncTimer: null,
+        avatarOptions: [ { id: '1', emoji: '🦁' }, { id: '2', emoji: '🦊' }, { id: '3', emoji: '🦉' }, { id: '4', emoji: '🐯' }, { id: '5', emoji: '🦅' }, { id: '6', emoji: '🐻' }, { id: '7', emoji: '🐰' }, { id: '8', emoji: '🐼' } ]
+    };
+
+    window.onload = async () => {
+        updateSoundIcon();
+        loadAppIdentity();
+        if (!supabaseClient) { document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none'); renderMainView(); return; }
+
+        try {
+            const [ 
+                {data: reguData}, {data: studentData}, {data: questData}, {data: shopData}, 
+                {data: sanctionData}, {data: logData}, {data: claimsData}, {data: configData}, {data: attLogsData},
+                {data: financesData}, {data: messagesData}
+            ] = await Promise.all([
+                supabaseClient.from('regus').select('*'), supabaseClient.from('students').select('*'),
+                supabaseClient.from('quests').select('*'), supabaseClient.from('shop_items').select('*'),
+                supabaseClient.from('sanction_rules').select('*'), supabaseClient.from('logged_sanctions').select('*'),
+                supabaseClient.from('shop_claims').select('*'), supabaseClient.from('app_config').select('*'),
+                supabaseClient.from('attendance_logs').select('*'),
+                supabaseClient.from('regu_finances').select('*').order('created_at', {ascending: false}), 
+                supabaseClient.from('messages').select('*').order('created_at', {ascending: true})
+            ]);
+
+            if (configData) {
+                const cloudConfig = {}; configData.forEach(c => cloudConfig[c.key] = c.value);
+                currentAppConfig = {...currentAppConfig, ...cloudConfig};
+                if (cloudConfig['restitution_rules']) try { state.restitutionRules = JSON.parse(cloudConfig['restitution_rules']); } catch(e){}
+                applyAppIdentity();
+            }
+
+            if (attLogsData) attLogsData.forEach(al => { state.attendanceLog[al.date] = al.logs || {}; });
+
+            if (reguData && reguData.length > 0) {
+                state.regus = {};
+                reguData.forEach(r => { state.regus[r.name] = { coins: r.coins, totalLostCoins: r.total_lost_coins, targetReward: r.target_reward, logs: r.logs || [], logo: r.logo || '🛡️' }; });
+                
+                state.students = studentData.map(s => ({
+                    id: s.id, name: s.name, kelas: s.kelas, gender: s.gender, regu: s.regu_name, jabatan: s.jabatan, 
+                    xp: s.xp, lifetimeXP: s.lifetime_xp || s.xp || 0, coins: s.coins,
+                    completedQuests: (s.completed_quests || []).map(q => typeof q === 'object' ? q : { id: q.toString(), status: 'completed' }),
+                    attendanceXP: s.attendance_xp || 0, bonusXP: s.bonus_xp || 0, avatarEmoji: s.avatar_emoji, isRecommended: s.is_recommended, xpHistory: s.xp_history || []
+                }));
+
+                state.quests = (questData || []).map(q => ({ id: q.id.toString(), poin: q.poin, title: q.title, desc: q.desc, diff: q.diff, xp: q.xp }));
+                state.shopItems = (shopData || []).map(s => ({ id: s.id.toString(), type: s.type, name: s.name, desc: s.desc, cost: s.cost, icon: s.icon, xpRequired: s.xp_required }));
+                state.sanctionRules = (sanctionData || []).map(s => ({ id: s.id.toString(), type: s.type, label: s.label, xpPenalty: s.xp_penalty, coinPenalty: s.coin_penalty }));
+                state.reguSanctionsLog = (logData || []).map(l => ({ id: l.id, studentId: l.student_id, regu: l.regu, type: l.type, reason: l.reason, xpPenalty: l.xp_penalty, coinPenalty: l.coin_penalty, resolved: l.resolved, date: l.date, maxRecoverable: l.max_recoverable }));
+                state.shopClaims = (claimsData || []).map(c => ({ id: c.id, studentId: c.student_id, itemId: c.item_id, itemName: c.item_name, cost: c.cost, claimType: c.claim_type, regu: c.regu, note: c.note, status: c.status, date: c.date }));
+                state.finances = (financesData || []).map(f => ({ id: f.id, reguName: f.regu_name, type: f.type, amount: f.amount, description: f.description, date: f.date }));
+                state.messages = (messagesData || []);
+            }
+        } catch (e) { showToast("Gagal Memuat Cloud", "⚠️"); }
+        document.getElementById('loading-overlay').classList.add('opacity-0', 'pointer-events-none');
+        renderMainView();
+        
+        setInterval(async () => {
+            if (supabaseClient && document.getElementById('chat-modal').classList.contains('hidden') === false) {
+                const {data} = await supabaseClient.from('messages').select('*').order('created_at', {ascending: true});
+                if (data && data.length > state.messages.length) {
+                    state.messages = data;
+                    if (state.activeChatContactId) renderChatRoomMessages();
+                    else renderChatContactsList();
+                }
+            }
+        }, 5000);
+    };
+
+    function getSortedQuests() {
+        return [...state.quests].sort((a, b) => {
+            const numA = parseInt(a.poin); const numB = parseInt(b.poin);
+            const isNumA = !isNaN(numA) && numA >= 1 && numA <= 30;
+            const isNumB = !isNaN(numB) && numB >= 1 && numB <= 30;
+            if (isNumA && isNumB) return numA - numB;
+            if (isNumA) return -1; if (isNumB) return 1;
+            return a.id.localeCompare(b.id);
+        });
+    }
+
+    async function asyncSyncStudent(s) {
+        const { error } = await DatabaseService.upsertStudent({
+            id: s.id, name: s.name, kelas: s.kelas, gender: s.gender, regu_name: s.regu, jabatan: s.jabatan,
+            xp: s.xp, lifetime_xp: s.lifetimeXP, coins: s.coins, completed_quests: s.completedQuests,
+            attendance_xp: s.attendanceXP, bonus_xp: s.bonusXP, avatar_emoji: s.avatarEmoji, xp_history: s.xpHistory, is_recommended: s.isRecommended
+        });
+        if (error) showToast("Gagal menyimpan data siswa.", "⚠️");
+    }
+
+    async function asyncSyncRegu(rName) {
+        const r = state.regus[rName]; if(!r) return;
+        await DatabaseService.upsertRegu({
+            name: rName, coins: r.coins, total_lost_coins: r.totalLostCoins, target_reward: r.targetReward, logs: r.logs, logo: r.logo || '🛡️'
+        });
+    }
+
+    async function asyncAddShopClaim(claim) { await DatabaseService.insertShopClaim(claim); }
+    async function asyncUpdateShopClaimStatus(claimId, status) { await DatabaseService.updateShopClaimStatus(claimId, status); }
+    async function asyncSyncAttendanceLog(dateStr, titleStr, logObj) { await DatabaseService.upsertAttendanceLog({ date: dateStr, title: titleStr, logs: logObj }); }
+
+    function addXPRecord(student, change, reason, triggerSync = true) {
+        const oldLifetime = student.lifetimeXP || student.xp || 0;
+        const oldLevel = getLevelInfo(oldLifetime).id;
+
+        student.xp = Math.max(0, student.xp + change);
+        student.lifetimeXP = Math.max(0, oldLifetime + change);
+        const dateStr = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric'});
+        student.xpHistory.unshift({ date: dateStr, change: change > 0 ? `+${change}` : `${change}`, reason: reason });
+        
+        const newLevelInfo = getLevelInfo(student.lifetimeXP);
+
+        if (change > 0) {
+            const oldCoinsContributed = Math.floor(oldLifetime / 10);
+            const newCoinsContributed = Math.floor(student.lifetimeXP / 10);
+            const coinsToEarn = newCoinsContributed - oldCoinsContributed;
+            if (coinsToEarn > 0) addReguCoins(student.regu, coinsToEarn, `Kontribusi XP: ${student.name}`, student.name);
+
+            // Popups
+            if (newLevelInfo.id > oldLevel) {
+                SoundEngine.playLevelUp();
+                showCelebration('NAIK TINGKAT!', `Kamu sekarang adalah ${newLevelInfo.name}!`, '🌟');
+            } else if (reason.includes("Lulus")) {
+                // If it's just a mission pass but no level up, popup handled at the call site or here
+            } else if (change >= 10 && state.currentView === 'student' && student.id === state.currentUser?.id) {
+                // Minor celebration for decent XP gain if student is viewing
+                SoundEngine.playCoin();
+                showToast(`+${change} XP Diperoleh!`, "✨");
+            }
+        } else if (change < 0 && state.currentView === 'student' && student.id === state.currentUser?.id) {
+            SoundEngine.playError();
+        }
+
+        if(triggerSync) asyncSyncStudent(student);
+    }
+
+    function addReguCoins(reguName, amount, reason, contributorName = "Sistem") {
+        const regu = state.regus[reguName]; if (!regu) return;
+        regu.coins += amount; regu.logs.unshift({ id: 'rl-' + Date.now(), type: 'gain', amount: `+${amount}`, reason: reason, contributor: contributorName, date: new Date().toLocaleDateString('id-ID') });
+        asyncSyncRegu(reguName);
+    }
+
+    function deductReguCoins(reguName, amount, reason) {
+        const regu = state.regus[reguName]; if (!regu) return;
+        regu.coins = Math.max(0, regu.coins - amount); regu.totalLostCoins += amount;
+        regu.logs.unshift({ id: 'rl-' + Date.now(), type: 'loss', amount: `-${amount}`, reason: reason, contributor: 'Pembina (Disiplin)', date: new Date().toLocaleDateString('id-ID') });
+        asyncSyncRegu(reguName);
+    }
+
+    function hasActiveSanction(student) {
+        if (!student) return false;
+        return state.reguSanctionsLog.some(log => !log.resolved && (log.studentId === student.id || log.regu === student.regu));
+    }
+
+    function getActiveSanctionsList(student) {
+        if (!student) return [];
+        return state.reguSanctionsLog.filter(log => !log.resolved && (log.studentId === student.id || log.regu === student.regu));
+    }
+
+    function getLevelInfo(lifetimeXp) {
+        if (lifetimeXp < 200) return { id: 1, name: "Calon Penggalang", min: 0, max: 200, percent: Math.min(100, (lifetimeXp/200)*100) };
+        if (lifetimeXp < 400) return { id: 2, name: "Ramu Purwa", min: 200, max: 400, percent: Math.min(100, ((lifetimeXp-200)/200)*100) };
+        if (lifetimeXp < 600) return { id: 3, name: "Ramu Madya", min: 400, max: 600, percent: Math.min(100, ((lifetimeXp-400)/200)*100) };
+        if (lifetimeXp < 800) return { id: 4, name: "Ramu Utama", min: 600, max: 800, percent: Math.min(100, ((lifetimeXp-600)/200)*100) };
+        if (lifetimeXp < 1000) return { id: 5, name: "Ramu Pratama", min: 800, max: 1000, percent: Math.min(100, ((lifetimeXp-800)/200)*100) };
+        return { id: 6, name: "Penggalang Ramu", min: 1000, max: lifetimeXp, percent: 100 };
+    }
+
+    function showToast(message, icon = "💡") {
+        const toast = document.getElementById('custom-toast');
+        document.getElementById('toast-icon').innerText = icon;
+        document.getElementById('toast-message').innerText = message;
+        toast.style.transform = 'translateY(0%)';
+        setTimeout(() => toast.style.transform = 'translateY(-150%)', 3500);
+    }
+
+    let confirmAction = null;
+    function openConfirmModal(title, desc, action) { 
+        SoundEngine.playClick();
+        document.getElementById('confirm-title').innerText = title; 
+        document.getElementById('confirm-desc').innerText = desc; 
+        confirmAction = action; 
+        document.getElementById('confirm-modal').classList.remove('hidden'); 
+    }
+    function closeConfirmModal() { 
+        SoundEngine.playClick();
+        document.getElementById('confirm-modal').classList.add('hidden'); confirmAction = null; 
+    }
+    document.getElementById('btn-confirm-yes').addEventListener('click', () => { 
+        SoundEngine.playClick();
+        if (confirmAction) confirmAction(); 
+        closeConfirmModal(); 
+    });
+
+    // ==========================================
+    // 💬 CHAT SYSTEM
+    // ==========================================
+    function getUnreadMessagesCount(targetReceiverId, specificSenderId = null) {
+        return state.messages.filter(m => m.receiver_id === targetReceiverId && !m.is_read && (specificSenderId ? m.sender_id === specificSenderId : m.sender_id !== targetReceiverId)).length;
+    }
+
+    function openChatContacts() {
+        SoundEngine.playClick();
+        state.activeChatContactId = null;
+        document.getElementById('chat-modal-name').innerText = "Obrolan";
+        document.getElementById('chat-modal-role').innerText = "Pilih Kontak";
+        document.getElementById('chat-modal-avatar').innerHTML = "💬";
+        document.getElementById('chat-back-btn').classList.add('hidden');
+        document.getElementById('chat-contacts-panel').classList.remove('hidden');
+        document.getElementById('chat-room-panel').classList.add('hidden');
+        document.getElementById('chat-modal').classList.remove('hidden');
+        
+        // Animasi masuk
+        const modalInner = document.querySelector('#chat-modal > div');
+        modalInner.classList.remove('animate-slide-up');
+        void modalInner.offsetWidth; // trigger reflow
+        modalInner.classList.add('animate-slide-up');
+
+        renderChatContactsList();
+    }
+
+    function renderChatContactsList() {
+        const container = document.getElementById('chat-contacts-panel');
+        let html = '';
+
+        if (state.currentView === 'student') {
+            const u = state.currentUser;
+            const reguGroupId = 'regu_' + u.regu;
+            
+            const unreadAdmin = getUnreadMessagesCount(u.id, 'admin');
+            html += generateContactCard('admin', 'Kakak Pembina', renderAvatar(currentAppConfig.adminAvatar || '👮‍♂️'), 'Admin Pusat', 'admin', unreadAdmin);
+            
+            const unreadGroup = state.messages.filter(m => m.receiver_id === reguGroupId && !m.is_read && m.sender_id !== u.id).length;
+            html += generateContactCard(reguGroupId, `Grup Regu ${u.regu}`, renderAvatar(state.regus[u.regu]?.logo || '🛡️'), 'Diskusi Regu', 'regu', unreadGroup);
+
+            html += `<h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4 mb-2 pl-2">Anggota Regu</h4>`;
+            state.students.filter(s => s.regu === u.regu && s.id !== u.id).forEach(friend => {
+                const unreadPrivate = getUnreadMessagesCount(u.id, friend.id);
+                html += generateContactCard(friend.id, friend.name, renderAvatar(friend.avatarEmoji), friend.jabatan, 'student', unreadPrivate);
+            });
+
+        } else if (state.currentView === 'admin') {
+            html += `<h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 pl-2">Grup Regu</h4>`;
+            Object.keys(state.regus).forEach(rName => {
+                const gid = 'regu_' + rName;
+                html += generateContactCard(gid, `Grup Regu ${rName}`, renderAvatar(state.regus[rName]?.logo || '🛡️'), 'Broadcast Regu', 'regu', 0);
+            });
+
+            html += `<h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4 mb-2 pl-2">Jalur Pribadi Siswa</h4>`;
+            state.students.forEach(s => {
+                const unread = getUnreadMessagesCount('admin', s.id);
+                html += generateContactCard(s.id, s.name, renderAvatar(s.avatarEmoji), `Regu ${s.regu}`, 'student', unread);
+            });
+        }
+        container.innerHTML = html;
+    }
+
+    function generateContactCard(id, name, avatarHtml, roleText, type, unreadCount) {
+        const badge = unreadCount > 0 ? `<span class="w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px] font-black shrink-0 border-2 border-white shadow-sm animate-bounce">${unreadCount}</span>` : '';
+        return `
+        <div onclick="openChatRoom('${id}', '${name}', '${type}')" class="bg-white p-3 rounded-2xl flex items-center gap-4 cursor-pointer hover:bg-indigo-50 border-2 ${unreadCount > 0 ? 'border-indigo-400 shadow-md' : 'border-slate-100'} transition-all transform active:scale-95">
+            <div class="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center text-3xl shrink-0 overflow-hidden shadow-inner border border-slate-200">${avatarHtml}</div>
+            <div class="flex-1 min-w-0">
+                <h4 class="font-black text-sm text-slate-800 truncate">${name}</h4>
+                <p class="text-[10px] font-extrabold text-slate-400 uppercase mt-0.5">${roleText}</p>
+            </div>
+            ${badge}
+        </div>`;
+    }
+
+    async function openChatRoom(contactId, contactName, contactType) {
+        SoundEngine.playClick();
+        state.activeChatContactId = contactId;
+        state.activeChatContactType = contactType;
+
+        document.getElementById('chat-modal-name').innerText = contactName;
+        document.getElementById('chat-modal-role').innerText = contactType === 'regu' ? "Grup Diskusi" : "Online";
+        
+        let avatarIcon = '💬';
+        if (contactId === 'admin') avatarIcon = renderAvatar(currentAppConfig.adminAvatar || '👮‍♂️');
+        else if (contactType === 'regu') { const rName = contactId.replace('regu_', ''); avatarIcon = renderAvatar(state.regus[rName]?.logo || '🛡️'); }
+        else { const st = state.students.find(s => s.id === contactId); if(st) avatarIcon = renderAvatar(st.avatarEmoji); }
+        document.getElementById('chat-modal-avatar').innerHTML = avatarIcon;
+
+        document.getElementById('chat-back-btn').classList.remove('hidden');
+        document.getElementById('chat-contacts-panel').classList.add('hidden');
+        document.getElementById('chat-room-panel').classList.remove('hidden');
+        document.getElementById('chat-room-panel').classList.add('flex');
+
+        renderChatRoomMessages();
+
+        const myId = state.currentView === 'admin' ? 'admin' : state.currentUser.id;
+        const msgsToRead = state.messages.filter(m => !m.is_read && m.receiver_id === (contactType === 'regu' ? contactId : myId) && m.sender_id !== myId && (contactType === 'regu' ? true : m.sender_id === contactId));
+
+        if (msgsToRead.length > 0) {
+            msgsToRead.forEach(m => m.is_read = true);
+            if (contactType === 'regu') await DatabaseService.updateGroupMessageRead(contactId);
+            else await DatabaseService.updateMessageRead(myId, contactId);
+        }
+    }
+
+    function renderChatRoomMessages() {
+        const container = document.getElementById('chat-messages-container');
+        const myId = state.currentView === 'admin' ? 'admin' : state.currentUser.id;
+        const targetId = state.activeChatContactId;
+        const isGroup = state.activeChatContactType === 'regu';
+
+        const relevantMsgs = state.messages.filter(m => {
+            if (isGroup) return m.receiver_id === targetId;
+            return (m.sender_id === myId && m.receiver_id === targetId) || (m.sender_id === targetId && m.receiver_id === myId);
+        });
+        
+        let html = '';
+        relevantMsgs.forEach(m => {
+            const isMe = m.sender_id === myId;
+            const time = new Date(m.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+            
+            let senderNameLabel = '';
+            if (isGroup && !isMe) {
+                const senderObj = m.sender_id === 'admin' ? {name: 'Pembina'} : state.students.find(s => s.id === m.sender_id);
+                senderNameLabel = `<div class="text-[9px] font-black text-indigo-500 mb-1 uppercase tracking-wide">${senderObj?.name || 'Unknown'}</div>`;
+            }
+
+            if (isMe) {
+                html += `<div class="flex justify-end mb-3"><div class="max-w-[85%] animate-pop"><div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm font-bold shadow-md">${m.content}</div><div class="text-right text-[9px] font-bold text-slate-400 mt-1">${time} ${m.is_read && !isGroup ? '<i class="fa-solid fa-check-double text-indigo-500"></i>' : '<i class="fa-solid fa-check"></i>'}</div></div></div>`;
+            } else {
+                html += `<div class="flex justify-start mb-3"><div class="max-w-[85%] animate-pop"><div class="bg-white border-2 border-slate-100 text-slate-700 p-3 rounded-2xl rounded-tl-sm text-sm font-bold shadow-sm">${senderNameLabel}${m.content}</div><div class="text-left text-[9px] font-bold text-slate-400 mt-1">${time}</div></div></div>`;
+            }
+        });
+        
+        if (relevantMsgs.length === 0) html = `<div class="flex-1 flex flex-col items-center justify-center text-slate-400 opacity-60"><i class="fa-regular fa-comments text-5xl mb-3 animate-float"></i><p class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-full">Mulai percakapan baru...</p></div>`;
+        container.innerHTML = html;
+        setTimeout(() => { container.scrollTop = container.scrollHeight; }, 10);
+    }
+
+    async function sendChatMessage() {
+        const input = document.getElementById('chat-input-text');
+        const text = input.value.trim();
+        if (!text || !state.activeChatContactId) return;
+        input.value = '';
+        SoundEngine.playClick();
+        
+        const myId = state.currentView === 'admin' ? 'admin' : state.currentUser.id;
+        const msg = { id: 'msg-' + Date.now() + '-' + Math.random(), sender_id: myId, receiver_id: state.activeChatContactId, content: text, is_read: false, created_at: new Date().toISOString() };
+        
+        state.messages.push(msg);
+        renderChatRoomMessages(); 
+        
+        const { error } = await DatabaseService.insertMessage(msg);
+        if (error) showToast("Gagal mengirim pesan", "❌");
+    }
+
+    function closeChatModal() { SoundEngine.playClick(); document.getElementById('chat-modal').classList.add('hidden'); }
+
+    // ==========================================
+    // 🎨 UI RENDERING & TAB NAVIGASI
+    // ==========================================
+    function openPanduanModal() { SoundEngine.playClick(); document.getElementById('panduan-modal').classList.remove('hidden'); }
+    function closePanduanModal() { SoundEngine.playClick(); document.getElementById('panduan-modal').classList.add('hidden'); }
+    
+    function openAvatarModal() {
+        SoundEngine.playClick();
+        document.getElementById('avatar-modal').classList.remove('hidden');
+        document.getElementById('student-avatar-upload-preview').innerHTML = renderAvatar(state.currentUser.avatarEmoji);
+        document.getElementById('student-photo-input').value = '';
+        
+        document.getElementById('avatar-grid').innerHTML = state.avatarOptions.map(a => `
+            <button onclick="submitAvatarChange('${a.emoji}', false)" class="text-5xl w-full aspect-square bg-slate-50 hover:bg-amber-100 rounded-3xl border-4 border-slate-100 hover:border-amber-300 flex items-center justify-center transition-all active:scale-90 shadow-sm hover:shadow-md">
+                ${a.emoji}
+            </button>
+        `).join('');
+    }
+
+    async function submitAvatarChange(avatarData, isPhoto = false) {
+        SoundEngine.playClick();
+        const claimId = 'cl-av-' + Date.now();
+        const dateStr = new Date().toLocaleDateString('id-ID');
+        
+        const claimObj = {
+            id: claimId, student_id: state.currentUser.id, item_id: null,
+            item_name: isPhoto ? "Perubahan Foto Profil Asli" : `Perubahan Karakter: ${avatarData}`,
+            cost: 0, claim_type: 'Avatar', regu: state.currentUser.regu, note: avatarData, status: 'pending', date: dateStr
+        };
+
+        state.shopClaims.unshift({
+            id: claimId, studentId: state.currentUser.id, itemId: null, itemName: claimObj.item_name,
+            cost: 0, claimType: 'Avatar', regu: state.currentUser.regu, note: avatarData, status: 'pending', date: dateStr
+        });
+
+        await asyncAddShopClaim(claimObj);
+        showToast("Pengajuan karakter dikirim ke Kakak Pembina!", "📤");
+        closeAvatarModal(); renderMainView();
+    }
+
+    function closeAvatarModal() { SoundEngine.playClick(); document.getElementById('avatar-modal').classList.add('hidden'); }
+
+    function renderMainView() {
+        const main = document.getElementById('main-scene');
+        document.getElementById('sanction-banner').classList.add('hidden');
+
+        // Simple fade in transition
+        main.style.opacity = '0';
+        setTimeout(() => {
+            if (state.currentView === 'dashboard') renderDashboard(main);
+            else if (state.currentView === 'student') renderStudentView(main);
+            else if (state.currentView === 'admin') renderAdminView(main);
+            
+            main.style.transition = 'opacity 0.3s ease';
+            main.style.opacity = '1';
+        }, 100);
+    }
+
+    function renderDashboard(container) {
+        let totalKas = 0;
+        state.finances.forEach(f => { if (f.type === 'Pemasukan') totalKas += f.amount; else totalKas -= f.amount; });
+
+        let html = `
+        <div class="px-6 pt-10 pb-12 bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-b-[3rem] text-center shadow-lg relative overflow-hidden">
+            <!-- Sunburst background -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTAwIDUwSDBMMTAwIDBaIiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMSkiLz48L3N2Zz4=')] bg-cover animate-sun opacity-50"></div>
+            
+            <div onclick="handleSecretDoor()" class="w-28 h-28 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl border-4 border-white/40 relative z-10 cursor-pointer hover:scale-110 transition-transform"><span class="text-[4rem] drop-shadow-lg animate-float" id="dash-logo">${currentAppConfig.appLogo}</span></div>
+            <h1 class="text-4xl font-black title-font tracking-tight text-white drop-shadow-xl uppercase relative z-10" id="dash-title">${currentAppConfig.appTitle}</h1>
+            <p class="text-xs font-bold text-amber-100 tracking-widest uppercase mt-3 border-2 border-white/30 inline-block px-4 py-1.5 rounded-full bg-black/10 relative z-10 backdrop-blur-sm">Versi ${currentAppConfig.appVersion}</p>
+        </div>
+
+        <div class="p-6 relative z-20 -mt-10">
+            <div class="card-3d p-4 bg-white shadow-xl border-b-[6px] border-emerald-500 mb-5 flex justify-between items-center transform hover:-translate-y-1 transition-transform">
+                <div>
+                    <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Total Uang Kas Pramuka</h3>
+                    <div class="text-2xl font-black text-emerald-500 mt-1 tracking-tight">Rp ${totalKas.toLocaleString('id-ID')}</div>
+                </div>
+                <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-500 text-3xl border-2 border-emerald-200 shadow-inner shrink-0 rotate-3">
+                    <i class="fa-solid fa-sack-dollar animate-bounce"></i>
+                </div>
+            </div>
+
+            <div class="card-3d p-6 bg-white shadow-xl border-b-[6px] border-sky-400">
+                <h2 class="title-font font-black text-xl text-slate-800 mb-2 text-center text-sky-600">Portal Petualang</h2>
+                <p class="text-center text-xs font-bold text-slate-400 mb-4">Cari namamu untuk mulai berpetualang!</p>
+                <div class="relative">
+                    <div class="flex items-center border-4 border-slate-100 rounded-2xl px-4 bg-slate-50 focus-within:border-sky-400 focus-within:bg-white transition-all shadow-inner">
+                        <i class="fa-solid fa-magnifying-glass text-sky-400 text-lg mr-3"></i>
+                        <input type="text" id="login-search" oninput="handleLoginSearch(this.value)" placeholder="Ketik namamu di sini..." class="w-full py-4 bg-transparent font-black text-slate-800 focus:outline-none text-base">
+                    </div>
+                    <div id="autocomplete-list" class="absolute w-full mt-2 bg-white border-4 border-slate-100 rounded-2xl shadow-2xl max-h-56 overflow-y-auto z-30 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 pb-12">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-xl font-black text-slate-800 title-font flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-400 text-2xl animate-float"></i> Papan Juara</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-5 bg-slate-200 p-1.5 rounded-2xl shadow-inner">
+                <button onclick="switchLeaderboardTab('individu'); SoundEngine.playClick();" id="tab-lead-individu" class="py-3 text-xs font-black rounded-xl transition-all uppercase tracking-wider text-center bg-white text-slate-800 shadow-md">🏅 Juara Individu</button>
+                <button onclick="switchLeaderboardTab('regu'); SoundEngine.playClick();" id="tab-lead-regu" class="py-3 text-xs font-black rounded-xl transition-all uppercase tracking-wider text-center text-slate-500 hover:bg-slate-100">🛡️ Juara Regu</button>
+            </div>
+            <div id="leaderboard-content" class="space-y-4"></div>
+        </div>`;
+        container.innerHTML = html; setTimeout(() => switchLeaderboardTab('individu'), 10);
+    }
+
+    function handleLoginSearch(val) {
+        if(val && val.length === 1) SoundEngine.playClick(); // Sound feedback on typing start
+        const list = document.getElementById('autocomplete-list');
+        if (!val.trim()) { list.classList.add('hidden'); return; }
+        const filtered = state.students.filter(s => s.name.toLowerCase().includes(val.toLowerCase()));
+        if (filtered.length === 0) list.innerHTML = `<div class="p-5 text-sm text-slate-400 font-black text-center">Ups! Namamu tidak ditemukan.</div>`;
+        else {
+            list.innerHTML = filtered.map(s => {
+                const lvl = getLevelInfo(s.lifetimeXP);
+                return `
+                <div onclick="loginAsStudent('${s.id}')" class="p-4 hover:bg-sky-50 cursor-pointer flex justify-between items-center border-b-2 border-slate-50 transition-all active:bg-sky-100">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 flex items-center justify-center text-3xl overflow-hidden rounded-full bg-white shadow-sm border-2 border-slate-100">${renderAvatar(s.avatarEmoji)}</div>
+                        <div>
+                            <div class="font-black text-base text-slate-800">${s.name}</div>
+                            <div class="text-[10px] text-sky-600 font-extrabold tracking-wide uppercase">${s.regu} • ${lvl.name}</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300"></i>
+                </div>`;
+            }).join('');
+        }
+        list.classList.remove('hidden');
+    }
+
+    function loginAsStudent(studentId) { 
+        SoundEngine.playSuccess();
+        state.currentUser = state.students.find(s => s.id === studentId); 
+        state.currentView = 'student'; 
+        showCelebration('Selamat Datang!', `Ayo kumpulkan XP hari ini, ${state.currentUser.name}!`, state.currentUser.avatarEmoji);
+        renderMainView(); 
+    }
+
+    function switchLeaderboardTab(type) {
+        const isInd = type === 'individu';
+        document.getElementById('tab-lead-individu').className = `py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-widest text-center ${isInd ? 'bg-sky-500 text-white shadow-md border-b-4 border-sky-600' : 'text-slate-500 hover:bg-slate-100'}`;
+        document.getElementById('tab-lead-regu').className = `py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-widest text-center ${!isInd ? 'bg-amber-500 text-white shadow-md border-b-4 border-amber-600' : 'text-slate-500 hover:bg-slate-100'}`;
+        
+        const content = document.getElementById('leaderboard-content');
+        if (isInd) {
+            const topFilter = (gender) => state.students.filter(s => s.gender === gender).sort((a,b) => b.lifetimeXP - a.lifetimeXP).slice(0,5);
+            let h = `<div><h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 pl-2 flex items-center gap-2"><i class="fa-solid fa-mars text-blue-500 text-lg animate-pulse"></i> Top 5 Putra</h4><div class="space-y-3 mb-6">`;
+            
+            topFilter('Putra').forEach((s, idx) => {
+                const lvl = getLevelInfo(s.lifetimeXP);
+                const att = getStudentAttendanceStats(s.id);
+                const rapor = getStudentRaporInfo(s);
+                const predikatColor = rapor.predikat === 'A' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : (rapor.predikat === 'B' ? 'bg-blue-100 text-blue-700 border-blue-300' : (rapor.predikat === 'C' ? 'bg-amber-100 text-amber-700 border-amber-300' : 'bg-rose-100 text-rose-700 border-rose-300'));
+                const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx+1}`));
+
+                h += `<div class="card-3d p-3.5 flex justify-between items-center bg-white border-l-8 border-l-blue-400 animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm shrink-0 ${idx < 3 ? 'bg-yellow-100 text-yellow-600 border-2 border-yellow-200' : 'bg-slate-100 text-slate-400'}">${medal}</span>
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden text-3xl shrink-0 border-2 border-slate-100 shadow-sm bg-slate-50">${renderAvatar(s.avatarEmoji)}</div>
+                        <div class="min-w-0">
+                            <div class="font-black text-sm text-slate-800 truncate">${s.name} <span class="text-[9px] font-black px-1.5 py-0.5 rounded border ${predikatColor} ml-1 align-middle">${rapor.predikat}</span></div>
+                            <div class="text-[10px] text-slate-500 font-extrabold tracking-wide truncate mt-0.5">${s.regu} • ${lvl.name}</div>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 ml-2">
+                        <div class="font-black text-amber-500 text-sm tracking-tight">${s.lifetimeXP} XP</div>
+                        <div class="text-[9px] text-blue-500 font-black mt-1 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 inline-block tracking-widest">HADIR ${att.percent}%</div>
+                    </div>
+                </div>`;
+            });
+
+            h += `</div><h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 pl-2 flex items-center gap-2"><i class="fa-solid fa-venus text-pink-500 text-lg animate-pulse"></i> Top 5 Putri</h4><div class="space-y-3">`;
+            
+            topFilter('Putri').forEach((s, idx) => {
+                const lvl = getLevelInfo(s.lifetimeXP);
+                const att = getStudentAttendanceStats(s.id);
+                const rapor = getStudentRaporInfo(s);
+                const predikatColor = rapor.predikat === 'A' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : (rapor.predikat === 'B' ? 'bg-blue-100 text-blue-700 border-blue-300' : (rapor.predikat === 'C' ? 'bg-amber-100 text-amber-700 border-amber-300' : 'bg-rose-100 text-rose-700 border-rose-300'));
+                const medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx+1}`));
+
+                h += `<div class="card-3d p-3.5 flex justify-between items-center bg-white border-l-8 border-l-pink-400 animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm shrink-0 ${idx < 3 ? 'bg-yellow-100 text-yellow-600 border-2 border-yellow-200' : 'bg-slate-100 text-slate-400'}">${medal}</span>
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden text-3xl shrink-0 border-2 border-slate-100 shadow-sm bg-slate-50">${renderAvatar(s.avatarEmoji)}</div>
+                        <div class="min-w-0">
+                            <div class="font-black text-sm text-slate-800 truncate">${s.name} <span class="text-[9px] font-black px-1.5 py-0.5 rounded border ${predikatColor} ml-1 align-middle">${rapor.predikat}</span></div>
+                            <div class="text-[10px] text-slate-500 font-extrabold tracking-wide truncate mt-0.5">${s.regu} • ${lvl.name}</div>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 ml-2">
+                        <div class="font-black text-amber-500 text-sm tracking-tight">${s.lifetimeXP} XP</div>
+                        <div class="text-[9px] text-pink-500 font-black mt-1 bg-pink-50 px-2 py-0.5 rounded-md border border-pink-200 inline-block tracking-widest">HADIR ${att.percent}%</div>
+                    </div>
+                </div>`;
+            });
+            content.innerHTML = h + `</div></div>`;
+        } else {
+            content.innerHTML = Object.entries(state.regus).sort((a,b) => b[1].coins - a[1].coins).map((r, i) => {
+                const medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${i+1}`));
+                return `
+                <div class="card-3d p-4 flex justify-between items-center bg-white border-l-8 border-l-amber-400 animate-slide-up" style="animation-delay: ${i*0.1}s">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 rounded-full border-2 flex items-center justify-center font-black text-sm shrink-0 ${i < 3 ? 'bg-yellow-100 border-yellow-300 text-yellow-700' : 'bg-slate-100 border-slate-200 text-slate-500'}">${medal}</span>
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-slate-50 border-2 border-slate-100 shadow-inner text-3xl overflow-hidden shrink-0">${renderAvatar(r[1].logo || '🛡️')}</div>
+                        <div class="min-w-0">
+                            <h4 class="font-black text-slate-800 text-base truncate">Regu ${r[0]}</h4>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase truncate mt-0.5">Target: ${r[1].targetReward || '-'}</p>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0 bg-amber-50 px-3 py-2 rounded-xl border border-amber-100">
+                        <span class="font-black text-amber-600 text-lg block tracking-tight"><i class="fa-solid fa-coins text-yellow-400 mr-1 animate-pulse"></i>${r[1].coins}</span>
+                        <span class="text-[9px] text-amber-700/70 font-black uppercase tracking-widest">Koin</span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+    }
+
+    // ==========================================
+    // 🏕️ HALAMAN SISWA (PORTAL UTAMA ANGGOTA)
+    // ==========================================
+    let activeStudentTab = 'profil'; 
+    function renderStudentView(container) {
+        const u = state.currentUser; const lvl = getLevelInfo(u.lifetimeXP); const myReguData = state.regus[u.regu] || { coins: 0 };
+        
+        let sanctionHTML = '';
+        if (hasActiveSanction(u)) {
+            const listSanc = getActiveSanctionsList(u);
+            const targets = listSanc.map(s => s.studentId ? `[Kamu]` : `[Regumu]`).join(" & ");
+            const reasons = listSanc.map(s => s.reason).join(", ");
+            
+            sanctionHTML = `
+            <div class="bg-rose-500 text-white px-4 py-2.5 text-center text-[10px] font-black tracking-widest flex items-center justify-center gap-2 relative shadow-md border-b-4 border-rose-700 animate-slide-up">
+                <i class="fa-solid fa-triangle-exclamation animate-bounce text-sm"></i>
+                <span>SANKSI AKTIF! ${targets} kena denda karena: ${reasons}.</span>
+            </div>`;
+        }
+
+        let html = `
+        ${sanctionHTML}
+        <div class="bg-gradient-to-br from-sky-400 to-blue-600 text-white p-5 pb-16 rounded-b-[3rem] shadow-xl relative overflow-hidden">
+            <!-- Pattern -->
+            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_2px,transparent_2px)] [background-size:20px_20px] pointer-events-none animate-float"></div>
+            
+            <div class="flex justify-between items-center mb-5 relative z-10">
+                <button onclick="SoundEngine.playClick(); state.currentView='dashboard'; renderMainView()" class="bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl border-2 border-white/30 text-xs font-black uppercase hover:bg-white/30 transition-colors active:scale-95 shadow-sm"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>
+                <button onclick="openChatContacts()" class="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-xl border-b-4 border-amber-600 text-xs font-black shadow-lg flex items-center gap-2 transition-all active:scale-95 animate-pop">
+                    <i class="fa-solid fa-comments animate-pulse"></i> CHAT
+                    <span id="student-unread-badge" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm hidden">0</span>
+                </button>
+            </div>
+            
+            <div class="flex flex-col items-center text-center mt-2 relative z-10 animate-slide-up">
+                <div class="relative mb-3">
+                    <div class="w-28 h-28 bg-white rounded-full overflow-hidden flex items-center justify-center border-4 border-white shadow-[0_0_20px_rgba(255,255,255,0.4)] text-[4rem]">${renderAvatar(u.avatarEmoji)}</div>
+                    <button onclick="openAvatarModal()" class="absolute bottom-0 right-0 w-9 h-9 bg-amber-400 text-white rounded-full border-4 border-white flex items-center justify-center text-sm shadow-md hover:bg-amber-500 active:scale-90 transition-transform"><i class="fa-solid fa-camera"></i></button>
+                </div>
+                
+                <h2 class="title-font font-black text-3xl text-white leading-tight drop-shadow-md">${u.name}</h2>
+                <div class="flex items-center gap-2 mt-2 justify-center">
+                    <span class="bg-white/20 backdrop-blur text-white text-[10px] font-black px-3 py-1 rounded-lg border border-white/30 uppercase tracking-widest shadow-sm">${u.jabatan} Regu ${u.regu}</span>
+                    <span class="bg-amber-400 text-amber-900 text-[10px] font-black px-3 py-1 rounded-lg border border-amber-300 uppercase tracking-widest shadow-sm"><i class="fa-solid fa-star mr-1"></i>${lvl.name}</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-white/10 backdrop-blur-md p-4 rounded-3xl border-2 border-white/20 shadow-inner relative z-10 animate-slide-up" style="animation-delay: 0.1s">
+                <div class="flex justify-between items-end mb-2.5">
+                    <div><div class="text-[9px] font-black text-sky-100 uppercase tracking-widest">Level XP</div></div>
+                    <div class="text-right">
+                        <div class="text-lg font-black text-white drop-shadow-sm"><i class="fa-solid fa-bolt text-amber-300 mr-1"></i>${u.lifetimeXP} <span class="text-xs text-sky-100 font-bold opacity-80">/ ${lvl.max} XP</span></div>
+                    </div>
+                </div>
+                <div class="w-full bg-black/20 rounded-full h-4 overflow-hidden border border-white/10 shadow-inner p-0.5">
+                    <div class="bg-gradient-to-r from-amber-300 to-yellow-400 h-full rounded-full transition-all duration-700 relative overflow-hidden" style="width: ${lvl.percent}%">
+                        <div class="absolute inset-0 bg-white/30 w-1/2 -skew-x-12 animate-[slide_2s_infinite]"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="px-5 -mt-8 relative z-20">
+            <div class="bg-white p-2 flex justify-between items-center shadow-xl gap-2 overflow-x-auto no-scrollbar rounded-[1.5rem] border-b-4 border-slate-200">
+                <button onclick="switchStudentTab('profil')" id="st-tab-profil" class="flex-1 min-w-[70px] py-3 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all">⛺ Profil</button>
+                <button onclick="switchStudentTab('misi')" id="st-tab-misi" class="flex-1 min-w-[70px] py-3 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all">🗺️ Misi</button>
+                <button onclick="switchStudentTab('regu')" id="st-tab-regu" class="flex-1 min-w-[70px] py-3 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all">🛡️ Regu</button>
+                <button onclick="switchStudentTab('toko')" id="st-tab-toko" class="flex-1 min-w-[70px] py-3 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all">🎁 Kedai</button>
+            </div>
+        </div>
+        <div class="p-5 pb-24" id="student-content-panel"></div>`;
+        container.innerHTML = html; setTimeout(() => switchStudentTab(activeStudentTab), 10);
+    }
+
+    function switchStudentTab(tab) {
+        SoundEngine.playClick();
+        activeStudentTab = tab;
+        ['profil', 'misi', 'regu', 'toko'].forEach(t => {
+            const btn = document.getElementById(`st-tab-${t}`);
+            if(btn) btn.className = `flex-1 min-w-[70px] py-3 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all ${t === tab ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:bg-slate-50'}`;
+        });
+        
+        const panel = document.getElementById('student-content-panel');
+        
+        if (hasActiveSanction(state.currentUser) && (tab === 'misi' || tab === 'toko')) {
+            const activeSancList = getActiveSanctionsList(state.currentUser);
+            let sLogHtml = activeSancList.map(s => `
+                <div class="p-4 bg-white rounded-2xl border-l-8 border-l-rose-500 text-rose-800 text-xs text-left mb-3 shadow-sm">
+                    <div class="font-black flex justify-between items-start gap-2"><span class="leading-tight">${s.reason}</span><span class="bg-rose-100 text-rose-600 px-2 py-1 rounded-lg text-[9px] uppercase shrink-0">Aktif</span></div>
+                    <div class="text-[10px] mt-2 font-bold bg-rose-50 p-2 rounded-lg inline-block">Denda: -${s.xpPenalty} XP & -${s.coinPenalty} Koin Regu</div>
+                </div>
+            `).join('');
+
+            panel.innerHTML = `
+            <div class="card-3d p-6 bg-rose-50 border-rose-200 text-center shadow-md animate-pop">
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-rose-200 shadow-inner"><i class="fa-solid fa-lock text-4xl text-rose-500 animate-pulse"></i></div>
+                <h3 class="title-font font-black text-2xl text-rose-900 mb-2">Akses Terkunci!</h3>
+                <p class="text-xs font-bold text-rose-600 mb-5 leading-relaxed">Waduh, Kamu atau Regumu terdeteksi memiliki sanksi disiplin yang belum diselesaikan:</p>
+                <div class="mb-5 max-h-48 overflow-y-auto no-scrollbar">${sLogHtml}</div>
+                <div class="bg-white p-4 rounded-2xl border-2 border-rose-100 shadow-sm text-left">
+                    <div class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-lightbulb"></i> Cara Membuka</div>
+                    <p class="text-[11px] font-bold text-slate-600">Selesaikan sanksi ini melalui aksi Restitusi bersama Kakak Pembina agar menu kembali normal.</p>
+                </div>
+            </div>`;
+        } else {
+            if(tab === 'profil') renderStudentProfil(panel);
+            else if(tab === 'misi') renderStudentMisi(panel);
+            else if(tab === 'regu') renderStudentRegu(panel);
+            else if(tab === 'toko') renderStudentToko(panel);
+            
+            // Re-apply staggered animation to children
+            const children = panel.children;
+            for(let i=0; i<children.length; i++) {
+                children[i].classList.add('animate-slide-up');
+                children[i].style.animationDelay = `${i * 0.05}s`;
+            }
+        }
+    }
+
+    function renderStudentProfil(el) {
+        const u = state.currentUser;
+        const totalTuntas = u.completedQuests.filter(q => q.status === 'completed').length;
+        const totalHadir = u.attendanceStats.present || 0;
+        
+        const reqXpOk = u.lifetimeXP >= 1000; 
+        const reqSkuOk = totalTuntas === 30;
+        const reqHadirOk = totalHadir >= 10;
+        const reqDisiplinOk = !hasActiveSanction(u); 
+        const reqRekomendasiOk = u.isRecommended;
+
+        const isSiapDilantik = reqXpOk && reqSkuOk && reqHadirOk && reqDisiplinOk && reqRekomendasiOk;
+
+        const percentXP = Math.min(100, (u.lifetimeXP / 1000) * 100);
+        const percentSKU = Math.min(100, (totalTuntas / 30) * 100);
+        const percentHadir = Math.min(100, (totalHadir / 10) * 100);
+        
+        const rapor = getStudentRaporInfo(u);
+        const predikatBg = rapor.predikat === 'A' ? 'bg-emerald-500' : (rapor.predikat === 'B' ? 'bg-sky-500' : (rapor.predikat === 'C' ? 'bg-amber-500' : 'bg-rose-500'));
+        const att = getStudentAttendanceStats(u.id);
+
+        let html = `
+        <div class="mb-4 flex justify-between items-center">
+            <h3 class="font-black text-sm text-slate-800 uppercase tracking-widest pl-1 border-l-4 border-amber-400">⛺ Status Pelantikan</h3>
+            <button onclick="openPanduanModal()" class="bg-white text-sky-600 px-3 py-2 rounded-xl text-[10px] font-black shadow-sm border-2 border-sky-100 flex items-center gap-1.5 hover:bg-sky-50 transition-colors active:scale-95"><i class="fa-solid fa-book-open"></i> PANDUAN</button>
+        </div>
+        
+        <div class="card-3d p-5 bg-white mb-6 border-l-8 ${isSiapDilantik ? 'border-l-emerald-500' : 'border-l-amber-400'}">
+            <div class="flex justify-between items-center border-b-2 border-slate-50 pb-3 mb-4">
+                <h3 class="font-black text-base title-font text-slate-800">📜 Syarat Pelantikan</h3>
+                ${isSiapDilantik ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-xl font-black uppercase tracking-widest shadow-sm animate-pulse border border-emerald-200">SIAP DILANTIK</span>' : '<span class="text-[10px] bg-amber-50 text-amber-600 px-3 py-1.5 rounded-xl font-black uppercase tracking-widest border border-amber-200">BELUM LENGKAP</span>'}
+            </div>
+            
+            <div class="space-y-4">
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-[11px] font-black text-slate-600 mb-2 uppercase tracking-wide">
+                        <span><i class="fa-solid fa-bolt text-amber-400 w-4 text-center mr-1"></i> 1000 Total XP</span>
+                        <span class="flex items-center gap-1.5 ${reqXpOk ? 'text-emerald-500' : 'text-slate-400'}">${u.lifetimeXP}/1000 ${reqXpOk ? '<i class="fa-solid fa-circle-check text-lg"></i>' : '<i class="fa-solid fa-circle-xmark text-lg opacity-50"></i>'}</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden shadow-inner"><div class="bg-amber-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: ${percentXP}%"></div></div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-[11px] font-black text-slate-600 mb-2 uppercase tracking-wide">
+                        <span><i class="fa-solid fa-map text-sky-400 w-4 text-center mr-1"></i> 30 Misi SKU</span>
+                        <span class="flex items-center gap-1.5 ${reqSkuOk ? 'text-emerald-500' : 'text-slate-400'}">${totalTuntas}/30 ${reqSkuOk ? '<i class="fa-solid fa-circle-check text-lg"></i>' : '<i class="fa-solid fa-circle-xmark text-lg opacity-50"></i>'}</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden shadow-inner"><div class="bg-sky-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: ${percentSKU}%"></div></div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <div class="flex justify-between items-center text-[11px] font-black text-slate-600 mb-2 uppercase tracking-wide">
+                        <span><i class="fa-solid fa-calendar-check text-emerald-400 w-4 text-center mr-1"></i> 10x Kehadiran</span>
+                        <span class="flex items-center gap-1.5 ${reqHadirOk ? 'text-emerald-500' : 'text-slate-400'}">${totalHadir}/10 ${reqHadirOk ? '<i class="fa-solid fa-circle-check text-lg"></i>' : '<i class="fa-solid fa-circle-xmark text-lg opacity-50"></i>'}</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden shadow-inner"><div class="bg-emerald-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: ${percentHadir}%"></div></div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-center flex flex-col justify-center">
+                        <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Bebas Sanksi</div>
+                        <div>${reqDisiplinOk ? '<i class="fa-solid fa-shield-halved text-2xl text-emerald-400 animate-bounce"></i>' : '<i class="fa-solid fa-triangle-exclamation text-2xl text-rose-400 animate-pulse"></i>'}</div>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-center flex flex-col justify-center">
+                        <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Rekomendasi</div>
+                        <div>${reqRekomendasiOk ? '<i class="fa-solid fa-medal text-2xl text-amber-400 animate-bounce"></i>' : '<i class="fa-solid fa-stamp text-2xl text-slate-300"></i>'}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-3d p-5 bg-white mb-6 border-l-8 border-l-sky-400 relative overflow-hidden">
+            <!-- Decorative badge -->
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-sky-50 rounded-full opacity-50 pointer-events-none"></div>
+            
+            <div class="flex justify-between items-center mb-4 relative z-10 border-b-2 border-slate-50 pb-3">
+                <div>
+                    <h3 class="font-black text-base title-font text-slate-800">📊 Rapor Petualang</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kinerja Keseluruhan</p>
+                </div>
+                <div class="w-14 h-14 rounded-2xl ${predikatBg} text-white flex items-center justify-center text-3xl font-black shadow-md border-b-4 border-black/20 transform rotate-6 animate-pop">${rapor.predikat}</div>
+            </div>
+            
+            <div class="mb-5 relative z-10">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-[10px] font-black uppercase text-slate-500 tracking-widest"><i class="fa-solid fa-calendar-days text-sky-400 mr-1"></i> Rasio Kehadiran</span>
+                    <span class="font-black text-lg text-sky-500">${att.percent}%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3 mb-4 overflow-hidden shadow-inner"><div class="bg-sky-400 h-full rounded-full transition-all duration-1000 ease-out relative" style="width: ${att.percent}%"><div class="absolute inset-0 bg-white/30 w-1/2 -skew-x-12 animate-[slide_2s_infinite]"></div></div></div>
+                
+                <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-black">
+                    <div class="bg-emerald-50 text-emerald-700 py-2.5 rounded-xl border border-emerald-200 shadow-sm uppercase tracking-wide">Hadir<br><span class="text-xl mt-1 block">${att.present}</span></div>
+                    <div class="bg-sky-50 text-sky-700 py-2.5 rounded-xl border border-sky-200 shadow-sm uppercase tracking-wide">Izin<br><span class="text-xl mt-1 block">${att.excused}</span></div>
+                    <div class="bg-amber-50 text-amber-700 py-2.5 rounded-xl border border-amber-200 shadow-sm uppercase tracking-wide">Telat<br><span class="text-xl mt-1 block">${att.late}</span></div>
+                    <div class="bg-rose-50 text-rose-700 py-2.5 rounded-xl border border-rose-200 shadow-sm uppercase tracking-wide">Alpa<br><span class="text-xl mt-1 block">${att.absent}</span></div>
+                </div>
+            </div>
+            
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 relative z-10">
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5"><i class="fa-solid fa-comment-dots text-amber-400 mr-1"></i> Catatan Sistem</div>
+                <p class="text-[11px] font-bold text-slate-600 leading-relaxed">${rapor.deskripsi}</p>
+            </div>
+        </div>
+
+        <h3 class="font-black text-sm text-slate-800 mb-4 uppercase tracking-widest pl-1 border-l-4 border-amber-400">📖 Catatan Petualangan (XP)</h3>
+        <div class="space-y-3">`;
+
+        if (u.xpHistory.length === 0) html += `<div class="text-center text-xs font-bold text-slate-400 py-6 bg-white rounded-3xl border-2 border-dashed border-slate-200">Belum ada jejak petualangan. Mulai selesaikan misi!</div>`;
+        else {
+            u.xpHistory.forEach(log => {
+                const isGain = log.change.startsWith('+');
+                const badgeColor = isGain ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-700 border-rose-200';
+                const icon = isGain ? '<i class="fa-solid fa-arrow-trend-up text-emerald-500"></i>' : '<i class="fa-solid fa-arrow-trend-down text-rose-500"></i>';
+                html += `
+                <div class="card-3d p-3.5 bg-white flex justify-between items-center border-l-4 ${isGain ? 'border-l-emerald-400' : 'border-l-rose-400'}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-lg shrink-0 border border-slate-100">${icon}</div>
+                        <div>
+                            <div class="text-[11px] font-black text-slate-800 leading-tight">${log.reason}</div>
+                            <div class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mt-1">${log.date}</div>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-black px-2.5 py-1.5 rounded-xl border shadow-sm ${badgeColor}">${log.change} XP</span>
+                </div>`;
+            });
+        }
+        el.innerHTML = html + `</div>`;
+    }
+
+    function renderStudentMisi(el) {
+        const u = state.currentUser;
+        const totalTuntas = u.completedQuests.filter(q => q.status === 'completed').length;
+        let html = `
+        <div class="mb-5 flex justify-between items-end bg-sky-50 p-4 rounded-[2rem] border-2 border-sky-100">
+            <div>
+                <h3 class="title-font font-black text-xl text-sky-800 mb-1 flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-sky-500 text-2xl animate-bounce"></i> Peta Misi SKU</h3>
+                <p class="text-[10px] font-black text-sky-600 uppercase tracking-widest bg-white inline-block px-2 py-1 rounded-lg border border-sky-200 shadow-sm">Total Tuntas: ${totalTuntas} / 30</p>
+            </div>
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-2xl border-4 border-sky-200 shadow-inner shrink-0 relative overflow-hidden">
+                <div class="absolute bottom-0 left-0 right-0 bg-sky-400 transition-all duration-1000" style="height: ${(totalTuntas/30)*100}%"></div>
+                <span class="relative z-10 text-sky-900 font-black title-font text-lg">${Math.round((totalTuntas/30)*100)}%</span>
+            </div>
+        </div>
+        <div class="space-y-4">`;
+
+        getSortedQuests().forEach((q, idx) => {
+            const hasCompleted = u.completedQuests.some(cq => cq.id === q.id && cq.status === 'completed');
+            const isPending = u.completedQuests.some(cq => cq.id === q.id && cq.status === 'pending');
+            
+            let btn = '', cardClasses = 'bg-white border-l-8 border-l-sky-400', badgeHtml = '';
+            if (hasCompleted) {
+                cardClasses = 'bg-emerald-50/50 border-2 border-emerald-200 border-l-8 border-l-emerald-500 opacity-80'; 
+                btn = `<div class="text-[11px] font-black text-emerald-600 bg-emerald-100 px-4 py-3 rounded-xl border border-emerald-200 text-center shadow-sm w-full uppercase tracking-widest"><i class="fa-solid fa-check-circle mr-1 text-lg align-middle"></i> MISI SELESAI</div>`;
+            } else if (isPending) {
+                cardClasses = 'bg-amber-50/50 border-2 border-amber-200 border-l-8 border-l-amber-500'; 
+                btn = `<div class="text-[10px] font-black text-amber-600 bg-amber-100 px-4 py-3 rounded-xl border border-amber-200 text-center shadow-sm w-full uppercase tracking-widest flex items-center justify-center gap-2"><i class="fa-solid fa-hourglass-half animate-spin-slow text-lg"></i> <span>DIPERIKSA KAKAK PEMBINA</span></div>`;
+            } else {
+                btn = `<button onclick="submitSKU('${q.id}')" class="btn-3d btn-sky w-full text-xs py-3 rounded-xl shadow-md"><i class="fa-solid fa-rocket mr-2"></i> SETORKAN BUKTI MISI!</button>`;
+            }
+            
+            const diffColor = q.diff === 'Mudah' ? 'text-emerald-600 bg-emerald-100 border-emerald-200' : (q.diff === 'Sedang' ? 'text-amber-600 bg-amber-100 border-amber-200' : 'text-rose-600 bg-rose-100 border-rose-200');
+
+            html += `
+            <div class="card-3d p-4 ${cardClasses}">
+                <div class="flex justify-between items-start mb-3 border-b-2 border-slate-50 pb-3">
+                    <span class="text-xs font-black bg-slate-800 text-white px-3 py-1.5 rounded-xl shadow-sm border-b-2 border-slate-900 tracking-wider">SKU ${q.poin}</span>
+                    <div class="flex gap-2">
+                        <span class="text-[9px] font-black px-2.5 py-1.5 rounded-lg border shadow-sm uppercase tracking-widest ${diffColor}">${q.diff}</span>
+                        <span class="text-[10px] font-black px-2.5 py-1.5 rounded-lg bg-amber-100 text-amber-700 border border-amber-300 shadow-sm flex items-center"><i class="fa-solid fa-star mr-1"></i>+${q.xp} XP</span>
+                    </div>
+                </div>
+                <h4 class="font-black title-font text-slate-800 text-lg mb-2 leading-tight">${q.title}</h4>
+                <p class="text-xs text-slate-500 font-bold mb-4 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">${q.desc}</p>
+                <div class="mt-auto">${btn}</div>
+            </div>`;
+        });
+        el.innerHTML = html + `</div>`;
+    }
+
+    function submitSKU(questId) {
+        SoundEngine.playSuccess();
+        state.currentUser.completedQuests.push({ id: questId, status: 'pending', date: new Date().toISOString() });
+        asyncSyncStudent(state.currentUser); 
+        showCelebration('Misi Melesat!', 'Bukti misimu sedang meluncur ke Kakak Pembina untuk dinilai.', '🚀');
+        switchStudentTab('misi');
+    }
+
+    function renderStudentRegu(el) {
+        const myRegu = state.currentUser.regu; 
+        const rData = state.regus[myRegu] || { coins: 0, totalLostCoins: 0, logs: [], logo: '🛡️' };
+        const members = state.students.filter(s => s.regu === myRegu).map(s => {
+            const att = getStudentAttendanceStats(s.id);
+            return { ...s, contributed: Math.floor(s.lifetimeXP / 10), attPercent: att.percent };
+        }).sort((a, b) => b.contributed - a.contributed);
+
+        let totalReguPercent = 0;
+        members.forEach(m => totalReguPercent += m.attPercent);
+        const avgReguPercent = members.length === 0 ? 0 : Math.round(totalReguPercent / members.length);
+
+        // Calculate Dues
+        const reguFinances = state.finances.filter(f => f.reguName === myRegu);
+        let totalUangKas = 0;
+        reguFinances.forEach(f => { if(f.type === 'Pemasukan') totalUangKas += f.amount; else totalUangKas -= f.amount; });
+
+        let html = `
+        <div class="mb-6 bg-gradient-to-br from-amber-400 to-orange-500 rounded-[2rem] p-6 text-center relative overflow-hidden shadow-xl border-b-8 border-orange-600">
+            <!-- Pattern -->
+            <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTAwIDUwSDBMMTAwIDBaIiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMSkiLz48L3N2Zz4=')] bg-cover animate-sun"></div>
+            
+            <div class="w-24 h-24 bg-white rounded-3xl shadow-lg border-4 border-white mx-auto mb-3 flex items-center justify-center text-5xl overflow-hidden relative z-10 animate-bounce">${renderAvatar(rData.logo || '🛡️')}</div>
+            <h3 class="title-font font-black text-3xl text-white drop-shadow-md relative z-10 uppercase tracking-wide mb-1">Regu ${myRegu}</h3>
+            <div class="bg-black/20 text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest inline-block relative z-10 backdrop-blur-sm border border-white/20 shadow-inner">Bersatu Kita Teguh</div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="card-3d bg-white p-4 border-b-[6px] border-amber-400 text-center flex flex-col justify-center items-center shadow-md">
+                <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-coins text-2xl text-amber-500 animate-float"></i></div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Koin Digital</div>
+                <div class="text-2xl font-black text-slate-800">${rData.coins}</div>
+            </div>
+            <div class="card-3d bg-white p-4 border-b-[6px] border-emerald-400 text-center flex flex-col justify-center items-center shadow-md">
+                <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mb-2"><i class="fa-solid fa-wallet text-2xl text-emerald-500 animate-float" style="animation-delay: 0.5s"></i></div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Kas Uang Asli</div>
+                <div class="text-lg font-black text-slate-800 leading-tight">Rp ${totalUangKas.toLocaleString('id-ID')}</div>
+            </div>
+            <div class="card-3d bg-white p-4 border-b-[6px] border-sky-400 text-center flex flex-col justify-center items-center shadow-md col-span-2">
+                <div class="flex justify-between items-center w-full px-2 mb-2">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kekompakan (Hadir)</span>
+                    <span class="text-lg font-black text-sky-500">${avgReguPercent}%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden shadow-inner"><div class="bg-sky-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: ${avgReguPercent}%"></div></div>
+            </div>
+        </div>
+
+        <h3 class="font-black text-sm text-slate-800 mb-3 uppercase tracking-widest pl-1 border-l-4 border-amber-400 mt-8">🏅 Anggota Regu</h3>
+        <div class="space-y-3 mb-8">`;
+        members.forEach((m, idx) => {
+            const medal = idx === 0 ? '👑' : (idx === 1 ? '⭐' : (idx === 2 ? '✨' : '🔥'));
+            html += `
+            <div class="card-3d p-3.5 bg-white border-l-8 ${idx === 0 ? 'border-l-amber-400 bg-amber-50/30' : 'border-l-slate-300'} flex justify-between items-center">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="w-12 h-12 overflow-hidden rounded-full flex items-center justify-center text-3xl shrink-0 bg-white border-2 border-slate-100 shadow-sm relative">
+                        ${renderAvatar(m.avatarEmoji)}
+                        ${idx === 0 ? '<div class="absolute -top-1 -right-1 text-base animate-bounce">👑</div>' : ''}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-black text-sm text-slate-800 truncate">${m.name}</div>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="text-[9px] text-sky-700 bg-sky-100 border border-sky-200 font-extrabold uppercase px-2 py-0.5 rounded shadow-sm">HADIR ${m.attPercent}%</span>
+                            <span class="text-[9px] text-slate-500 font-bold uppercase truncate">${m.jabatan}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right shrink-0 ml-2 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                    <span class="font-black text-amber-500 text-base block leading-none">+${m.contributed}</span>
+                    <span class="text-[8px] text-slate-400 font-black uppercase tracking-widest mt-1 block">KOIN</span>
+                </div>
+            </div>`;
+        });
+
+        html += `</div>
+        <h3 class="font-black text-sm text-slate-800 mb-3 uppercase tracking-widest pl-1 border-l-4 border-emerald-400 mt-8">💸 Riwayat Uang Kas</h3>
+        <div class="space-y-3 mb-8">`;
+        if (reguFinances.length === 0) {
+            html += `<div class="text-center text-xs font-bold text-slate-400 py-6 bg-white rounded-3xl border-2 border-dashed border-slate-200">Buku kas masih kosong.</div>`;
+        } else {
+            reguFinances.forEach(f => {
+                const isIncome = f.type === 'Pemasukan';
+                html += `
+                <div class="card-3d p-3.5 bg-white flex justify-between items-center border-l-4 ${isIncome ? 'border-emerald-400' : 'border-rose-400'}">
+                    <div class="flex-1 pr-3">
+                        <h5 class="font-black text-xs text-slate-800 leading-tight mb-1">${f.description}</h5>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${f.date}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div class="text-sm font-black ${isIncome ? 'text-emerald-500' : 'text-rose-500'} bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 shadow-sm">${isIncome ? '+' : '-'} Rp ${f.amount.toLocaleString('id-ID')}</div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        html += `</div>
+        <h3 class="font-black text-sm text-slate-800 mb-3 uppercase tracking-widest pl-1 border-l-4 border-slate-400 mt-8">📜 Buku Ledger Log (Koin)</h3>
+        <div class="space-y-3">`;
+        if (rData.logs.length === 0) html += `<div class="text-center text-xs font-bold text-slate-400 py-6 bg-white rounded-3xl border-2 border-dashed border-slate-200">Belum ada aktivitas koin.</div>`;
+        else rData.logs.slice(0, 10).forEach(lg => {
+            html += `
+            <div class="card-3d p-3 bg-white border-l-4 border-slate-200 flex justify-between items-center">
+                <div class="flex-1 pr-3">
+                    <div class="text-[11px] font-black text-slate-700 leading-snug mb-1">${lg.reason}</div>
+                    <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Oleh: ${lg.contributor} • ${lg.date}</div>
+                </div>
+                <span class="text-[11px] font-black px-2.5 py-1.5 rounded-xl border shadow-sm ${lg.type === 'gain' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-rose-100 text-rose-700 border-rose-200'} shrink-0">${lg.amount} K</span>
+            </div>`;
+        });
+        el.innerHTML = html + `</div>`;
+    }
+
+    function renderStudentToko(el) {
+        const u = state.currentUser; const rData = state.regus[u.regu] || { coins: 0 };
+        let html = `
+        <div class="mb-6 bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-5 rounded-[2rem] shadow-xl border-b-8 border-indigo-700 flex justify-between items-center relative overflow-hidden">
+            <!-- decorative -->
+            <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+            
+            <div class="flex-1 text-center relative z-10">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl mx-auto mb-2 shadow-inner border border-white/30"><i class="fa-solid fa-star text-amber-300 animate-pulse"></i></div>
+                <div class="text-[9px] font-black uppercase tracking-widest text-indigo-100 mb-0.5">Poin Individu</div>
+                <div class="text-2xl font-black drop-shadow-md">${u.xp}</div>
+            </div>
+            <div class="w-1 h-16 bg-white/20 mx-2 rounded-full relative z-10"></div>
+            <div class="flex-1 text-center relative z-10">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl mx-auto mb-2 shadow-inner border border-white/30"><i class="fa-solid fa-coins text-yellow-300 animate-pulse"></i></div>
+                <div class="text-[9px] font-black uppercase tracking-widest text-indigo-100 mb-0.5">Kas Koin Regu</div>
+                <div class="text-2xl font-black drop-shadow-md">${rData.coins}</div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mb-6 bg-slate-200 p-1.5 rounded-2xl shadow-inner">
+            <button onclick="switchTokoTab('toko-regu')" id="tab-toko-regu" class="py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-widest text-center bg-white text-slate-800 shadow-md border-b-4 border-indigo-200">🛡️ Regu</button>
+            <button onclick="switchTokoTab('toko-individu')" id="tab-toko-individu" class="py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-widest text-center text-slate-500 hover:bg-slate-100">🏅 Individu</button>
+        </div>
+        <div id="toko-items-content" class="space-y-4"></div>`;
+        el.innerHTML = html; setTimeout(() => switchTokoTab('toko-regu'), 10);
+    }
+
+    function switchTokoTab(tab) {
+        SoundEngine.playClick();
+        activeTokoTab = tab; const isRegu = tab === 'toko-regu';
+        document.getElementById('tab-toko-regu').className = `py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-widest text-center ${isRegu ? 'bg-indigo-500 text-white shadow-md border-b-4 border-indigo-700' : 'text-slate-500 hover:bg-slate-100'}`;
+        document.getElementById('tab-toko-individu').className = `py-3 text-[11px] font-black rounded-xl transition-all uppercase tracking-widest text-center ${!isRegu ? 'bg-indigo-500 text-white shadow-md border-b-4 border-indigo-700' : 'text-slate-500 hover:bg-slate-100'}`;
+        
+        const container = document.getElementById('toko-items-content');
+        container.innerHTML = state.shopItems.filter(item => isRegu ? item.type === "Regu" : item.type === "Individu").map((item, idx) => {
+            const hasEnough = isRegu ? (state.regus[state.currentUser.regu].coins >= item.cost) : (state.currentUser.xp >= item.cost);
+            const isPinru = ['Pinru', 'Wapinru', 'Pratama'].includes(state.currentUser.jabatan);
+            const isPendingClaim = state.shopClaims.some(c => c.itemId === item.id && c.studentId === state.currentUser.id && c.status === 'pending');
+            const costIcon = isRegu ? '<i class="fa-solid fa-coins text-yellow-500"></i>' : '<i class="fa-solid fa-star text-amber-500"></i>';
+            
+            let btn = '';
+            if (isPendingClaim) {
+                btn = `<button class="btn-3d btn-disabled text-[9px] py-3 w-full rounded-xl" disabled><i class="fa-solid fa-spinner fa-spin mr-2"></i> MENUNGGU KAKAK</button>`;
+            } else if (isRegu) {
+                if (!isPinru) btn = `<button class="btn-3d btn-disabled text-[9px] py-3 w-full rounded-xl" disabled><i class="fa-solid fa-lock mr-2"></i> KHUSUS PINRU</button>`;
+                else if (!hasEnough) btn = `<button class="btn-3d btn-disabled text-[9px] py-3 w-full rounded-xl" disabled><i class="fa-solid fa-xmark mr-2"></i> KOIN KURANG</button>`;
+                else btn = `<button onclick="openRewardClaimModal('${item.id}')" class="btn-3d btn-amber text-[10px] py-3 w-full rounded-xl shadow-md border-b-[5px]">BELI UNTUK REGU</button>`;
+            } else {
+                if (state.currentUser.lifetimeXP < item.xpRequired) btn = `<button class="btn-3d btn-disabled text-[9px] py-3 w-full rounded-xl" disabled><i class="fa-solid fa-lock mr-2"></i> BUTUH LVL ${item.xpRequired} XP</button>`;
+                else if (!hasEnough) btn = `<button class="btn-3d btn-disabled text-[9px] py-3 w-full rounded-xl" disabled><i class="fa-solid fa-xmark mr-2"></i> POIN KURANG</button>`;
+                else btn = `<button onclick="openRewardClaimModal('${item.id}')" class="btn-3d btn-emerald text-[10px] py-3 w-full rounded-xl shadow-md border-b-[5px]">BELI (KLAIM)</button>`;
+            }
+            return `
+            <div class="card-3d p-4 bg-white flex flex-col gap-3 border-l-8 ${isRegu ? 'border-l-indigo-400' : 'border-l-amber-400'} animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                <div class="flex gap-4 items-center border-b-2 border-slate-50 pb-3">
+                    <div class="w-16 h-16 bg-slate-50 rounded-[1.25rem] border-2 border-slate-100 shadow-inner flex items-center justify-center text-4xl shrink-0 animate-float hover:scale-110 transition-transform cursor-pointer">${item.icon}</div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-black text-sm text-slate-800 truncate mb-1 title-font">${item.name}</h4>
+                        <span class="text-[11px] font-black bg-slate-100 px-3 py-1 rounded-lg border shadow-sm inline-flex items-center gap-1.5 ${isRegu ? 'text-amber-600 border-amber-200' : 'text-amber-600 border-amber-200'}">${costIcon} ${item.cost}</span>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-500 font-bold leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100 flex-1">${item.desc}</p>
+                <div class="mt-2">${btn}</div>
+            </div>`;
+        }).join('');
+    }
+
+    let selectedClaimItemId = null;
+    function openRewardClaimModal(itemId) {
+        SoundEngine.playClick();
+        const item = state.shopItems.find(i => i.id === itemId); if(!item) return;
+        selectedClaimItemId = itemId;
+        document.getElementById('reward-modal-title').innerText = `Klaim Hadiah: ${item.name}`;
+        document.getElementById('reward-modal-desc').innerText = item.desc;
+        document.getElementById('reward-pinru-requirement').classList.toggle('hidden', item.type !== "Regu");
+        document.getElementById('reward-claim-note').value = '';
+        document.getElementById('btn-confirm-reward-action').onclick = confirmRewardClaim;
+        document.getElementById('reward-purchase-modal').classList.remove('hidden');
+    }
+    
+    function closeRewardModal() { SoundEngine.playClick(); document.getElementById('reward-purchase-modal').classList.add('hidden'); selectedClaimItemId = null; }
+    
+    async function confirmRewardClaim() {
+        const item = state.shopItems.find(i => i.id === selectedClaimItemId);
+        const note = document.getElementById('reward-claim-note').value.trim();
+        if(item.type === 'Regu' && !note) return showToast("Masukkan alasan musyawarah regu!", "⚠️");
+
+        const isRegu = item.type === 'Regu';
+        const cost = item.cost;
+        const claimId = 'cl-' + Date.now();
+        const dateStr = new Date().toLocaleDateString('id-ID');
+
+        if (isRegu) {
+            deductReguCoins(state.currentUser.regu, cost, `Kunci Koin: Pengajuan ${item.name}`);
+        } else {
+            state.currentUser.xp = Math.max(0, state.currentUser.xp - cost);
+            state.currentUser.xpHistory.unshift({ date: dateStr, change: `-${cost}`, reason: `Kunci Poin (XP): Pengajuan ${item.name}` });
+            asyncSyncStudent(state.currentUser);
+        }
+
+        const claimObj = {
+            id: claimId, student_id: state.currentUser.id, item_id: item.id, item_name: item.name,
+            cost: cost, claim_type: item.type, regu: state.currentUser.regu, note: note, status: 'pending', date: dateStr
+        };
+
+        state.shopClaims.unshift({
+            id: claimId, studentId: state.currentUser.id, itemId: item.id, itemName: item.name,
+            cost: cost, claimType: item.type, regu: state.currentUser.regu, note: note, status: 'pending', date: dateStr
+        });
+        
+        await asyncAddShopClaim(claimObj);
+        closeRewardModal(); 
+        switchTokoTab(activeTokoTab);
+        SoundEngine.playSuccess();
+        showCelebration('Klaim Dikirim!', 'Pengajuan berhasil dikirim. Tunggu persetujuan Kakak Pembina ya!', '🎁');
+    }
+
+    // ==========================================
+    // 👮‍♂️ ADMIN PANEL CONTROL (SATELIT PEMBINA)
+    // ==========================================
+    // Logika Admin tidak perlu perombakan animasi berat, cukup mewarisi CSS btn-3d dan card-3d baru.
+    // Seluruh fungsi JS di bawah ini murni dari versi stabil sebelumnya tanpa pemotongan.
+
+    function renderAdminView(container) {
+        let html = `
+        <div class="bg-indigo-900 text-white p-4 pb-12 rounded-b-[3rem] shadow-xl relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_2px,transparent_2px)] [background-size:20px_20px] pointer-events-none"></div>
+            <div class="flex justify-between items-center mb-5 relative z-10">
+                <button onclick="SoundEngine.playClick(); state.currentView='dashboard';renderMainView()" class="bg-indigo-800/80 px-4 py-2 rounded-xl border-2 border-indigo-700 text-[10px] font-black shadow hover:bg-indigo-700 transition-colors"><i class="fa-solid fa-arrow-left mr-1"></i> KELUAR</button>
+                <div class="text-[9px] font-black bg-amber-500 text-amber-950 px-3 py-1.5 rounded-lg border border-amber-400 uppercase tracking-widest shadow-md animate-pulse">Satelit Pembina</div>
+            </div>
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-4xl border-4 border-indigo-400 shadow-lg overflow-hidden shrink-0 animate-pop">${renderAvatar(currentAppConfig.adminAvatar || '👮‍♂️')}</div>
+                <div>
+                    <h2 class="title-font font-black text-2xl text-white leading-tight drop-shadow-md">Panel Kontrol</h2>
+                    <p class="text-xs font-black text-indigo-300 uppercase tracking-widest mt-1 bg-indigo-950/50 inline-block px-2 py-1 rounded-md border border-indigo-800/50">Gudep 09.011-09.012</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="px-5 -mt-8 relative z-20 overflow-x-auto no-scrollbar pb-2">
+            <div class="bg-white p-2 flex gap-2 shadow-xl min-w-max rounded-2xl border-b-4 border-slate-200">
+                <button onclick="switchAdminSection('verification')" id="btn-adm-verification" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">📥 Verifikasi</button>
+                <button onclick="switchAdminSection('attendance')" id="btn-adm-attendance" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">📋 Presensi</button>
+                <button onclick="switchAdminSection('students')" id="btn-adm-students" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">👥 Siswa</button>
+                <button onclick="switchAdminSection('regus')" id="btn-adm-regus" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">🛡️ Regu</button>
+                <button onclick="switchAdminSection('finances')" id="btn-adm-finances" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">💸 Kas Uang</button>
+                <button onclick="switchAdminSection('missions')" id="btn-adm-missions" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">🎯 SKU</button>
+                <button onclick="switchAdminSection('shop')" id="btn-adm-shop" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">🎁 Kedai</button>
+                <button onclick="switchAdminSection('bonus')" id="btn-adm-bonus" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">🌟 Bonus</button>
+                <button onclick="switchAdminSection('discipline')" id="btn-adm-discipline" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">⚠️ Disiplin</button>
+                <button onclick="switchAdminSection('rapor')" id="btn-adm-rapor" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">📊 Rapor</button>
+                <button onclick="switchAdminSection('appsettings')" id="btn-adm-appsettings" class="px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border border-transparent">⚙️ Settings</button>
+            </div>
+        </div>
+        
+        <div class="px-5 mt-4">
+            <button onclick="openChatContacts()" class="w-full bg-sky-500 hover:bg-sky-600 text-white p-4 rounded-2xl shadow-md border-b-[6px] border-sky-700 flex items-center justify-between transition-all active:scale-95 animate-pop">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-comments"></i></div>
+                    <div class="text-left"><div class="font-black text-base title-font tracking-wide">Pusat Komunikasi</div><div class="text-[10px] font-bold text-sky-100 uppercase tracking-widest">Pantau Seluruh Jalur Chat</div></div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-sky-200"></i>
+            </button>
+        </div>
+        
+        <div class="p-5 pb-24" id="admin-tab-panel"></div>`;
+        container.innerHTML = html; setTimeout(() => switchAdminSection(state.adminSection), 10);
+    }
+
+    function switchAdminSection(section) {
+        SoundEngine.playClick();
+        state.adminSection = section;
+        ['verification', 'attendance', 'students', 'regus', 'missions', 'shop', 'bonus', 'discipline', 'finances', 'rapor', 'appsettings'].forEach(s => {
+            const el = document.getElementById(`btn-adm-${s}`);
+            if(el) {
+                if (s === section) {
+                    el.className = `px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-md border-b-4 border-indigo-700 bg-indigo-600 text-white`;
+                } else {
+                    el.className = `px-4 py-2.5 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest whitespace-nowrap shadow-sm border-2 border-slate-100 bg-slate-50 text-slate-400 hover:bg-slate-100`;
+                }
+            }
+        });
+        const panel = document.getElementById('admin-tab-panel');
+        if (section === 'verification') renderAdminVerif(panel);
+        else if (section === 'attendance') renderAdminPresensi(panel);
+        else if (section === 'students') renderAdminSiswa(panel);
+        else if (section === 'regus') renderAdminRegu(panel);
+        else if (section === 'missions') renderAdminMisi(panel);
+        else if (section === 'shop') renderAdminShop(panel);
+        else if (section === 'bonus') renderAdminBonus(panel);
+        else if (section === 'discipline') renderAdminDisiplin(panel);
+        else if (section === 'finances') renderAdminKeuangan(panel);
+        else if (section === 'rapor') renderAdminRapor(panel);
+        else if (section === 'appsettings') renderAdminAppSettings(panel);
+        
+        // Re-apply staggered animation to children
+        const children = panel.children;
+        for(let i=0; i<children.length; i++) {
+            if(children[i].tagName === 'DIV') {
+                children[i].classList.add('animate-slide-up');
+                children[i].style.animationDelay = `${Math.min(i * 0.05, 0.5)}s`;
+            }
+        }
+    }
+
+    function getPendingVerifications() {
+        let pending = [];
+        state.students.forEach(student => {
+            (student.completedQuests || []).forEach(cq => {
+                if (cq.status === 'pending') {
+                    const questDef = state.quests.find(q => q.id === cq.id);
+                    if (questDef) {
+                        pending.push({
+                            studentId: student.id, studentName: student.name, avatar: student.avatarEmoji || '👤',
+                            reguName: student.regu || '-', questId: cq.id, questTitle: questDef.title,
+                            questPoin: questDef.poin, questXp: questDef.xp, date: cq.date || new Date().toISOString()
+                        });
+                    }
+                }
+            });
+        });
+        return pending.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    let activeVerifTab = 'sku';
+    function renderAdminVerif(el) {
+        const pendingSKU = getPendingVerifications();
+        const pendingClaims = state.shopClaims.filter(c => c.status === 'pending');
+
+        let html = `
+        <div class="mb-5">
+            <h3 class="title-font font-black text-2xl text-slate-800">Verifikasi Antrean</h3>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-indigo-500 pl-2">Menerima pengajuan SKU, Klaim Kedai & Avatar</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mb-6 bg-slate-200 p-1.5 rounded-2xl shadow-inner">
+            <button onclick="switchVerifTab('sku')" id="tab-ver-sku" class="py-3 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest text-center bg-white text-slate-800 shadow-md">📥 Misi SKU (${pendingSKU.length})</button>
+            <button onclick="switchVerifTab('kedai')" id="tab-ver-kedai" class="py-3 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest text-center text-slate-500 hover:bg-slate-100">🎁 Hadiah & Avatar (${pendingClaims.length})</button>
+        </div>
+        <div id="verif-tab-content" class="space-y-4"></div>`;
+        
+        el.innerHTML = html; setTimeout(() => switchVerifTab(activeVerifTab), 10);
+    }
+
+    function switchVerifTab(tab) {
+        SoundEngine.playClick();
+        activeVerifTab = tab; const isSku = tab === 'sku';
+        const pendingSKU = getPendingVerifications(); const pendingClaims = state.shopClaims.filter(c => c.status === 'pending');
+
+        document.getElementById('tab-ver-sku').className = `py-3 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest text-center ${isSku ? 'bg-indigo-500 text-white shadow-md border-b-4 border-indigo-700' : 'text-slate-500 hover:bg-slate-100'}`;
+        document.getElementById('tab-ver-kedai').className = `py-3 text-[10px] font-black rounded-xl transition-all uppercase tracking-widest text-center ${!isSku ? 'bg-indigo-500 text-white shadow-md border-b-4 border-indigo-700' : 'text-slate-500 hover:bg-slate-100'}`;
+        
+        const container = document.getElementById('verif-tab-content');
+        if (isSku) {
+            if (pendingSKU.length === 0) container.innerHTML = `<div class="bg-slate-50 p-8 rounded-[2rem] border-2 border-slate-100 text-center flex flex-col items-center"><div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 border-4 border-slate-100 shadow-sm"><i class="fa-solid fa-check-double text-emerald-400 text-4xl animate-bounce"></i></div><p class="text-xs font-black text-slate-400 uppercase tracking-widest">Semua misi tuntas diverifikasi.</p></div>`;
+            else container.innerHTML = pendingSKU.map((p, idx) => `
+                    <div class="card-3d bg-white p-4 border-l-8 border-amber-400 animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                        <div class="flex justify-between items-start mb-3 border-b-2 border-slate-50 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 flex items-center justify-center text-3xl overflow-hidden rounded-full bg-slate-50 border-2 border-slate-100 shadow-sm">${renderAvatar(p.avatar)}</div>
+                                <div>
+                                    <div class="text-sm font-black text-slate-800 title-font tracking-wide">${p.studentName}</div>
+                                    <div class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mt-0.5">Regu ${p.reguName} • ${new Date(p.date).toLocaleDateString('id-ID')}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 p-3.5 rounded-2xl border border-indigo-100 mb-4 shadow-inner">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-[10px] font-black text-white bg-indigo-500 px-2 py-1 rounded-md uppercase tracking-wider shadow-sm">SKU ${p.questPoin}</span>
+                                <span class="text-[10px] font-black text-amber-600 bg-amber-100 border border-amber-200 px-2 py-1 rounded-md">+${p.questXp} XP</span>
+                            </div>
+                            <div class="text-sm font-bold text-indigo-900 leading-snug">${p.questTitle}</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="approveSKU('${p.studentId}', '${p.questId}')" class="btn-3d btn-emerald text-[10px] py-3 rounded-xl border-b-[5px]"><i class="fa-solid fa-check mr-2"></i> LULUS</button>
+                            <button onclick="rejectSKU('${p.studentId}', '${p.questId}')" class="btn-3d btn-rose text-[10px] py-3 rounded-xl border-b-[5px]"><i class="fa-solid fa-rotate-left mr-2"></i> ULANG</button>
+                        </div>
+                    </div>`).join('');
+        } else {
+            if (pendingClaims.length === 0) container.innerHTML = `<div class="bg-slate-50 p-8 rounded-[2rem] border-2 border-slate-100 text-center flex flex-col items-center"><div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 border-4 border-slate-100 shadow-sm"><i class="fa-solid fa-box-open text-sky-400 text-4xl animate-bounce"></i></div><p class="text-xs font-black text-slate-400 uppercase tracking-widest">Belum ada antrean klaim.</p></div>`;
+            else container.innerHTML = pendingClaims.map((c, idx) => {
+                    const student = state.students.find(s => s.id === c.studentId) || { avatarEmoji: '👤', name: 'Siswa' };
+                    const isAvatarClaim = c.claimType === 'Avatar';
+                    const previewContent = isAvatarClaim ? 
+                        `<div class="mt-3 flex items-center gap-3 bg-white p-3 rounded-xl border-2 border-indigo-100 shadow-sm"><span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest flex-1 text-center">Preview:</span><div class="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-slate-50 text-4xl border-2 border-slate-200 animate-pulse">${renderAvatar(c.note)}</div></div>` : '';
+
+                    return `
+                    <div class="card-3d bg-white p-4 border-l-8 ${isAvatarClaim ? 'border-l-indigo-400' : 'border-l-amber-400'} animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                        <div class="flex justify-between items-start mb-3 border-b-2 border-slate-50 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 flex items-center justify-center text-3xl overflow-hidden rounded-full bg-slate-50 border-2 border-slate-100 shadow-sm">${renderAvatar(student.avatarEmoji)}</div>
+                                <div>
+                                    <div class="text-sm font-black text-slate-800 title-font tracking-wide">${student.name}</div>
+                                    <div class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mt-0.5">Regu ${c.regu} • ${c.date}</div>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-black bg-slate-800 text-white px-2.5 py-1.5 rounded-lg shadow-sm uppercase tracking-widest border-b-2 border-black/50">${c.claimType}</span>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 mb-4 shadow-inner">
+                            <div class="text-[10px] font-black bg-white inline-flex px-2 py-1 rounded-md border border-slate-200 shadow-sm mb-2 uppercase tracking-widest ${c.claimType === 'Regu' ? 'text-amber-600' : 'text-blue-600'}"><i class="fa-solid ${c.claimType === 'Regu' ? 'fa-coins' : 'fa-star'} mr-1"></i> Biaya: ${c.cost}</div>
+                            <div class="text-sm font-bold text-slate-800 mb-1 leading-snug">${c.itemName}</div>
+                            ${!isAvatarClaim && c.note ? `<div class="text-[10px] font-bold text-slate-500 bg-white p-2.5 rounded-xl border border-dashed border-slate-300 mt-2 leading-relaxed flex gap-2"><i class="fa-solid fa-quote-left text-slate-300"></i> ${c.note}</div>` : ''}
+                            ${previewContent}
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="approveClaim('${c.id}')" class="btn-3d btn-emerald text-[10px] py-3 rounded-xl border-b-[5px]"><i class="fa-solid fa-check mr-2"></i> SETUJUI</button>
+                            <button onclick="rejectClaim('${c.id}')" class="btn-3d btn-rose text-[10px] py-3 rounded-xl border-b-[5px]"><i class="fa-solid fa-xmark mr-2"></i> ${isAvatarClaim ? 'TOLAK' : 'REFUND'}</button>
+                        </div>
+                    </div>`;
+                }).join('');
+        }
+    }
+
+    function approveSKU(studentId, questId) {
+        SoundEngine.playSuccess();
+        const student = state.students.find(st => st.id === studentId);
+        const quest = state.quests.find(qt => qt.id === questId);
+        if (student && quest) {
+            const cq = student.completedQuests.find(c => c.id === questId && c.status === 'pending');
+            if (cq) {
+                cq.status = 'completed';
+                addXPRecord(student, quest.xp, `Lulus ${quest.title}`, true); 
+                showToast(`${student.name} lulus SKU ${quest.poin}!`, "✅");
+                switchAdminSection('verification');
+            }
+        }
+    }
+    
+    function rejectSKU(studentId, questId) {
+        SoundEngine.playClick();
+        const student = state.students.find(st => st.id === studentId);
+        if (student) {
+            student.completedQuests = student.completedQuests.filter(c => !(c.id === questId && c.status === 'pending'));
+            asyncSyncStudent(student); 
+            showToast("Misi dikembalikan untuk latihan ulang.", "ℹ️");
+            switchAdminSection('verification');
+        }
+    }
+
+    async function approveClaim(claimId) {
+        SoundEngine.playSuccess();
+        const claim = state.shopClaims.find(c => c.id === claimId); if (!claim) return;
+        claim.status = 'approved'; await asyncUpdateShopClaimStatus(claimId, 'approved');
+        const student = state.students.find(s => s.id === claim.studentId);
+        
+        if (claim.claimType === 'Avatar') {
+            if (student) {
+                student.avatarEmoji = claim.note; 
+                student.xpHistory.unshift({ date: new Date().toLocaleDateString('id-ID'), change: `0`, reason: `Avatar baru disetujui Pembina` });
+                await asyncSyncStudent(student);
+            }
+        } else if (claim.claimType === 'Regu') {
+            const regu = state.regus[claim.regu];
+            if (regu) {
+                regu.logs.unshift({ id: 'rl-' + Date.now(), type: 'gain', amount: `-${claim.cost}`, reason: `Klaim Disetujui: ${claim.itemName}`, contributor: 'Pembina', date: new Date().toLocaleDateString('id-ID') });
+                asyncSyncRegu(claim.regu);
+            }
+        } else if (student) {
+            student.xpHistory.unshift({ date: new Date().toLocaleDateString('id-ID'), change: `0`, reason: `Klaim Disetujui: ${claim.itemName}` });
+            asyncSyncStudent(student);
+        }
+        showToast(`Klaim/Perubahan disetujui!`, "🎉"); switchAdminSection('verification');
+    }
+
+    async function rejectClaim(claimId) {
+        SoundEngine.playClick();
+        const claim = state.shopClaims.find(c => c.id === claimId); if (!claim) return;
+        claim.status = 'rejected'; await asyncUpdateShopClaimStatus(claimId, 'rejected');
+        const student = state.students.find(s => s.id === claim.studentId);
+
+        if (claim.claimType === 'Regu') {
+            addReguCoins(claim.regu, claim.cost, `Refund Ditolak: ${claim.itemName}`, 'Pembina');
+        } else if (claim.claimType === 'Individu' && student) {
+            student.xp += claim.cost;
+            student.xpHistory.unshift({ date: new Date().toLocaleDateString('id-ID'), change: `+${claim.cost}`, reason: `Refund Ditolak: ${claim.itemName}` });
+            asyncSyncStudent(student);
+        }
+        showToast(`Pengajuan ditolak (Refund).`, "ℹ️"); switchAdminSection('verification');
+    }
+
+    // ==========================================
+    // 📋 ADMIN PRESENSI (CRUD RIWAYAT TANGGAL LATIHAN)
+    // ==========================================
+    let tempAttDate = new Date().toISOString().split('T')[0]; 
+    let tempAttTitle = "Latihan Rutin";
+
+    function renderAdminPresensi(el) {
+        const dayLogs = state.attendanceLog[tempAttDate] || {};
+        const totalPesertaAbsen = Object.keys(dayLogs).length;
+
+        let html = `
+        <div class="mb-5">
+            <h3 class="title-font font-black text-2xl text-slate-800">Buku Presensi</h3>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-emerald-500 pl-2">Mencatat kehadiran & kekompakan latihan</p>
+        </div>
+
+        <div class="card-3d bg-white p-5 mb-6 border-l-8 border-l-emerald-500 shadow-md">
+            <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-2xl mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-emerald-500 text-2xl border-2 border-emerald-200 shadow-sm"><i class="fa-regular fa-calendar-check animate-pulse"></i></div>
+                    <div>
+                        <div class="text-[10px] font-black text-emerald-800 uppercase tracking-widest">Status Hari Ini</div>
+                        <div class="font-black text-sm text-emerald-600 mt-0.5">${totalPesertaAbsen > 0 ? `${totalPesertaAbsen} Anggota Terdata` : 'Belum Ada Data'}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Pilih Tanggal</label>
+                    <input type="date" id="att-date" value="${tempAttDate}" onchange="updateAttConfig()" class="w-full text-xs font-bold border-2 border-slate-200 bg-slate-50 rounded-xl p-3 focus:bg-white focus:border-emerald-400 outline-none transition-colors shadow-inner">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Nama Kegiatan</label>
+                    <input type="text" id="att-title" value="${tempAttTitle}" onchange="updateAttConfig()" class="w-full text-xs font-bold border-2 border-slate-200 bg-slate-50 rounded-xl p-3 focus:bg-white focus:border-emerald-400 outline-none transition-colors shadow-inner">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button onclick="markAllPresent()" class="btn-3d btn-emerald text-[10px] py-3 rounded-xl border-b-[5px] shadow-sm"><i class="fa-solid fa-check-double mr-2"></i> SET HADIR SEMUA</button>
+                <button onclick="deleteAttendanceForDate()" class="btn-3d btn-rose text-[10px] py-3 rounded-xl border-b-[5px] shadow-sm"><i class="fa-solid fa-trash-can mr-2"></i> HAPUS DATA</button>
+            </div>
+
+            <div class="relative mt-2">
+                <div class="flex items-center border-2 border-slate-200 rounded-xl px-4 bg-slate-50 focus-within:border-emerald-400 focus-within:bg-white transition-all shadow-inner">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 mr-3"></i>
+                    <input type="text" oninput="handleAttSearch(this.value)" placeholder="Cari nama anggota..." class="w-full py-3 bg-transparent font-black text-slate-800 focus:outline-none text-xs">
+                </div>
+            </div>
+        </div>
+        <div id="att-list" class="space-y-3"></div>`;
+        el.innerHTML = html;
+        handleAttSearch('');
+    }
+
+    function updateAttConfig() { 
+        SoundEngine.playClick();
+        tempAttDate = document.getElementById('att-date').value; 
+        tempAttTitle = document.getElementById('att-title').value; 
+        switchAdminSection('attendance'); 
+    }
+
+    function deleteAttendanceForDate() {
+        openConfirmModal("Hapus Log Presensi?", `Menghapus seluruh log presensi tanggal ${tempAttDate} dari Cloud.`, async () => {
+            delete state.attendanceLog[tempAttDate];
+            const { error } = await DatabaseService.deleteAttendanceForDate(tempAttDate);
+            if(error) return showToast("Gagal hapus log di Cloud!", "❌");
+            showToast(`Log presensi tanggal ${tempAttDate} dihapus!`, "🗑️");
+            switchAdminSection('attendance');
+        });
+    }
+
+    function markAllPresent() {
+        SoundEngine.playSuccess();
+        if(!state.attendanceLog[tempAttDate]) state.attendanceLog[tempAttDate] = {};
+        let count = 0;
+        state.students.forEach(s => {
+            if(!state.attendanceLog[tempAttDate][s.id]) {
+                state.attendanceLog[tempAttDate][s.id] = 'ontime'; s.attendanceStats.present++;
+                s.attendanceXP = Math.min(150, s.attendanceXP + attendanceTypes['ontime'].xp);
+                addXPRecord(s, attendanceTypes['ontime'].xp, `Presensi: ${tempAttTitle}`, false); 
+                asyncSyncStudent(s);
+                count++;
+            }
+        });
+        asyncSyncAttendanceLog(tempAttDate, tempAttTitle, state.attendanceLog[tempAttDate]);
+        showToast(`${count} siswa ditandai Hadir.`, "✅"); 
+        switchAdminSection('attendance');
+    }
+
+    function handleAttSearch(val) {
+        if(val && val.length === 1) SoundEngine.playClick();
+        const resBox = document.getElementById('att-list');
+        const filtered = state.students.filter(s => s.name.toLowerCase().includes(val.toLowerCase()));
+        
+        if (filtered.length === 0) {
+            resBox.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 font-black bg-white rounded-[2rem] border-2 border-dashed border-slate-200">Siswa tidak ditemukan.</div>`;
+            return;
+        }
+
+        resBox.innerHTML = filtered.map(s => {
+            const dayLogs = state.attendanceLog[tempAttDate] || {};
+            const curStat = dayLogs[s.id] || null;
+            let statusText = `<span class="text-slate-400 font-black uppercase tracking-widest text-[9px] bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">Belum Absen</span>`;
+            if (curStat) {
+                const label = attendanceTypes[curStat].label;
+                const textColor = curStat === 'ontime' ? 'text-emerald-700' : (curStat === 'late' ? 'text-amber-700' : (curStat === 'excused' ? 'text-blue-700' : 'text-rose-700'));
+                const bgColor = curStat === 'ontime' ? 'bg-emerald-100 border-emerald-200' : (curStat === 'late' ? 'bg-amber-100 border-amber-200' : (curStat === 'excused' ? 'bg-blue-100 border-blue-200' : 'bg-rose-100 border-rose-200'));
+                statusText = `<span class="${textColor} ${bgColor} font-black uppercase tracking-widest text-[9px] px-2.5 py-1 rounded-md border shadow-sm">${label}</span>`;
+            }
+
+            return `
+            <div class="card-3d p-4 bg-white border-l-8 ${curStat ? attendanceTypes[curStat].border : 'border-l-slate-200'}">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 overflow-hidden rounded-full flex items-center justify-center text-2xl shrink-0 bg-slate-50 border border-slate-100">${renderAvatar(s.avatarEmoji)}</div>
+                        <div>
+                            <div class="font-black text-sm text-slate-800 leading-tight">${s.name}</div>
+                            <div class="font-bold text-[9px] text-slate-400 uppercase tracking-widest mt-0.5">Regu ${s.regu}</div>
+                        </div>
+                    </div>
+                    <div class="shrink-0 ml-2">${statusText}</div>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    ${Object.keys(attendanceTypes).map(t => {
+                        const isSelected = curStat === t;
+                        const btnStyle = isSelected ? `${attendanceTypes[t].color} text-white border-b-4 border-black/20 shadow-md transform -translate-y-1` : 'bg-slate-50 hover:bg-slate-100 text-slate-500 border-b-4 border-slate-200 shadow-sm';
+                        return `<button onclick="setSingleAttendance('${s.id}', '${t}')" class="text-[10px] font-black py-2.5 rounded-xl transition-all border-2 border-transparent active:scale-90 ${btnStyle} uppercase tracking-wider">${attendanceTypes[t].label}</button>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    let isProcessingAtt = false;
+    async function setSingleAttendance(studentId, type) {
+        if (isProcessingAtt) return;
+        isProcessingAtt = true;
+        SoundEngine.playCoin();
+        
+        try {
+            if(!state.attendanceLog[tempAttDate]) state.attendanceLog[tempAttDate] = {};
+            
+            const s = state.students.find(st => st.id === studentId); 
+            const dayLogs = state.attendanceLog[tempAttDate];
+            const prevType = dayLogs[studentId];
+
+            if (prevType === type) { showToast(`Status sudah ${attendanceTypes[type].label}`, "ℹ️"); return; }
+
+            if (prevType) {
+                const prevXP = attendanceTypes[prevType].xp;
+                if (prevType === 'ontime') s.attendanceStats.present = Math.max(0, s.attendanceStats.present - 1);
+                s.attendanceXP = Math.max(0, s.attendanceXP - prevXP);
+                addXPRecord(s, -prevXP, `Koreksi Presensi ${tempAttDate}`, false);
+            }
+
+            dayLogs[studentId] = type;
+            const newXP = attendanceTypes[type].xp; 
+            s.attendanceXP = Math.min(150, s.attendanceXP + newXP);
+            if (type === 'ontime') s.attendanceStats.present++;
+            
+            addXPRecord(s, newXP, `Presensi (${attendanceTypes[type].label}): ${tempAttTitle}`, false); 
+            await asyncSyncStudent(s);
+            await asyncSyncAttendanceLog(tempAttDate, tempAttTitle, dayLogs);
+
+            switchAdminSection('attendance');
+        } finally {
+            isProcessingAtt = false;
+        }
+    }
+
+    // ==========================================
+    // 👥 ADMIN SISWA (DATA ANGGOTA & SEARCH CRUD)
+    // ==========================================
+    let currentStudentSearchQuery = '';
+
+    function renderAdminSiswa(el) {
+        let html = `
+        <div class="flex justify-between items-end mb-5">
+            <div>
+                <h3 class="title-font font-black text-2xl text-slate-800">Buku Induk</h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-indigo-500 pl-2">Manajemen Data Anggota</p>
+            </div>
+            <button onclick="openAdminStudentModal()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-lg border-b-4 border-indigo-700 active:scale-95 transition-transform animate-pop"><i class="fa-solid fa-user-plus mr-1"></i> SISWA</button>
+        </div>
+        
+        <div class="mb-5 relative">
+            <div class="flex items-center border-4 border-slate-100 rounded-2xl px-4 bg-white focus-within:border-indigo-400 transition-all shadow-sm">
+                <i class="fa-solid fa-magnifying-glass text-slate-300 text-lg mr-3"></i>
+                <input type="text" id="admin-stud-search" value="${currentStudentSearchQuery}" oninput="searchAdminSiswa(this.value)" placeholder="Ketik nama untuk mencari..." class="w-full py-4 bg-transparent font-black text-slate-700 focus:outline-none text-sm">
+            </div>
+        </div>
+
+        <div class="space-y-4" id="admin-students-container">`;
+        el.innerHTML = html + `</div>`;
+        applyAdminSiswaFilter();
+    }
+
+    function searchAdminSiswa(val) { currentStudentSearchQuery = val; applyAdminSiswaFilter(); }
+
+    function applyAdminSiswaFilter() {
+        const container = document.getElementById('admin-students-container');
+        const q = currentStudentSearchQuery.toLowerCase();
+        const filtered = state.students.filter(s => s.name.toLowerCase().includes(q));
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 font-black bg-white rounded-[2rem] border-2 border-dashed border-slate-200">Siswa tidak ditemukan dalam arsip.</div>`;
+            return;
+        }
+
+        container.innerHTML = filtered.map((s, idx) => {
+            const att = getStudentAttendanceStats(s.id);
+            return `
+            <div class="card-3d bg-white p-4 flex justify-between items-center border-l-8 border-indigo-300 animate-slide-up" style="animation-delay: ${idx*0.05}s">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="w-14 h-14 overflow-hidden rounded-[1.25rem] flex items-center justify-center text-4xl shrink-0 bg-slate-50 border-2 border-slate-100 shadow-inner">${renderAvatar(s.avatarEmoji)}</div>
+                    <div class="min-w-0">
+                        <div class="font-black text-sm text-slate-800 truncate leading-tight">${s.name}</div>
+                        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            <span class="text-[8px] bg-slate-100 text-slate-500 font-black uppercase tracking-widest px-2 py-1 rounded shadow-sm">${s.kelas}</span>
+                            <span class="text-[8px] bg-indigo-50 text-indigo-600 font-black uppercase tracking-widest px-2 py-1 rounded border border-indigo-200 shadow-sm">${s.regu}</span>
+                            <span class="text-[8px] bg-sky-50 text-sky-600 font-black uppercase tracking-widest px-2 py-1 rounded border border-sky-200 shadow-sm">Hadir ${att.percent}%</span>
+                        </div>
+                        <div class="flex gap-1.5 mt-1.5">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded-md bg-amber-400 text-amber-900 shadow-sm">${s.lifetimeXP} XP</span>
+                            ${s.isRecommended ? '<span class="text-[9px] font-black px-2 py-0.5 rounded-md bg-emerald-400 text-emerald-900 shadow-sm"><i class="fa-solid fa-stamp"></i> REKOM</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 shrink-0 ml-2">
+                    <button onclick="toggleRecommendation('${s.id}')" class="w-9 h-9 rounded-xl ${s.isRecommended ? 'bg-emerald-100 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'} flex items-center justify-center transition-colors active:scale-90 shadow-sm" title="Rekomendasi Pelantikan"><i class="fa-solid fa-medal"></i></button>
+                    <div class="flex gap-2">
+                        <button onclick="openAdminStudentModal('${s.id}')" class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center hover:bg-amber-200 active:scale-90 shadow-sm border border-amber-200"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteStudent('${s.id}')" class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center hover:bg-rose-200 active:scale-90 shadow-sm border border-rose-200"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function toggleRecommendation(studentId) {
+        SoundEngine.playClick();
+        const student = state.students.find(s => s.id === studentId);
+        if (student) {
+            student.isRecommended = !student.isRecommended;
+            await asyncSyncStudent(student);
+            showToast(`Rekomendasi ${student.name} diperbarui!`, "ℹ️");
+            applyAdminSiswaFilter();
+        }
+    }
+
+    function openAdminStudentModal(id = null) {
+        SoundEngine.playClick();
+        document.getElementById('admin-student-modal').classList.remove('hidden');
+        if(id) {
+            const s = state.students.find(st => st.id === id); document.getElementById('student-modal-title').innerText = "Edit Siswa";
+            ['id', 'name', 'kelas', 'gender', 'regu', 'jabatan'].forEach(f => document.getElementById('form-student-'+f).value = s[f] || (f==='jabatan'?'Anggota':(f==='gender'?'Putra':'')));
+            document.getElementById('form-student-avatar-data').value = s.avatarEmoji;
+            document.getElementById('form-student-photo-preview').innerHTML = renderAvatar(s.avatarEmoji);
+        } else {
+            document.getElementById('student-modal-title').innerText = "Tambah Siswa Baru"; document.getElementById('form-student-id').value = '';
+            ['name', 'kelas', 'regu'].forEach(f => document.getElementById('form-student-'+f).value = '');
+            document.getElementById('form-student-gender').value = 'Putra'; document.getElementById('form-student-jabatan').value = 'Anggota';
+            document.getElementById('form-student-avatar-data').value = '';
+            document.getElementById('form-student-photo-preview').innerHTML = '👤';
+        }
+        document.getElementById('form-student-photo').value = ''; 
+    }
+    function closeAdminStudentModal() { SoundEngine.playClick(); document.getElementById('admin-student-modal').classList.add('hidden'); }
+
+    async function saveStudentData() {
+        SoundEngine.playClick();
+        const id = document.getElementById('form-student-id').value, name = document.getElementById('form-student-name').value.trim(), kelas = document.getElementById('form-student-kelas').value.trim();
+        const gender = document.getElementById('form-student-gender').value, regu = document.getElementById('form-student-regu').value.trim(), jabatan = document.getElementById('form-student-jabatan').value;
+        if(!name || !kelas || !regu) return showToast("Semua data wajib diisi!", "⚠️");
+
+        const btn = document.getElementById('btn-save-student'); btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENYIMPAN...'; btn.disabled = true;
+        
+        let finalAvatar = document.getElementById('form-student-avatar-data').value;
+        if (!finalAvatar) finalAvatar = gender === 'Putri' ? '🦉' : '🦁';
+
+        try {
+            if(!state.regus[regu]) {
+                state.regus[regu] = { coins: 0, totalLostCoins: 0, targetReward: 'Menunggu Target', logs: [] };
+                await DatabaseService.upsertRegu({ name: regu, coins: 0, total_lost_coins: 0, target_reward: 'Menunggu Target', logs: [] });
+            }
+            if(id) {
+                const s = state.students.find(st => st.id === id);
+                if (s) { s.name = name; s.kelas = kelas; s.gender = gender; s.regu = regu; s.jabatan = jabatan; s.avatarEmoji = finalAvatar; }
+                const {error} = await DatabaseService.upsertStudent({ id, name, kelas, gender, regu_name: regu, jabatan, avatar_emoji: finalAvatar });
+                if(error) throw error;
+                showToast("Data siswa diperbarui di Cloud!", "✅");
+            } else {
+                let newId = 's' + Date.now();
+                const newStud = { id: newId, name, kelas, gender, regu_name: regu, jabatan, avatar_emoji: finalAvatar, xp: 0, lifetime_xp: 0, coins: 0, completed_quests: [], attendance_stats: { present: 0, late: 0, sick: 0, absent: 0 }, xp_history: [] };
+                const {error} = await DatabaseService.upsertStudent(newStud);
+                if(error) throw error;
+                state.students.push({ id: newId, name, kelas, gender, regu, jabatan, xp: 0, lifetimeXP: 0, coins: 0, completedQuests: [], attendanceStats: { present:0, late:0, sick:0, absent:0 }, attendanceXP: 0, bonusXP: 0, avatarEmoji: finalAvatar, isRecommended: false, xpHistory: [] });
+                showToast("Siswa baru berhasil dikirim ke Cloud!", "✅");
+                SoundEngine.playSuccess();
+            }
+        } catch (error) { showToast("Gagal menyimpan ke Supabase Cloud!", "❌"); SoundEngine.playError(); }
+        
+        btn.innerText = 'SIMPAN DATA'; btn.disabled = false; closeAdminStudentModal(); switchAdminSection('students');
+    }
+
+    function deleteStudent(id) {
+        openConfirmModal("Hapus Siswa?", "Data siswa akan dihapus permanen dari Cloud.", async () => {
+            const {error} = await DatabaseService.deleteStudent(id);
+            if(error) return showToast("Gagal menghapus Cloud!", "❌");
+            state.students = state.students.filter(s => s.id !== id);
+            showToast("Siswa dihapus permanen.", "🗑️"); switchAdminSection('students');
+        });
+    }
+
+    // ==========================================
+    // 🛡️ ADMIN DATA REGU (MANAJEMEN LOGO & INFO)
+    // ==========================================
+    function renderAdminRegu(el) {
+        let html = `
+        <div class="mb-5">
+            <h3 class="title-font font-black text-2xl text-slate-800">Manajemen Regu</h3>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-amber-500 pl-2">Kelola Atribut, Identitas, & Logo Regu</p>
+        </div>
+        <div class="space-y-4">
+        `;
+        Object.keys(state.regus).sort().forEach((rName, idx) => {
+            const r = state.regus[rName];
+            html += `
+            <div class="card-3d bg-white p-4 flex justify-between items-center border-l-8 border-amber-400 animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-[1.25rem] overflow-hidden flex items-center justify-center text-4xl border-2 border-slate-100 shadow-inner shrink-0 bg-slate-50">${renderAvatar(r.logo || '🛡️')}</div>
+                    <div>
+                        <h4 class="font-black title-font text-lg text-slate-800">Regu ${rName}</h4>
+                        <div class="bg-amber-50 px-2 py-1 rounded-md border border-amber-100 inline-block mt-1">
+                            <p class="text-[10px] text-amber-700 font-black uppercase tracking-widest"><i class="fa-solid fa-coins mr-1 text-yellow-500"></i> ${r.coins} Koin</p>
+                        </div>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1.5"><i class="fa-solid fa-bullseye text-sky-400 mr-1"></i> Target: ${r.targetReward || '-'}</p>
+                    </div>
+                </div>
+                <button onclick="openAdminReguModal('${rName}')" class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center shadow-sm border border-amber-200 hover:bg-amber-200 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-pen text-xl"></i></button>
+            </div>
+            `;
+        });
+        el.innerHTML = html + `</div>`;
+    }
+
+    function openAdminReguModal(rName) {
+        SoundEngine.playClick();
+        const r = state.regus[rName];
+        if (!r) return;
+        document.getElementById('admin-regu-modal').classList.remove('hidden');
+        document.getElementById('regu-modal-name-title').innerText = rName;
+        document.getElementById('form-regu-name-id').value = rName;
+        document.getElementById('form-regu-logo-data').value = r.logo || '';
+        document.getElementById('form-regu-logo-preview').innerHTML = renderAvatar(r.logo || '🛡️');
+        document.getElementById('form-regu-emoji').value = '';
+        document.getElementById('form-regu-logo').value = '';
+    }
+    
+    function closeAdminReguModal() { SoundEngine.playClick(); document.getElementById('admin-regu-modal').classList.add('hidden'); }
+
+    async function saveReguData() {
+        SoundEngine.playClick();
+        const rName = document.getElementById('form-regu-name-id').value;
+        const emojiInput = document.getElementById('form-regu-emoji').value.trim();
+        let finalLogo = document.getElementById('form-regu-logo-data').value;
+        
+        if (emojiInput) finalLogo = emojiInput;
+        if (!finalLogo) finalLogo = '🛡️';
+
+        if (state.regus[rName]) {
+            state.regus[rName].logo = finalLogo;
+            await asyncSyncRegu(rName);
+            showToast(`Logo Regu ${rName} diperbarui!`, "✅");
+            closeAdminReguModal();
+            switchAdminSection('regus');
+        }
+    }
+
+    // ==========================================
+    // 🎯 ADMIN MISI (SINKRON CLOUD & URUTAN SKU TETAP)
+    // ==========================================
+    function renderAdminMisi(el) {
+        let html = `
+        <div class="flex justify-between items-end mb-5">
+            <div>
+                <h3 class="title-font font-black text-2xl text-slate-800">Katalog Misi/SKU</h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-sky-500 pl-2">Desain Misi & Hadiah XP</p>
+            </div>
+            <button onclick="openAdminMissionModal()" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-lg border-b-4 border-sky-700 active:scale-95 transition-transform animate-pop"><i class="fa-solid fa-plus mr-1"></i> MISI</button>
+        </div>
+        <div class="space-y-4">`;
+        
+        getSortedQuests().forEach((q, idx) => {
+            const diffColor = q.diff === 'Mudah' ? 'text-emerald-600 bg-emerald-100 border-emerald-200' : (q.diff === 'Sedang' ? 'text-amber-600 bg-amber-100 border-amber-200' : 'text-rose-600 bg-rose-100 border-rose-200');
+            html += `
+            <div class="card-3d bg-white p-4 border-l-8 border-l-sky-400 flex flex-col justify-between animate-slide-up" style="animation-delay: ${idx*0.05}s">
+                <div class="flex justify-between items-start mb-3 border-b-2 border-slate-50 pb-3">
+                    <span class="text-xs font-black bg-slate-800 text-white px-3 py-1 rounded-lg shadow-sm tracking-widest">SKU ${q.poin}</span>
+                    <div class="flex gap-2">
+                        <span class="text-[9px] font-black px-2.5 py-1 rounded-md border uppercase tracking-widest ${diffColor}">${q.diff}</span>
+                        <span class="text-[10px] font-black text-sky-700 bg-sky-100 border border-sky-200 px-2.5 py-1 rounded-md shadow-sm"><i class="fa-solid fa-arrow-up text-[8px] mr-1"></i>${q.xp} XP</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h4 class="font-black title-font text-slate-800 text-lg mb-1 leading-tight">${q.title}</h4>
+                    <p class="text-xs text-slate-500 font-bold bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">${q.desc}</p>
+                </div>
+                <div class="flex gap-2 mt-auto justify-end">
+                    <button onclick="openAdminMissionModal('${q.id}')" class="px-4 py-2 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-black text-[10px] uppercase tracking-widest shadow-sm border border-amber-200 hover:bg-amber-200 active:scale-95 transition-transform"><i class="fa-solid fa-pen mr-2"></i> Edit</button>
+                    <button onclick="deleteMission('${q.id}')" class="px-4 py-2 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-black text-[10px] uppercase tracking-widest shadow-sm border border-rose-200 hover:bg-rose-200 active:scale-95 transition-transform"><i class="fa-solid fa-trash mr-2"></i> Hapus</button>
+                </div>
+            </div>`;
+        });
+        el.innerHTML = html + `</div>`;
+    }
+
+    function openAdminMissionModal(id = null) {
+        SoundEngine.playClick();
+        document.getElementById('admin-mission-modal').classList.remove('hidden');
+        if(id) {
+            const q = state.quests.find(qt => qt.id === id); document.getElementById('mission-modal-title').innerText = "Edit Misi";
+            ['id', 'poin', 'xp', 'title', 'desc', 'diff'].forEach(f => document.getElementById('form-mission-'+f).value = q[f]);
+        } else {
+            document.getElementById('mission-modal-title').innerText = "Buat Misi Baru"; document.getElementById('form-mission-id').value = ''; document.getElementById('form-mission-poin').value = '';
+            document.getElementById('form-mission-xp').value = '15'; document.getElementById('form-mission-title').value = ''; document.getElementById('form-mission-desc').value = ''; document.getElementById('form-mission-diff').value = 'Mudah';
+        }
+    }
+    function closeAdminMissionModal() { SoundEngine.playClick(); document.getElementById('admin-mission-modal').classList.add('hidden'); }
+
+    async function saveMissionData() {
+        SoundEngine.playClick();
+        const id = document.getElementById('form-mission-id').value, poin = document.getElementById('form-mission-poin').value.trim(), xp = parseInt(document.getElementById('form-mission-xp').value);
+        const title = document.getElementById('form-mission-title').value.trim(), desc = document.getElementById('form-mission-desc').value.trim(), diff = document.getElementById('form-mission-diff').value;
+        if(!poin || !title || !desc || isNaN(xp)) return showToast("Isi semua data!", "⚠️");
+
+        const targetId = id || 'q-' + Date.now();
+        const {error} = await DatabaseService.upsertQuest({ id: targetId, poin, xp, title, "desc": desc, diff });
+        if(error) return showToast("Gagal menyimpan misi ke Cloud!", "❌");
+
+        if(id) {
+            const q = state.quests.find(qt => qt.id === id);
+            if (q) { q.poin = poin; q.xp = xp; q.title = title; q.desc = desc; q.diff = diff; }
+            showToast("Misi diperbarui di Cloud!", "✅");
+        } else {
+            state.quests.push({ id: targetId, poin, xp, title, desc, diff });
+            showToast("Misi baru ditambahkan!", "✅");
+        }
+        closeAdminMissionModal(); switchAdminSection('missions');
+    }
+
+    function deleteMission(id) {
+        openConfirmModal("Hapus Misi?", "Misi ini akan dihapus permanen dari Cloud.", async () => {
+            const {error} = await DatabaseService.deleteQuest(id);
+            if(error) return showToast("Gagal hapus Cloud!", "❌");
+            state.quests = state.quests.filter(q => q.id !== id);
+            showToast("Misi dihapus.", "🗑️"); switchAdminSection('missions');
+        });
+    }
+
+    // ==========================================
+    // 🎁 ADMIN KEDAI/TOKO
+    // ==========================================
+    function renderAdminShop(el) {
+        let html = `
+        <div class="flex justify-between items-end mb-5">
+            <div>
+                <h3 class="title-font font-black text-2xl text-slate-800">Manajemen Kedai</h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-indigo-500 pl-2">Atur Inventori Hadiah</p>
+            </div>
+            <button onclick="openAdminShopModal()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-lg border-b-4 border-indigo-700 active:scale-95 transition-transform animate-pop"><i class="fa-solid fa-plus mr-1"></i> HADIAH</button>
+        </div>
+        <div class="space-y-4">`;
+        
+        state.shopItems.forEach((item, idx) => {
+            const isRegu = item.type === 'Regu';
+            const costIcon = isRegu ? '<i class="fa-solid fa-coins text-yellow-500"></i>' : '<i class="fa-solid fa-star text-amber-500"></i>';
+            html += `
+            <div class="card-3d bg-white p-4 flex justify-between items-center border-l-8 ${isRegu ? 'border-l-indigo-400' : 'border-l-amber-400'} animate-slide-up" style="animation-delay: ${idx*0.1}s">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-[1.25rem] bg-slate-50 border-2 border-slate-100 shadow-inner flex items-center justify-center text-4xl shrink-0">${item.icon}</div>
+                    <div class="min-w-0 flex-1">
+                        <h4 class="font-black title-font text-base text-slate-800 truncate leading-tight">${item.name}</h4>
+                        <div class="flex items-center gap-2 mt-1 mb-1.5">
+                            <span class="text-[8px] bg-slate-800 text-white font-black px-2 py-0.5 rounded uppercase tracking-widest shadow-sm">${item.type}</span>
+                            ${item.type === 'Individu' && item.xpRequired > 0 ? `<span class="text-[8px] bg-sky-100 text-sky-700 font-black px-2 py-0.5 rounded border border-sky-200 uppercase tracking-widest">Min. Lvl ${item.xpRequired}</span>` : ''}
+                        </div>
+                        <div class="text-[11px] font-black bg-slate-50 inline-block px-2.5 py-1 rounded-md border border-slate-200 ${isRegu ? 'text-indigo-600' : 'text-amber-600'}">${costIcon} ${item.cost} Harga</div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 shrink-0 ml-2">
+                    <button onclick="openAdminShopModal('${item.id}')" class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center hover:bg-amber-200 shadow-sm border border-amber-200 active:scale-90 transition-transform"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteShopItem('${item.id}')" class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center hover:bg-rose-200 shadow-sm border border-rose-200 active:scale-90 transition-transform"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>`;
+        });
+        el.innerHTML = html + `</div>`;
+    }
+
+    function openAdminShopModal(id = null) {
+        SoundEngine.playClick();
+        document.getElementById('admin-shop-modal').classList.remove('hidden');
+        if(id) {
+            const item = state.shopItems.find(i => i.id === id); document.getElementById('shop-modal-title').innerText = "Edit Hadiah";
+            document.getElementById('form-shop-id').value = item.id;
+            document.getElementById('form-shop-type').value = item.type;
+            document.getElementById('form-shop-icon').value = item.icon;
+            document.getElementById('form-shop-name').value = item.name;
+            document.getElementById('form-shop-desc').value = item.desc;
+            document.getElementById('form-shop-cost').value = item.cost;
+            document.getElementById('form-shop-xp').value = item.xpRequired;
+        } else {
+            document.getElementById('shop-modal-title').innerText = "Buat Hadiah Baru";
+            document.getElementById('form-shop-id').value = '';
+            document.getElementById('form-shop-type').value = 'Individu';
+            document.getElementById('form-shop-icon').value = '🎁';
+            document.getElementById('form-shop-name').value = '';
+            document.getElementById('form-shop-desc').value = '';
+            document.getElementById('form-shop-cost').value = '50';
+            document.getElementById('form-shop-xp').value = '0';
+        }
+    }
+    function closeAdminShopModal() { SoundEngine.playClick(); document.getElementById('admin-shop-modal').classList.add('hidden'); }
+
+    async function saveShopItemData() {
+        SoundEngine.playClick();
+        const id = document.getElementById('form-shop-id').value;
+        const type = document.getElementById('form-shop-type').value;
+        const icon = document.getElementById('form-shop-icon').value.trim();
+        const name = document.getElementById('form-shop-name').value.trim();
+        const desc = document.getElementById('form-shop-desc').value.trim();
+        const cost = parseInt(document.getElementById('form-shop-cost').value);
+        const xpRequired = parseInt(document.getElementById('form-shop-xp').value);
+
+        if(!name || !desc || isNaN(cost)) return showToast("Lengkapi data formulir!", "⚠️");
+
+        const targetId = id || 'sh-' + Date.now();
+        const {error} = await DatabaseService.upsertShopItem({ id: targetId, type, icon, name, "desc": desc, cost, xp_required: xpRequired });
+        if(error) return showToast("Gagal menyimpan ke Cloud!", "❌");
+
+        if(id) {
+            const item = state.shopItems.find(i => i.id === id);
+            if (item) { item.type = type; item.icon = icon; item.name = name; item.desc = desc; item.cost = cost; item.xpRequired = xpRequired; }
+            showToast("Item Toko berhasil diperbarui!", "✅");
+        } else {
+            state.shopItems.push({ id: targetId, type, icon, name, desc, cost, xpRequired });
+            showToast("Hadiah baru ditambahkan ke Kedai!", "✅");
+        }
+        closeAdminShopModal(); switchAdminSection('shop');
+    }
+
+    function deleteShopItem(id) {
+        openConfirmModal("Hapus Hadiah?", "Item ini akan ditarik dari etalase Kedai.", async () => {
+            const {error} = await DatabaseService.deleteShopItem(id);
+            if(error) return showToast("Gagal hapus item Toko!", "❌");
+            state.shopItems = state.shopItems.filter(i => i.id !== id);
+            showToast("Hadiah ditarik.", "🗑️"); switchAdminSection('shop');
+        });
+    }
+
+    // BONUS ADMIN
+    function renderAdminBonus(el) {
+        el.innerHTML = `
+        <div class="mb-5">
+            <h3 class="title-font font-black text-2xl text-slate-800">Bonus Prestasi</h3>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 border-l-4 border-amber-400 pl-2">Pemberian Bintang / XP Bebas</p>
+        </div>
+        <div class="card-3d p-6 bg-white mb-6 border-b-8 border-amber-400 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-20"><i class="fa-solid fa-star text-[10rem] text-amber-300"></i></div>
+            <div class="space-y-4 relative z-10">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Pilih Siswa</label>
+                    <select id="bonus-student" class="w-full text-xs font-black border-2 border-slate-200 bg-slate-50 rounded-xl p-3.5 focus:bg-white focus:border-amber-400 outline-none transition-colors shadow-inner">
+                        ${state.students.map(s => `<option value="${s.id}">${s.name} (${s.lifetimeXP} XP)</option>`).join('')}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Keterangan Prestasi</label>
+                    <input type="text" id="bonus-reason" placeholder="Cth: Menjadi Petugas Upacara yang baik" class="w-full text-xs font-black border-2 border-slate-200 bg-slate-50 rounded-xl p-3.5 focus:bg-white focus:border-amber-400 outline-none transition-colors shadow-inner">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Besaran Reward</label>
+                    <select id="bonus-amount" class="w-full text-xs font-black border-2 border-slate-200 bg-slate-50 rounded-xl p-3.5 focus:bg-white focus:border-amber-400 outline-none transition-colors shadow-inner">
+                        <option value="10">+10 XP (Tindakan Ringan)</option>
+                        <option value="25">+25 XP (Tindakan Sedang)</option>
+                        <option value="50">+50 XP (Tindakan Hebat)</option>
+                        <option value="100">+100 XP (Tindakan Luar Biasa)</option>
+                    </select>
+                </div>
+                <button onclick="giveBonus()" class="btn-3d btn-amber w-full text-xs py-4 rounded-[1.25rem] mt-2 shadow-lg"><i class="fa-solid fa-wand-magic-sparkles mr-2 animate-pulse"></i> BERIKAN BONUS XP!</button>
+            </div>
+        </div>`;
+    }
+
+    function giveBonus() {
+        SoundEngine.playClick();
+        const sId = document.getElementById('bonus-student').value, reason = document.getElementById('bonus-reason').value.trim(), amt = parseInt(document.getElementById('bonus-amount').value);
+        if(!reason) return showToast("Alasan wajib diisi!", "⚠️");
+        const s = state.students.find(st => st.id === sId); s.bonusXP += amt; addXPRecord(s, amt, `Bonus: ${reason}`, true);
+        showToast(`Bonus +${amt} XP diserahkan ke ${s.name}`, "🌟"); 
+        SoundEngine.playLevelUp();
+        switchAdminSection('bonus');
+    }
