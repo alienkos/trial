@@ -1,2598 +1,696 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Teladan Hidupku - Aplikasi Pembelajaran Interaktif PID Kelas V SD</title>
-  
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  
-  <!-- Google Fonts: Nunito & Fredoka for child-friendly, high-legibility UI -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
-
-  <!-- React & ReactDOM via CDN -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- Babel Standalone for JSX compilation -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Nunito', 'sans-serif'],
-            display: ['Fredoka', 'sans-serif'],
-          },
-          colors: {
-            skybright: '#0EA5E9',
-            sunyellow: '#FACC15',
-            funorange: '#FB923C',
-            leafgreen: '#22C55E',
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Pecahan - Belajar Membandingkan Pecahan SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font - Fredoka (Comic/Child Friendly) & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#4F46E5',
+                            yellow: '#F59E0B',
+                            green: '#10B981',
+                            pink: '#EC4899',
+                            purple: '#8B5CF6',
+                            bg: '#F0F9FF'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
         }
-      }
-    };
-  </script>
-  <style>
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #E0F2FE 0%, #FEF9C3 50%, #DCFCE7 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-    h1, h2, h3, .font-display {
-      font-family: 'Fredoka', sans-serif;
-    }
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.45); }
-      50% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
-    }
-    .animate-float {
-      animation: floatSlow 3s ease-in-out infinite;
-    }
-    .tap-selected {
-      animation: pulseGlow 1.5s infinite;
-    }
-    /* Custom scrollbar for smooth PID navigation */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #38bdf8;
-      border-radius: 9999px;
-    }
-  </style>
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F0F9FF;
+        }
+        h1, h2, h3, .font-fun {
+            font-family: 'Fredoka', cursive;
+        }
+        /* Grid Paper Effect */
+        .grid-paper {
+            background-size: 20px 20px;
+            background-image: 
+                linear-gradient(to right, rgba(99, 102, 241, 0.15) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(99, 102, 241, 0.15) 1px, transparent 1px);
+            background-color: #ffffff;
+        }
+        /* Bounce & Pop Animations */
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        /* Fraction Styling */
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-weight: bold;
+        }
+        .fraction .top {
+            border-bottom: 3px solid currentColor;
+            padding-bottom: 2px;
+        }
+        .fraction .bottom {
+            padding-top: 2px;
+        }
+    </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-yellow-300 selection:text-slate-900">
-  <div id="root"></div>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef, useMemo } = React;
-
-    // ============================================================================
-    // SOUND SYNTHESIZER (No external MP3 needed, 100% reliable on Smartboard/Mobile)
-    // ============================================================================
-    const createSoundEngine = () => {
-      let ctx = null;
-      const init = () => {
-        if (!ctx) {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          if (AudioCtx) ctx = new AudioCtx();
-        }
-        if (ctx && ctx.state === 'suspended') ctx.resume();
-      };
-
-      const playTone = (freq, type = 'sine', duration = 0.15, delay = 0, vol = 0.15) => {
-        try {
-          init();
-          if (!ctx) return;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-          gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + delay);
-          osc.stop(ctx.currentTime + delay + duration);
-        } catch (e) {
-          // Ignore audio context restriction errors
-        }
-      };
-
-      return {
-        tap: (enabled) => { if (enabled) playTone(520, 'sine', 0.08, 0, 0.12); },
-        success: (enabled) => {
-          if (!enabled) return;
-          playTone(523.25, 'triangle', 0.15, 0, 0.18);
-          playTone(659.25, 'triangle', 0.15, 0.12, 0.18);
-          playTone(783.99, 'triangle', 0.25, 0.24, 0.22);
-          playTone(1046.5, 'triangle', 0.35, 0.36, 0.22);
-        },
-        retry: (enabled) => {
-          if (!enabled) return;
-          playTone(349.23, 'sine', 0.18, 0, 0.15);
-          playTone(293.66, 'sine', 0.28, 0.16, 0.15);
-        },
-        bell: (enabled) => {
-          if (!enabled) return;
-          playTone(880, 'sine', 0.3, 0, 0.2);
-          playTone(1174.66, 'sine', 0.5, 0.2, 0.2);
-        },
-        tick: (enabled) => { if (enabled) playTone(700, 'square', 0.04, 0, 0.06); }
-      };
-    };
-
-    const sfx = createSoundEngine();
-
-    // ============================================================================
-    // DATA TAHAPAN PEMBELAJARAN & TIMER DURASI (TOTAL 70 MENIT = 2 x 35 MENIT)
-    // ============================================================================
-    const STAGES = [
-      {
-        id: 'pendahuluan',
-        code: 'Pendahuluan',
-        title: 'A. Kegiatan Pendahuluan',
-        subtitle: 'Orientasi, Lagu Garuda Pancasila & Match-Up Game',
-        durationMinutes: 10,
-        appUsed: 'Wordwall / ClassPoint di PID',
-        color: 'from-sky-500 to-blue-600',
-        badgeColor: 'bg-sky-100 text-sky-800 border-sky-300',
-        icon: 'fa-rocket',
-        emoji: '🚀'
-      },
-      {
-        id: 'inti1',
-        code: 'Inti - Tahap 1',
-        title: 'B1. Orientasi Stimulasi Visual',
-        subtitle: 'Kajian Tokoh & Spidol Digital Interaktif PID',
-        durationMinutes: 10,
-        appUsed: 'YouTube / Canva Presentation + Spidol PID',
-        color: 'from-amber-400 to-orange-500',
-        badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
-        icon: 'fa-highlighter',
-        emoji: '🎨'
-      },
-      {
-        id: 'inti2',
-        code: 'Inti - Tahap 2',
-        title: 'B2. Pengorganisasian Kelompok',
-        subtitle: 'Spin the Wheel & Pembagian Area Papan Digital',
-        durationMinutes: 10,
-        appUsed: 'Canva Whiteboard / Padlet (Canvas Terbagi)',
-        color: 'from-emerald-500 to-green-600',
-        badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-        icon: 'fa-users-gear',
-        emoji: '🤝'
-      },
-      {
-        id: 'inti3',
-        code: 'Inti - Tahap 3',
-        title: 'B3. Kolaborasi LKPD Digital',
-        subtitle: 'Kanvas Kolaborasi "Teladan Hidupku"',
-        durationMinutes: 15,
-        appUsed: 'Canva Whiteboard / Padlet & Tablet Kelompok',
-        color: 'from-violet-500 to-purple-600',
-        badgeColor: 'bg-violet-100 text-violet-800 border-violet-300',
-        icon: 'fa-chalkboard-user',
-        emoji: '📝'
-      },
-      {
-        id: 'inti4',
-        code: 'Inti - Tahap 4',
-        title: 'B4. Presentasi & Gallery Walk',
-        subtitle: 'Feature Focus Zoom-In & Stiker Apresiasi Teman',
-        durationMinutes: 15,
-        appUsed: 'Feature Focus / Zoom-In PID',
-        color: 'from-pink-500 to-rose-500',
-        badgeColor: 'bg-pink-100 text-pink-800 border-pink-300',
-        icon: 'fa-award',
-        emoji: '🌟'
-      },
-      {
-        id: 'penutup',
-        code: 'Penutup',
-        title: 'C. Refleksi & Kuis Evaluasi',
-        subtitle: 'Awan Kata (Word Cloud) & Kuis Formatif',
-        durationMinutes: 10,
-        appUsed: 'Mentimeter / Slido & Quizizz / Wordwall',
-        color: 'from-teal-500 to-cyan-600',
-        badgeColor: 'bg-teal-100 text-teal-800 border-teal-300',
-        icon: 'fa-flag-checkered',
-        emoji: '🏆'
-      }
-    ];
-
-    // ============================================================================
-    // DATA TOKOH PERUMUS PANCASILA (DENGAN ILUSTRASI SVG BUILT-IN)
-    // ============================================================================
-    const FOUNDERS = [
-      {
-        id: 'sukarno',
-        name: 'Ir. Sukarno',
-        nickname: 'Bung Karno',
-        birth: 'Surabaya, 6 Juni 1901',
-        role: 'Mengusulkan istilah "Pancasila" pada 1 Juni 1945 dan Ketua Panitia Sembilan.',
-        bgGradient: 'from-red-500 to-orange-500',
-        cardBg: 'bg-orange-50 border-orange-300',
-        avatarEmoji: '🦁',
-        svgType: 'peci-glasses-none',
-        matchTrait: 'Berjiwa Persatuan, Cinta Tanah Air & Pandai Bermusyawarah',
-        keyValues: [
-          { id: 'v1', label: 'Cinta Tanah Air & Nasionalisme', category: 'Nilai Perjuangan', example: 'Mengikuti upacara bendera dengan tertib dan bangga memakai produk Indonesia.' },
-          { id: 'v2', label: 'Mengutamakan Persatuan Bangsa', category: 'Karakter Utama', example: 'Berteman dengan semua teman di kelas tanpa membeda-bedakan suku atau agama.' },
-          { id: 'v3', label: 'Berani Menyampaikan Gagasan Kritis', category: 'Profil Pelajar Pancasila', example: 'Berani bertanya dan memberi usul sopan saat kerja kelompok.' }
-        ]
-      },
-      {
-        id: 'hatta',
-        name: 'Drs. Moh. Hatta',
-        nickname: 'Bung Hatta',
-        birth: 'Bukittinggi, 12 Agustus 1902',
-        role: 'Perumus Piagam Jakarta & penengah yang bijaksana demi keutuhan bangsa Indonesia.',
-        bgGradient: 'from-sky-500 to-blue-600',
-        cardBg: 'bg-sky-50 border-sky-300',
-        avatarEmoji: '👓',
-        svgType: 'peci-glasses',
-        matchTrait: 'Toleran, Disiplin Tinggi, Jujur & Rela Berkorban demi Kesepakatan',
-        keyValues: [
-          { id: 'v4', label: 'Toleransi & Menghargai Perbedaan', category: 'Nilai Perjuangan', example: 'Menghormati teman yang sedang beribadah dan menerima hasil mufakat kelas.' },
-          { id: 'v5', label: 'Disiplin & Mandiri', category: 'Karakter Utama', example: 'Datang ke sekolah tepat waktu dan menyelesaikan tugas piket tanpa disuruh.' },
-          { id: 'v6', label: 'Rela Berkorban (Berjiwa Besar)', category: 'Profil Pelajar Pancasila', example: 'Tidak memaksakan kehendak sendiri saat memilih ketua kelompok.' }
-        ]
-      },
-      {
-        id: 'yamin',
-        name: 'Prof. Mr. Moh. Yamin',
-        nickname: 'Tokoh Pemikir & Sastrawan',
-        birth: 'Talawi, Sawahlunto, 24 Agustus 1903',
-        role: 'Mengusulkan 5 dasar negara secara lisan dan tertulis pada sidang pertama BPUPK (29 Mei 1945).',
-        bgGradient: 'from-emerald-500 to-teal-600',
-        badgeColor: 'bg-emerald-100',
-        cardBg: 'bg-emerald-50 border-emerald-300',
-        avatarEmoji: '📚',
-        svgType: 'scholar-cap',
-        matchTrait: 'Gemar Membaca, Bernalar Kritis & Menghargai Sejarah Bangsa',
-        keyValues: [
-          { id: 'v7', label: 'Bernalar Kritis & Gemar Belajar', category: 'Nilai Perjuangan', example: 'Rajin membaca buku di perpustakaan dan mencari informasi sebelum berpendapat.' },
-          { id: 'v8', label: 'Menghargai Pendapat Orang Lain', category: 'Karakter Utama', example: 'Mendengarkan dengan saksama saat kelompok lain sedang presentasi di depan PID.' },
-          { id: 'v9', label: 'Gotong Royong Merangkum Ide', category: 'Profil Pelajar Pancasila', example: 'Bekerja sama mencatat dan menyusun LKPD Digital bersama teman kelompok.' }
-        ]
-      },
-      {
-        id: 'soepomo',
-        name: 'Mr. Soepomo',
-        nickname: 'Arsitek UUD & Kekeluargaan',
-        birth: 'Sukoharjo, 22 Januari 1903',
-        role: 'Mengusulkan gagasan Negara Persatuan (Integralistik) yang mengutamakan semangat kekeluargaan.',
-        bgGradient: 'from-purple-500 to-indigo-600',
-        cardBg: 'bg-purple-50 border-purple-300',
-        avatarEmoji: '⚖️',
-        svgType: 'formal-peci',
-        matchTrait: 'Menjunjung Semangat Kekeluargaan, Gotong Royong & Keadilan',
-        keyValues: [
-          { id: 'v10', label: 'Semangat Kekeluargaan & Gotong Royong', category: 'Nilai Perjuangan', example: 'Membantu teman yang kesulitan memahami pelajaran dan piket kelas bersama.' },
-          { id: 'v11', label: 'Adil & Tidak Memihak', category: 'Karakter Utama', example: 'Membagi tugas kelompok secara adil dan merata kepada semua anggota.' },
-          { id: 'v12', label: 'Santun dalam Bermusyawarah', category: 'Profil Pelajar Pancasila', example: 'Berbicara dengan bahasa yang sopan kepada guru dan teman.' }
-        ]
-      }
-    ];
-
-    // ============================================================================
-    // PANDUAN APLIKASI & PERANGKAT LUNAK PID
-    // ============================================================================
-    const PID_APPS_GUIDE = [
-      {
-        name: 'Canva Whiteboard / Padlet / Miro',
-        stage: 'Kegiatan Inti (Tahap 2, 3 & 4)',
-        icon: 'fa-object-group',
-        color: 'bg-violet-500',
-        functionDesc: 'Kolaborasi LKPD Digital (Teladan Hidupku): Peserta didik mengunggah foto tokoh, menempelkan sticky notes digital berisi karakter/sikap teladan, serta mengelompokkan nilai perjuangan di papan interaktif.',
-        integrationDesc: 'Langsung disentuh/ditulis di PID (Tap-to-Select) atau diakses dari tablet/laptop kelompok yang tersinkronisasi ke PID kelas.'
-      },
-      {
-        name: 'Wordwall / ClassPoint',
-        stage: 'Pendahuluan & Penutup',
-        icon: 'fa-gamepad',
-        color: 'bg-orange-500',
-        functionDesc: 'Apersepsi & Kuis Game Interaktif: Permainan Match-Up (menjodohkan foto tokoh dengan sikap teladan) dan kuis roda putar (Spin the Wheel) untuk memanggil kelompok.',
-        integrationDesc: 'Peserta didik maju ke depan kelas untuk menyentuh elemen secara interaktif di layar PID.'
-      },
-      {
-        name: 'Mentimeter / Slido',
-        stage: 'Kegiatan Penutup (Refleksi)',
-        icon: 'fa-cloud',
-        color: 'bg-sky-500',
-        functionDesc: 'Refleksi & Awan Kata (Word Cloud): Menyampaikan refleksi singkat mengenai sikap teladan yang paling ingin diterapkan hari ini secara langsung.',
-        integrationDesc: 'Hasil refleksi langsung tertampil secara real-time di layar PID dalam bentuk visual Awan Kata yang menarik.'
-      }
-    ];
-
-    const GARUDA_LYRICS = [
-      "🎵 Garuda Pancasila, akulah pendukungmu!",
-      "🎵 Patriot proklamasi, sedia berkorban untukmu!",
-      "🎵 Pancasila dasar negara, rakyat adil makmur sentosa!",
-      "🎵 Pribadi bangsaku... Ayo maju, maju! Ayo maju, maju! Ayo maju, maju! 🇮🇩"
-    ];
-
-    const QUIZ_QUESTIONS = [
-      {
-        id: 1,
-        level: 'C3 - Menerapkan',
-        question: 'Saat berdiskusi mengisi LKPD Digital di Papan Interaktif, Rani dan Bima memiliki pendapat yang berbeda tentang contoh sikap teladan. Sikap yang meneladani para perumus Pancasila adalah...',
-        options: [
-          'Memaksakan pendapat sendiri karena merasa paling benar',
-          'Bermusyawarah dengan tenang dan mencari kesepakatan bersama',
-          'Membiarkan papan digital kosong agar tidak berdebat',
-          'Menghapus tulisan teman tanpa izin'
-        ],
-        correctIndex: 1,
-        explanation: 'Hebat! Para pendiri bangsa seperti Ir. Sukarno dan Moh. Hatta selalu mengutamakan musyawarah untuk mufakat meskipun berbeda pendapat.'
-      },
-      {
-        id: 2,
-        level: 'C4 - Menganalisis',
-        question: 'Drs. Moh. Hatta bersama tokoh-tokoh lainnya rela mengubah tujuh kata pada Piagam Jakarta demi menjaga persatuan seluruh bangsa Indonesia. Nilai keteladanan utama dari peristiwa tersebut adalah...',
-        options: [
-          'Rela berkorban dan mengutamakan persatuan di atas kepentingan golongan',
-          'Mengutamakan keuntungan kelompok sendiri',
-          'Menyerah karena tidak mau berdiskusi lagi',
-          'Keinginan untuk cepat menyelesaikan sidang'
-        ],
-        correctIndex: 0,
-        explanation: 'Luar biasa, Anak Cerdas! Sikap berjiwa besar, toleran, dan rela berkorban demi persatuan bangsa adalah kunci lahirnya Pancasila.'
-      },
-      {
-        id: 3,
-        level: 'C3 - Menentukan',
-        question: 'Tokoh perumus Pancasila yang mengusulkan lima dasar negara pada hari pertama sidang BPUPK (29 Mei 1945) secara lisan dan tertulis adalah...',
-        options: [
-          'Ir. Sukarno',
-          'Drs. Moh. Hatta',
-          'Prof. Mr. Moh. Yamin',
-          'Ki Hajar Dewantara'
-        ],
-        correctIndex: 2,
-        explanation: 'Tepat sekali! Prof. Mr. Moh. Yamin menyampaikan usulan dasar negara pada tanggal 29 Mei 1945.'
-      },
-      {
-        id: 4,
-        level: 'C4 - Menganalisis',
-        question: 'Manakah kegiatan di bawah ini yang merupakan penerapan nyata nilai "Gotong Royong" dan "Mandiri" di lingkungan sekolah?',
-        options: [
-          'Menyontek jawaban teman saat mengerjakan kuis evaluasi',
-          'Melaksanakan piket kelas bersama-sama dengan kesadaran sendiri tanpa harus disuruh guru',
-          'Menyuruh satu orang teman mengerjakan seluruh tugas kelompok',
-          'Hanya mau berteman dengan teman yang satu suku saja'
-        ],
-        correctIndex: 1,
-        explanation: 'Mantap! Piket bersama tanpa disuruh menunjukkan kemandirian sekaligus semangat gotong royong.'
-      },
-      {
-        id: 5,
-        level: 'C4 - Mengevaluasi',
-        question: 'Mengapa para pendiri bangsa bisa bersatu merumuskan Pancasila meskipun memiliki latar belakang suku, agama, dan pemikiran yang berbeda?',
-        options: [
-          'Karena mereka memiliki tujuan mulia yang sama, yaitu Indonesia merdeka dan bersatu',
-          'Karena semua tokoh dipaksa memiliki pendapat yang persis sama',
-          'Karena sidang BPUPK hanya diikuti oleh satu kelompok daerah saja',
-          'Karena tidak ada satu pun tokoh yang berani berbicara di sidang'
-        ],
-        correctIndex: 0,
-        explanation: 'Kamu Cerdas Sekali! Rasa cinta tanah air dan cita-cita persatuan membuat perbedaan menjadi kekuatan.'
-      }
-    ];
-
-    // ============================================================================
-    // KOMPONEN SVG AVATAR TOKOH (TANPA URL EKSTERNAL AGAR SELALU MUNCUL)
-    // ============================================================================
-    const FounderAvatar = ({ id, size = 'w-16 h-16' }) => {
-      return (
-        <div className={`${size} rounded-2xl flex items-center justify-center shadow-inner bg-white/90 border-2 border-white overflow-hidden shrink-0`}>
-          {id === 'sukarno' && (
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <rect width="100" height="100" fill="#FFEDD5" />
-              {/* Jas & Dasi */}
-              <path d="M15 100 L30 70 L70 70 L85 100 Z" fill="#F59E0B" />
-              <polygon points="46,70 54,70 52,95 48,95" fill="#B91C1C" />
-              {/* Wajah */}
-              <circle cx="50" cy="48" r="20" fill="#FDBA74" />
-              {/* Peci Hitam Khas Bung Karno */}
-              <path d="M28 36 L32 20 L68 22 L72 36 Z" fill="#1E293B" />
-              <circle cx="62" cy="28" r="3" fill="#FACC15" />
-              {/* Mata & Senyum Hangat */}
-              <circle cx="43" cy="46" r="2.5" fill="#1E293B" />
-              <circle cx="57" cy="46" r="2.5" fill="#1E293B" />
-              <path d="M43 55 Q50 61 57 55" stroke="#1E293B" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            </svg>
-          )}
-          {id === 'hatta' && (
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <rect width="100" height="100" fill="#E0F2FE" />
-              {/* Jas Putih */}
-              <path d="M15 100 L30 70 L70 70 L85 100 Z" fill="#0284C7" />
-              <polygon points="47,70 53,70 51,95 49,95" fill="#1E3A8A" />
-              {/* Wajah */}
-              <circle cx="50" cy="48" r="20" fill="#FDBA74" />
-              {/* Peci */}
-              <path d="M30 35 L33 21 L67 21 L70 35 Z" fill="#0F172A" />
-              {/* Kacamata Bundar Khas Bung Hatta */}
-              <circle cx="42" cy="46" r="6" stroke="#334155" strokeWidth="2.2" fill="none" />
-              <circle cx="58" cy="46" r="6" stroke="#334155" strokeWidth="2.2" fill="none" />
-              <line x1="48" y1="46" x2="52" y2="46" stroke="#334155" strokeWidth="2.2" />
-              <circle cx="42" cy="46" r="2" fill="#1E293B" />
-              <circle cx="58" cy="46" r="2" fill="#1E293B" />
-              <path d="M44 56 Q50 60 56 56" stroke="#1E293B" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-            </svg>
-          )}
-          {id === 'yamin' && (
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <rect width="100" height="100" fill="#D1FAE5" />
-              <path d="M15 100 L30 70 L70 70 L85 100 Z" fill="#059669" />
-              <circle cx="50" cy="48" r="20" fill="#FDBA74" />
-              {/* Rambut Bergelombang Cendekiawan */}
-              <path d="M29 42 Q30 22 50 24 Q70 22 71 42 Q65 32 50 33 Q35 32 29 42 Z" fill="#1E293B" />
-              <circle cx="43" cy="47" r="2.5" fill="#1E293B" />
-              <circle cx="57" cy="47" r="2.5" fill="#1E293B" />
-              <path d="M44 56 Q50 61 56 56" stroke="#1E293B" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            </svg>
-          )}
-          {id === 'soepomo' && (
-            <svg viewBox="0 0 100 100" className="w-full h-full">
-              <rect width="100" height="100" fill="#EDE9FE" />
-              <path d="M15 100 L30 70 L70 70 L85 100 Z" fill="#4F46E5" />
-              <circle cx="50" cy="48" r="20" fill="#FDBA74" />
-              <path d="M29 36 L34 22 L66 22 L71 36 Z" fill="#312E81" />
-              <circle cx="43" cy="46" r="2.5" fill="#1E293B" />
-              <circle cx="57" cy="46" r="2.5" fill="#1E293B" />
-              <path d="M44 55 Q50 60 56 55" stroke="#1E293B" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            </svg>
-          )}
-        </div>
-      );
-    };
-
-    // ============================================================================
-    // KOMPONEN UTAMA APLIKASI
-    // ============================================================================
-    const App = () => {
-      // Navigasi Mode Utama: 'pid_interactive' (Mode Belajar Siswa/Kelas di PID) vs 'teacher_guide' (Dokumen TP ABCDE, ATP, Panduan PID & Rubrik)
-      const [viewMode, setViewMode] = useState('pid_interactive');
-      const [activeStageIndex, setActiveStageIndex] = useState(0);
-      const [soundEnabled, setSoundEnabled] = useState(true);
-
-      // State Timer untuk Setiap Tahapan (dalam detik, sesuai rancangan 2x35 menit = 70 menit)
-      const [stageTimers, setStageTimers] = useState(() =>
-        STAGES.reduce((acc, stg) => {
-          acc[stg.id] = stg.durationMinutes * 60;
-          return acc;
-        }, {})
-      );
-      const [isTimerRunning, setIsTimerRunning] = useState(false);
-
-      // Toast / Pesan Penyemangat ramah anak (Tanpa alert browser!)
-      const [cheerMessage, setCheerMessage] = useState({
-        visible: false,
-        title: 'Halo, Anak Cerdas! 👋',
-        text: 'Selamat datang di Papan Interaktif Digital (PID) Teladan Hidupku!',
-        type: 'info'
-      });
-
-      const showCheer = (title, text, type = 'success') => {
-        setCheerMessage({ visible: true, title, text, type });
-        if (type === 'success') sfx.success(soundEnabled);
-        else if (type === 'retry') sfx.retry(soundEnabled);
-        else sfx.tap(soundEnabled);
-      };
-
-      // Efek Interval Timer Setiap Tahapan
-      useEffect(() => {
-        if (!isTimerRunning) return;
-        const currentStageId = STAGES[activeStageIndex].id;
-        const interval = setInterval(() => {
-          setStageTimers((prev) => {
-            const currentSec = prev[currentStageId];
-            if (currentSec <= 1) {
-              setIsTimerRunning(false);
-              sfx.bell(soundEnabled);
-              setCheerMessage({
-                visible: true,
-                title: '⏰ Waktu Tahap Ini Selesai!',
-                text: `Hebat! Waktu untuk ${STAGES[activeStageIndex].title} sudah selesai. Yuk, kita lanjut ke tahap berikutnya!`,
-                type: 'info'
-              });
-              return { ...prev, [currentStageId]: 0 };
-            }
-            return { ...prev, [currentStageId]: currentSec - 1 };
-          });
-        }, 1000);
-        return () => clearInterval(interval);
-      }, [isTimerRunning, activeStageIndex, soundEnabled]);
-
-      // Format MM:SS
-      const formatTime = (seconds) => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      };
-
-      const resetCurrentTimer = () => {
-        const stg = STAGES[activeStageIndex];
-        sfx.tap(soundEnabled);
-        setIsTimerRunning(false);
-        setStageTimers((prev) => ({
-          ...prev,
-          [stg.id]: stg.durationMinutes * 60
-        }));
-      };
-
-      // ==========================================================================
-      // STATE TAHAP PENDAHULUAN (Lagu, Match-Up Tap-to-Select, Pemantik)
-      // ==========================================================================
-      const [activeLyricLine, setActiveLyricLine] = useState(0);
-      const [selectedFounderMatch, setSelectedFounderMatch] = useState(null);
-      const [matchedPairs, setMatchedPairs] = useState({}); // { sukarno: true, hatta: true, ... }
-      const [sparkSelected, setSparkSelected] = useState(null);
-
-      // ==========================================================================
-      // STATE TAHAP INTI 1 (Stimulasi Visual & Spidol Digital PID)
-      // ==========================================================================
-      const [activeMarkerColor, setActiveMarkerColor] = useState('yellow');
-      const [highlightedPoints, setHighlightedPoints] = useState({
-        'p1': true,
-        'p3': true
-      });
-
-      // ==========================================================================
-      // STATE TAHAP INTI 2 (Spin the Wheel & Pengorganisasian Kelompok)
-      // ==========================================================================
-      const [isSpinning, setIsSpinning] = useState(false);
-      const [selectedSpinGroup, setSelectedSpinGroup] = useState(null);
-      const [groupReadyStatus, setGroupReadyStatus] = useState({
-        sukarno: true,
-        hatta: false,
-        yamin: false,
-        soepomo: false
-      });
-
-      // ==========================================================================
-      // STATE TAHAP INTI 3 & 4 (Kolaborasi LKPD Digital "Teladan Hidupku" & Gallery Walk)
-      // ==========================================================================
-      const [activeWorkspaceGroup, setActiveWorkspaceGroup] = useState('sukarno');
-      const [zoomFocusGroup, setZoomFocusGroup] = useState('sukarno');
-      const [selectedBankItem, setSelectedBankItem] = useState(null);
-      const [customStickyInput, setCustomStickyInput] = useState('');
-      const [customCategoryInput, setCustomCategoryInput] = useState('Contoh Sikap di Sekolah/Rumah');
-      const [peerCommentInput, setPeerCommentInput] = useState('');
-
-      const [groupCanvases, setGroupCanvases] = useState({
-        sukarno: {
-          groupName: 'Kelompok 1 - Ir. Sukarno',
-          founderId: 'sukarno',
-          photoAttached: true,
-          profileAttached: true,
-          stickies: [
-            { id: 's1', text: 'Mengutamakan Persatuan Bangsa di atas kepentingan pribadi', category: 'Karakter & Nilai Perjuangan', color: 'bg-yellow-200 border-yellow-400 text-yellow-950' },
-            { id: 's2', text: 'Berteman dengan semua teman tanpa membedakan suku & agama', category: 'Contoh Sikap di Sekolah/Rumah', color: 'bg-emerald-200 border-emerald-400 text-emerald-950' }
-          ],
-          stickers: { star: 4, heart: 3, clap: 5, bulb: 2 },
-          comments: ['Keren sekali contoh sikapnya Kelompok 1! 🌟']
-        },
-        hatta: {
-          groupName: 'Kelompok 2 - Drs. Moh. Hatta',
-          founderId: 'hatta',
-          photoAttached: true,
-          profileAttached: true,
-          stickies: [
-            { id: 's3', text: 'Toleransi tinggi & rela berkorban demi kesepakatan bersama', category: 'Karakter & Nilai Perjuangan', color: 'bg-sky-200 border-sky-400 text-sky-950' },
-            { id: 's4', text: 'Datang tepat waktu dan menerima hasil musyawarah kelas', category: 'Contoh Sikap di Sekolah/Rumah', color: 'bg-orange-200 border-orange-400 text-orange-950' }
-          ],
-          stickers: { star: 3, heart: 4, clap: 3, bulb: 3 },
-          comments: ['Sangat menginspirasi untuk disiplin! 👏']
-        },
-        yamin: {
-          groupName: 'Kelompok 3 - Prof. Mr. Moh. Yamin',
-          founderId: 'yamin',
-          photoAttached: true,
-          profileAttached: false,
-          stickies: [
-            { id: 's5', text: 'Bernalar kritis dan berani menyampaikan ide dasar negara', category: 'Karakter & Nilai Perjuangan', color: 'bg-emerald-200 border-emerald-400 text-emerald-950' }
-          ],
-          stickers: { star: 2, heart: 2, clap: 4, bulb: 4 },
-          comments: ['Semangat lengkapi profil singkatnya ya! 💡']
-        },
-        soepomo: {
-          groupName: 'Kelompok 4 - Mr. Soepomo',
-          founderId: 'soepomo',
-          photoAttached: true,
-          profileAttached: false,
-          stickies: [
-            { id: 's6', text: 'Menjunjung tinggi semangat kekeluargaan dan gotong royong', category: 'Karakter & Nilai Perjuangan', color: 'bg-purple-200 border-purple-400 text-purple-950' }
-          ],
-          stickers: { star: 3, heart: 3, clap: 2, bulb: 2 },
-          comments: ['Ayo tambahkan contoh piket bersama di kelas! ❤️']
-        }
-      });
-
-      // ==========================================================================
-      // STATE TAHAP PENUTUP (Refleksi Word Cloud Mentimeter & Kuis Evaluasi)
-      // ==========================================================================
-      const [wordCloudItems, setWordCloudItems] = useState([
-        { word: 'Musyawarah', count: 7, color: 'text-sky-600 bg-sky-100 border-sky-300' },
-        { word: 'Gotong Royong', count: 8, color: 'text-emerald-600 bg-emerald-100 border-emerald-300' },
-        { word: 'Toleransi', count: 6, color: 'text-orange-600 bg-orange-100 border-orange-300' },
-        { word: 'Rela Berkorban', count: 5, color: 'text-rose-600 bg-rose-100 border-rose-300' },
-        { word: 'Disiplin', count: 6, color: 'text-purple-600 bg-purple-100 border-purple-300' },
-        { word: 'Cinta Tanah Air', count: 5, color: 'text-amber-600 bg-amber-100 border-amber-300' },
-        { word: 'Menghargai Pendapat', count: 7, color: 'text-teal-600 bg-teal-100 border-teal-300' },
-        { word: 'Mandiri', count: 4, color: 'text-indigo-600 bg-indigo-100 border-indigo-300' }
-      ]);
-      const [studentReflectionName, setStudentReflectionName] = useState('');
-      const [customReflectionWord, setCustomReflectionWord] = useState('');
-      const [reflectionHistory, setReflectionHistory] = useState([
-        { name: 'Alya', word: 'Gotong Royong' },
-        { name: 'Bagas', word: 'Musyawarah' },
-        { name: 'Citra', word: 'Menghargai Pendapat' }
-      ]);
-
-      // State Kuis Evaluasi
-      const [quizAnswers, setQuizAnswers] = useState({});
-      const [quizSubmitted, setQuizSubmitted] = useState(false);
-
-      // State Rubrik Asesmen Interaktif Guru
-      const [rubricScores, setRubricScores] = useState({
-        sukarno: { kritis: 4, gotongRoyong: 4, ketepatanKarakter: 4, relevansiContoh: 4 },
-        hatta: { kritis: 4, gotongRoyong: 4, ketepatanKarakter: 4, relevansiContoh: 3 },
-        yamin: { kritis: 3, gotongRoyong: 4, ketepatanKarakter: 3, relevansiContoh: 3 },
-        soepomo: { kritis: 3, gotongRoyong: 4, ketepatanKarakter: 3, relevansiContoh: 4 }
-      });
-
-      // ==========================================================================
-      // HANDLER INTERAKSI TAP-TO-SELECT (RAMAH LAYAR SENTUH HP & SMARTBOARD PID)
-      // ==========================================================================
-      const handleSelectTraitCard = (founderId) => {
-        if (!selectedFounderMatch) {
-          showCheer('Pilih Tokoh Dulu Yuk! 👇', 'Ketuk kartu foto tokoh di sebelah kiri terlebih dahulu, lalu ketuk sikap teladan yang cocok!', 'info');
-          return;
-        }
-        if (selectedFounderMatch === founderId) {
-          setMatchedPairs((prev) => ({ ...prev, [founderId]: true }));
-          setSelectedFounderMatch(null);
-          showCheer('Hebat Sekali! 🎉', 'Pasangan tokoh dan karakter teladannya sangat tepat! Kamu memang Anak Cerdas!', 'success');
-        } else {
-          showCheer('Yuk, Coba Lagi! 💪', 'Belum tepat pasangannya. Baca kembali ciri khas sikap tokohnya ya, kamu pasti bisa!', 'retry');
-        }
-      };
-
-      const handleSpinGroupWheel = () => {
-        if (isSpinning) return;
-        setIsSpinning(true);
-        let ticks = 0;
-        const maxTicks = 14;
-        const spinInterval = setInterval(() => {
-          sfx.tick(soundEnabled);
-          const randomFounder = FOUNDERS[ticks % FOUNDERS.length];
-          setSelectedSpinGroup(randomFounder);
-          ticks++;
-          if (ticks >= maxTicks) {
-            clearInterval(spinInterval);
-            const winner = FOUNDERS[Math.floor(Math.random() * FOUNDERS.length)];
-            setSelectedSpinGroup(winner);
-            setIsSpinning(false);
-            showCheer(
-              `🎯 Terpilih: Kelompok ${winner.name}!`,
-              `Silakan perwakilan Kelompok ${winner.name} bersiap di Papan Interaktif Digital!`,
-              'success'
-            );
-          }
-        }, 120);
-      };
-
-      // Menambahkan Sticky Note dari Bank Ide (Tap-to-Select -> Tap-to-Place)
-      const handlePlaceBankStickyToCanvas = () => {
-        if (!selectedBankItem) {
-          showCheer('Pilih Kartu Nilai Dulu Yuk! 👆', 'Ketuk salah satu kartu sikap teladan di atas, lalu ketuk tombol Tempel ke Kanvas!', 'info');
-          return;
-        }
-        const colors = [
-          'bg-yellow-200 border-yellow-400 text-yellow-950',
-          'bg-sky-200 border-sky-400 text-sky-950',
-          'bg-emerald-200 border-emerald-400 text-emerald-950',
-          'bg-orange-200 border-orange-400 text-orange-950'
-        ];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-        setGroupCanvases((prev) => {
-          const current = prev[activeWorkspaceGroup];
-          return {
-            ...prev,
-            [activeWorkspaceGroup]: {
-              ...current,
-              stickies: [
-                ...current.stickies,
-                {
-                  id: 'st-' + Date.now(),
-                  text: `${selectedBankItem.label} — Contoh: ${selectedBankItem.example}`,
-                  category: selectedBankItem.category,
-                  color: randomColor
-                }
-              ]
-            }
-          };
-        });
-        setSelectedBankItem(null);
-        showCheer('Sticky Note Tertempel! 📌', 'Hebat! Ide kelompokmu sudah masuk ke LKPD Digital di Papan Interaktif!', 'success');
-      };
-
-      // Menambahkan Sticky Note Ketikan Sendiri
-      const handleAddCustomSticky = (e) => {
-        e.preventDefault();
-        if (!customStickyInput.trim()) return;
-        const colors = [
-          'bg-yellow-200 border-yellow-400 text-yellow-950',
-          'bg-emerald-200 border-emerald-400 text-emerald-950',
-          'bg-sky-200 border-sky-400 text-sky-950',
-          'bg-pink-200 border-pink-400 text-pink-950'
-        ];
-        const chosenColor = colors[Math.floor(Math.random() * colors.length)];
-
-        setGroupCanvases((prev) => {
-          const current = prev[activeWorkspaceGroup];
-          return {
-            ...prev,
-            [activeWorkspaceGroup]: {
-              ...current,
-              stickies: [
-                ...current.stickies,
-                {
-                  id: 'cust-' + Date.now(),
-                  text: customStickyInput.trim(),
-                  category: customCategoryInput,
-                  color: chosenColor
-                }
-              ]
-            }
-          };
-        });
-        setCustomStickyInput('');
-        showCheer('Karya Hebat! ✨', 'Catatan teladanmu berhasil ditempelkan di kanvas kelompok!', 'success');
-      };
-
-      const handleDeleteSticky = (groupKey, stickyId) => {
-        sfx.tap(soundEnabled);
-        setGroupCanvases((prev) => ({
-          ...prev,
-          [groupKey]: {
-            ...prev[groupKey],
-            stickies: prev[groupKey].stickies.filter((s) => s.id !== stickyId)
-          }
-        }));
-      };
-
-      // Menambahkan Stiker Apresiasi pada Tahap 4 Gallery Walk
-      const handleAddStickerReaction = (groupKey, stickerType) => {
-        setGroupCanvases((prev) => {
-          const current = prev[groupKey];
-          return {
-            ...prev,
-            [groupKey]: {
-              ...current,
-              stickers: {
-                ...current.stickers,
-                [stickerType]: (current.stickers[stickerType] || 0) + 1
-              }
-            }
-          };
-        });
-        showCheer('Apresiasi Terkirim! 🌟', 'Terima kasih sudah menghargai karya kelompok temanmu dengan hangat!', 'success');
-      };
-
-      const handleAddPeerComment = (e) => {
-        e.preventDefault();
-        if (!peerCommentInput.trim()) return;
-        setGroupCanvases((prev) => {
-          const current = prev[zoomFocusGroup];
-          return {
-            ...prev,
-            [zoomFocusGroup]: {
-              ...current,
-              comments: [...current.comments, peerCommentInput.trim()]
-            }
-          };
-        });
-        setPeerCommentInput('');
-        showCheer('Komentar Positif Tertempel! 💬', 'Tanggapanmu langsung tampil di layar PID!', 'success');
-      };
-
-      // Handler Word Cloud Mentimeter (Tahap Penutup)
-      const handleVoteWordCloud = (wordText) => {
-        const cleanWord = wordText.trim();
-        if (!cleanWord) return;
-        setWordCloudItems((prev) => {
-          const exists = prev.find((item) => item.word.toLowerCase() === cleanWord.toLowerCase());
-          if (exists) {
-            return prev.map((item) =>
-              item.word.toLowerCase() === cleanWord.toLowerCase()
-                ? { ...item, count: item.count + 1 }
-                : item
-            );
-          } else {
-            const palette = [
-              'text-sky-600 bg-sky-100 border-sky-300',
-              'text-emerald-600 bg-emerald-100 border-emerald-300',
-              'text-orange-600 bg-orange-100 border-orange-300',
-              'text-purple-600 bg-purple-100 border-purple-300'
-            ];
-            return [
-              ...prev,
-              {
-                word: cleanWord,
-                count: 4,
-                color: palette[prev.length % palette.length]
-              }
-            ];
-          }
-        });
-        setReflectionHistory((prev) => [
-          { name: studentReflectionName.trim() || 'Anak Cerdas', word: cleanWord },
-          ...prev.slice(0, 7)
-        ]);
-        setCustomReflectionWord('');
-        showCheer('Refleksi Masuk ke Awan Kata! ☁️✨', `Hebat! Komitmenmu menerapkan sikap "${cleanWord}" sudah tampil real-time di PID!`, 'success');
-      };
-
-      const currentStage = STAGES[activeStageIndex];
-      const currentRemainingSec = stageTimers[currentStage.id];
-      const totalElapsedPercent = Math.round(
-        ((currentStage.durationMinutes * 60 - currentRemainingSec) / (currentStage.durationMinutes * 60)) * 100
-      );
-
-      const quizScore = useMemo(() => {
-        let correct = 0;
-        QUIZ_QUESTIONS.forEach((q) => {
-          if (quizAnswers[q.id] === q.correctIndex) correct += 1;
-        });
-        return correct * 20;
-      }, [quizAnswers]);
-
-      return (
-        <div className="min-h-screen flex flex-col pb-24">
-          {/* ==================================================================== */}
-          {/* TOP HEADER & STICKY STAGE DURATION TIMER (2x35 MENIT = 70 MENIT)      */}
-          {/* ==================================================================== */}
-          <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-4 border-sky-300 shadow-md">
-            <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                {/* Brand & Identitas Mapel */}
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-emerald-500 flex items-center justify-center text-white text-2xl shadow-md animate-float">
-                    🇮🇩
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 text-xs font-extrabold uppercase tracking-wider bg-amber-300 text-slate-900 rounded-full">
-                        Kelas V SD • 2x35 Menit
-                      </span>
-                      <span className="hidden sm:inline-block px-2.5 py-0.5 text-xs font-bold bg-sky-100 text-sky-800 rounded-full">
-                        Pendidikan Pancasila
-                      </span>
-                    </div>
-                    <h1 className="text-lg sm:text-xl font-bold text-slate-800 leading-tight">
-                      Teladan Hidupku <span className="text-sky-600">— Papan Interaktif Digital (PID)</span>
-                    </h1>
-                  </div>
+    <header class="bg-white border-b-4 border-indigo-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-3 rounded-2xl shadow-md transform -rotate-3">
+                    <i class="fa-solid fa-shapes text-2xl"></i>
                 </div>
-
-                {/* Kontrol Mode & Suara */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      sfx.tap(!soundEnabled);
-                      setSoundEnabled(!soundEnabled);
-                    }}
-                    className={`p-3 rounded-2xl border-2 font-bold text-sm flex items-center gap-1.5 transition active:scale-95 ${
-                      soundEnabled
-                        ? 'bg-emerald-100 border-emerald-400 text-emerald-800'
-                        : 'bg-slate-100 border-slate-300 text-slate-500'
-                    }`}
-                    title="Aktifkan/Matikan Suara Interaktif"
-                  >
-                    <i className={`fa-solid ${soundEnabled ? 'fa-volume-high' : 'fa-volume-xmark'} text-base`}></i>
-                    <span className="hidden md:inline">{soundEnabled ? 'Suara Aktif' : 'Bisu'}</span>
-                  </button>
-
-                  <div className="bg-slate-100 p-1 rounded-2xl border-2 border-slate-200 flex">
-                    <button
-                      onClick={() => { sfx.tap(soundEnabled); setViewMode('pid_interactive'); }}
-                      className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-1.5 ${
-                        viewMode === 'pid_interactive'
-                          ? 'bg-sky-500 text-white shadow'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      <i className="fa-solid fa-tv"></i>
-                      <span>Layar Siswa / PID</span>
-                    </button>
-                    <button
-                      onClick={() => { sfx.tap(soundEnabled); setViewMode('teacher_guide'); }}
-                      className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-1.5 ${
-                        viewMode === 'teacher_guide'
-                          ? 'bg-orange-500 text-white shadow'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      <i className="fa-solid fa-book-open-reader"></i>
-                      <span>TP, ATP & Rubrik</span>
-                    </button>
-                  </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-indigo-900 tracking-wide">Dunia Pecahan</h1>
+                    <p class="text-xs font-bold text-indigo-500 uppercase tracking-wider">Matematika Kelas 5 SD</p>
                 </div>
-              </div>
-
-              {/* BAR PENGHITUNG WAKTU DURASI / TIMER SETIAP TAHAPAN */}
-              <div className="mt-2.5 bg-gradient-to-r from-sky-50 via-amber-50 to-emerald-50 rounded-2xl p-2.5 border-2 border-sky-200 flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-2xl">{currentStage.emoji}</span>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-extrabold uppercase px-2 py-0.5 rounded-lg bg-sky-600 text-white">
-                        {currentStage.code}
-                      </span>
-                      <span className="text-xs font-bold text-slate-600">
-                        Alokasi: {currentStage.durationMinutes} Menit (Total 70 Menit)
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-sm font-extrabold text-slate-800">
-                      {currentStage.title} — <span className="text-sky-700">{currentStage.appUsed}</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Widget Countdown Timer Interaktif */}
-                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-2xl border-2 border-amber-300 shadow-sm ml-auto">
-                  <div className="flex items-center gap-1.5">
-                    <i className={`fa-solid fa-stopwatch text-lg ${isTimerRunning ? 'text-orange-500 animate-bounce' : 'text-slate-500'}`}></i>
-                    <div className="text-left">
-                      <span className="block text-[10px] font-bold uppercase text-slate-400 leading-none">
-                        Timer Tahap Ini
-                      </span>
-                      <span className={`font-display text-lg sm:text-xl font-bold tracking-wider ${
-                        currentRemainingSec < 60 ? 'text-red-600 animate-pulse' : 'text-slate-800'
-                      }`}>
-                        {formatTime(currentRemainingSec)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      sfx.tap(soundEnabled);
-                      setIsTimerRunning(!isTimerRunning);
-                    }}
-                    className={`px-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm text-white shadow transition active:scale-95 flex items-center gap-1.5 ${
-                      isTimerRunning ? 'bg-amber-500 hover:bg-amber-600' : 'bg-emerald-500 hover:bg-emerald-600'
-                    }`}
-                  >
-                    <i className={`fa-solid ${isTimerRunning ? 'fa-pause' : 'fa-play'}`}></i>
-                    <span>{isTimerRunning ? 'Jeda' : 'Mulai'}</span>
-                  </button>
-
-                  <button
-                    onClick={resetCurrentTimer}
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition active:scale-95"
-                    title="Ulangi Timer Tahap Ini"
-                  >
-                    <i className="fa-solid fa-rotate-right"></i>
-                  </button>
-                </div>
-              </div>
-
-              {/* Progress Bar Waktu Tahapan */}
-              <div className="w-full bg-slate-200 h-2 rounded-full mt-1.5 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-sky-500 via-emerald-500 to-amber-400 h-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, totalElapsedPercent))}%` }}
-                ></div>
-              </div>
             </div>
-          </header>
 
-          {/* ==================================================================== */}
-          {/* BANNER SAPAAN PENYEMANGAT RAMAH ANAK                                 */}
-          {/* ==================================================================== */}
-          {cheerMessage.visible && (
-            <div className="max-w-6xl mx-auto w-full px-3 sm:px-6 mt-3">
-              <div className={`rounded-3xl p-3.5 sm:p-4 border-2 shadow-md flex items-center justify-between gap-3 transition-all ${
-                cheerMessage.type === 'success'
-                  ? 'bg-emerald-100 border-emerald-400 text-emerald-950'
-                  : cheerMessage.type === 'retry'
-                  ? 'bg-orange-100 border-orange-400 text-orange-950'
-                  : 'bg-sky-100 border-sky-400 text-sky-950'
-              }`}>
-                <div className="flex items-center gap-3">
-                  <div className="text-2xl sm:text-3xl">
-                    {cheerMessage.type === 'success' ? '🌟' : cheerMessage.type === 'retry' ? '💪' : '💡'}
-                  </div>
-                  <div>
-                    <h4 className="font-display font-bold text-base sm:text-lg leading-snug">
-                      {cheerMessage.title}
-                    </h4>
-                    <p className="text-xs sm:text-sm font-semibold opacity-90">
-                      {cheerMessage.text}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setCheerMessage({ ...cheerMessage, visible: false })}
-                  className="px-3 py-1.5 rounded-xl bg-white/80 hover:bg-white text-xs font-extrabold shadow-sm shrink-0"
-                >
-                  Oke, Mengerti! 👍
+            <!-- Navigation Tabs -->
+            <nav class="flex bg-indigo-50 p-1.5 rounded-2xl border border-indigo-100 font-fun">
+                <button onclick="switchTab('materi')" id="btn-materi" class="nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm">
+                    <i class="fa-solid fa-book-open mr-1.5"></i>Materi Paham
                 </button>
-              </div>
-            </div>
-          )}
-
-          {/* ==================================================================== */}
-          {/* KONTEN UTAMA BERDASARKAN MODE                                        */}
-          {/* ==================================================================== */}
-          <main className="max-w-6xl mx-auto w-full px-3 sm:px-6 mt-4 flex-1">
-            {viewMode === 'pid_interactive' ? (
-              <div>
-                {/* STEPPER TAHAPAN PEMBELAJARAN (6 TAHAP = 70 MENIT) */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-5">
-                  {STAGES.map((stg, idx) => {
-                    const isActive = idx === activeStageIndex;
-                    return (
-                      <button
-                        key={stg.id}
-                        onClick={() => {
-                          sfx.tap(soundEnabled);
-                          setActiveStageIndex(idx);
-                          setIsTimerRunning(false);
-                        }}
-                        className={`p-3 rounded-2xl border-2 text-left transition-all flex flex-col justify-between active:scale-95 ${
-                          isActive
-                            ? `bg-gradient-to-br ${stg.color} text-white border-white shadow-lg scale-[1.02]`
-                            : 'bg-white/90 hover:bg-white border-sky-200 text-slate-700 shadow-sm'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className="text-xl">{stg.emoji}</span>
-                          <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-full ${
-                            isActive ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
-                          }`}>
-                            {formatTime(stageTimers[stg.id])}
-                          </span>
-                        </div>
-                        <div>
-                          <div className={`text-[11px] font-bold uppercase ${isActive ? 'text-white/90' : 'text-sky-600'}`}>
-                            {stg.code}
-                          </div>
-                          <div className="font-display font-bold text-xs sm:text-sm leading-tight line-clamp-1">
-                            {stg.title.replace(/^[A-Z0-9.]+\s*/, '')}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* ============================================================== */}
-                {/* TAHAP A: KEGIATAN PENDAHULUAN (10 MENIT)                       */}
-                {/* ============================================================== */}
-                {currentStage.id === 'pendahuluan' && (
-                  <div className="space-y-6">
-                    {/* 1. Orientasi & Lagu Garuda Pancasila Interaktif */}
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-sky-200 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl font-bold">
-                            🎵
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-sky-600">
-                              1. Orientasi & Pengondisian Kelas
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              Halo, Anak Cerdas! Yuk, Bernyanyi Bersama! 🇮🇩
-                            </h2>
-                          </div>
-                        </div>
-                        <span className="px-3 py-1 rounded-full bg-yellow-100 border border-yellow-400 text-yellow-900 text-xs font-extrabold">
-                          Ketuk baris lirik saat menyanyi di PID!
-                        </span>
-                      </div>
-
-                      <p className="text-sm text-slate-600 mb-4 font-semibold">
-                        Sebelum mulai belajar, mari kita berdoa dan menyanyikan lagu <strong>"Garuda Pancasila"</strong> dengan penuh semangat! Ketuk setiap baris lirik di bawah ini:
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {GARUDA_LYRICS.map((line, i) => (
-                          <button
-                            key={i}
-                            onClick={() => {
-                              setActiveLyricLine(i);
-                              sfx.tap(soundEnabled);
-                            }}
-                            className={`p-4 rounded-2xl border-2 text-left font-display text-base sm:text-lg transition-all active:scale-95 ${
-                              activeLyricLine === i
-                                ? 'bg-gradient-to-r from-amber-300 to-yellow-200 border-amber-500 text-slate-900 shadow-md scale-[1.01]'
-                                : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-sky-50'
-                            }`}
-                          >
-                            {line}
-                          </button>
-                        ))}
-                      </div>
-                    </section>
-
-                    {/* 2. Apersepsi Interaktif Berbasis PID: Match-Up Game (Tap-to-Select) */}
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-orange-200 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">
-                            🧩
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-orange-600">
-                              2. Apersepsi Interaktif PID (Simulasi Wordwall Match-Up)
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              Permainan Jodohkan Tokoh Pendiri Bangsa!
-                            </h2>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            sfx.tap(soundEnabled);
-                            setMatchedPairs({});
-                            setSelectedFounderMatch(null);
-                          }}
-                          className="px-3.5 py-2 rounded-2xl bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-extrabold transition"
-                        >
-                          <i className="fa-solid fa-rotate mr-1"></i> Ulangi Permainan
-                        </button>
-                      </div>
-
-                      <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 mb-5 text-xs sm:text-sm font-bold text-amber-900 flex items-center gap-2.5">
-                        <i className="fa-solid fa-hand-pointer text-xl text-orange-500"></i>
-                        <span>
-                          Cara Bermain di Layar Sentuh / PID: <strong>(1) Ketuk Foto Tokoh</strong> di kolom kiri, lalu <strong>(2) Ketuk Sikap Teladan</strong> yang sesuai di kolom kanan!
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {/* Kolom Kiri: Kartu Tokoh */}
-                        <div className="space-y-3">
-                          <h3 className="font-display font-bold text-sm uppercase tracking-wider text-slate-500">
-                            Langkah 1: Ketuk Tokoh Pendiri Bangsa
-                          </h3>
-                          {FOUNDERS.slice(0, 3).map((founder) => {
-                            const isMatched = matchedPairs[founder.id];
-                            const isSelected = selectedFounderMatch === founder.id;
-                            return (
-                              <button
-                                key={founder.id}
-                                disabled={isMatched}
-                                onClick={() => {
-                                  sfx.tap(soundEnabled);
-                                  setSelectedFounderMatch(founder.id);
-                                }}
-                                className={`w-full p-4 rounded-3xl border-3 text-left flex items-center gap-4 transition-all active:scale-95 ${
-                                  isMatched
-                                    ? 'bg-emerald-100 border-2 border-emerald-500 opacity-90'
-                                    : isSelected
-                                    ? 'bg-sky-100 border-4 border-sky-500 tap-selected shadow-md'
-                                    : 'bg-white hover:bg-sky-50 border-2 border-slate-200 shadow-sm'
-                                }`}
-                              >
-                                <FounderAvatar id={founder.id} size="w-16 h-16" />
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-display font-bold text-lg text-slate-800">
-                                      {founder.name}
-                                    </span>
-                                    {isMatched ? (
-                                      <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-xs font-extrabold">
-                                        ✓ Cocok!
-                                      </span>
-                                    ) : isSelected ? (
-                                      <span className="px-2.5 py-1 rounded-full bg-sky-500 text-white text-xs font-extrabold">
-                                        Dipilih 👇
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                  <p className="text-xs font-semibold text-slate-500 mt-0.5">
-                                    {founder.nickname} • {founder.birth}
-                                  </p>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-
-                        {/* Kolom Kanan: Kartu Sikap Teladan (Urutan Diacak Tetap) */}
-                        <div className="space-y-3">
-                          <h3 className="font-display font-bold text-sm uppercase tracking-wider text-slate-500">
-                            Langkah 2: Ketuk Karakter & Peran yang Sesuai
-                          </h3>
-                          {[FOUNDERS[1], FOUNDERS[2], FOUNDERS[0]].map((founderTarget) => {
-                            const isMatched = matchedPairs[founderTarget.id];
-                            return (
-                              <button
-                                key={founderTarget.id}
-                                disabled={isMatched}
-                                onClick={() => handleSelectTraitCard(founderTarget.id)}
-                                className={`w-full p-4 rounded-3xl border-2 text-left transition-all active:scale-95 min-h-[92px] flex flex-col justify-center ${
-                                  isMatched
-                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-900'
-                                    : selectedFounderMatch
-                                    ? 'bg-amber-50 hover:bg-amber-100 border-amber-400 shadow-md'
-                                    : 'bg-slate-50 hover:bg-slate-100 border-slate-200'
-                                }`}
-                              >
-                                <div className="flex items-start justify-between gap-2">
-                                  <p className="font-bold text-sm sm:text-base text-slate-800">
-                                    "{founderTarget.matchTrait}"
-                                  </p>
-                                  <span className="text-xl shrink-0">
-                                    {isMatched ? '🌟' : '🎯'}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-slate-600 mt-1">
-                                  Peran: {founderTarget.role}
-                                </p>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </section>
-
-                    {/* 3. Pertanyaan Pemantik & Penyampaian Tujuan Pembelajaran (TP ABCDE) */}
-                    <section className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-5 sm:p-6 text-white shadow-lg">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="text-3xl">💡</span>
-                        <div>
-                          <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-100">
-                            3. Pertanyaan Pemantik & Tujuan Pembelajaran
-                          </span>
-                          <h2 className="text-xl sm:text-2xl font-bold">
-                            "Mengapa para pendiri bangsa bisa bersatu merumuskan Pancasila meskipun memiliki perbedaan pendapat?"
-                          </h2>
-                        </div>
-                      </div>
-
-                      <p className="text-sm text-emerald-50 mb-4 font-semibold">
-                        Ketuk pendapat yang menurutmu paling tepat di bawah ini:
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                        {[
-                          {
-                            id: 'ans1',
-                            text: 'Karena mereka mengutamakan persatuan bangsa & bermusyawarah dengan hati terbuka! 🤝',
-                            correct: true
-                          },
-                          {
-                            id: 'ans2',
-                            text: 'Karena mereka saling mendiamkan dan tidak mau berbicara di ruang sidang.',
-                            correct: false
-                          },
-                          {
-                            id: 'ans3',
-                            text: 'Karena mereka cinta tanah air dan rela berkorban demi Indonesia Merdeka! 🇮🇩',
-                            correct: true
-                          }
-                        ].map((opt) => (
-                          <button
-                            key={opt.id}
-                            onClick={() => {
-                              setSparkSelected(opt.id);
-                              if (opt.correct) {
-                                showCheer('Hebat! Jawabanmu Sangat Kritis! 🌟', 'Benar sekali! Sikap musyawarah, cinta tanah air, dan rela berkorban membuat mereka bersatu.', 'success');
-                              } else {
-                                showCheer('Yuk, Coba Lagi! 😊', 'Para pendiri bangsa justru aktif bermusyawarah dengan santun. Coba pilih jawaban lainnya ya!', 'retry');
-                              }
-                            }}
-                            className={`p-4 rounded-2xl text-left font-bold text-sm transition active:scale-95 ${
-                              sparkSelected === opt.id
-                                ? 'bg-yellow-300 text-slate-900 shadow-lg scale-[1.02]'
-                                : 'bg-white/15 hover:bg-white/25 text-white border border-white/30'
-                            }`}
-                          >
-                            {opt.text}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="bg-white/95 text-slate-800 rounded-2xl p-4">
-                        <h4 className="font-display font-bold text-sm sm:text-base text-teal-800 mb-1">
-                          🎯 Misi Belajar Kita Hari Ini (Tujuan Pembelajaran):
-                        </h4>
-                        <p className="text-xs sm:text-sm font-semibold leading-relaxed">
-                          Kita akan berkolaborasi di <strong>Papan Interaktif Digital (PID)</strong> untuk mengidentifikasi minimal <strong>3 nilai keteladanan perumus Pancasila</strong> beserta contoh penerapannya di sekolah dan rumah sebagai wujud <strong>Profil Pelajar Pancasila (Bernalar Kritis, Gotong Royong, dan Mandiri)</strong>!
-                        </p>
-                      </div>
-                    </section>
-                  </div>
-                )}
-
-                {/* ============================================================== */}
-                {/* TAHAP B1: ORIENTASI STIMULASI VISUAL & SPIDOL PID (10 MENIT)   */}
-                {/* ============================================================== */}
-                {currentStage.id === 'inti1' && (
-                  <div className="space-y-6">
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-amber-300 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl">
-                            🖍️
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-amber-600">
-                              Tahap 1 • YouTube / Canva Presentation + Fitur Spidol Digital PID
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              Infografis Interaktif & Spidol Penanda Karakter Penting
-                            </h2>
-                          </div>
-                        </div>
-
-                        {/* Pilihan Warna Spidol Digital PID */}
-                        <div className="flex items-center gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200">
-                          <span className="text-xs font-extrabold text-slate-600 px-2">
-                            Warna Spidol PID:
-                          </span>
-                          {[
-                            { id: 'yellow', label: 'Kuning', cls: 'bg-yellow-300 border-yellow-500' },
-                            { id: 'green', label: 'Hijau', cls: 'bg-emerald-300 border-emerald-500' },
-                            { id: 'sky', label: 'Biru', cls: 'bg-sky-300 border-sky-500' }
-                          ].map((m) => (
-                            <button
-                              key={m.id}
-                              onClick={() => { sfx.tap(soundEnabled); setActiveMarkerColor(m.id); }}
-                              className={`px-3 py-1.5 rounded-xl border-2 text-xs font-extrabold transition ${m.cls} ${
-                                activeMarkerColor === m.id ? 'ring-2 ring-slate-800 scale-105' : 'opacity-70'
-                              }`}
-                            >
-                              🖍️ {m.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3.5 mb-5 text-xs sm:text-sm font-bold text-sky-900 flex items-center justify-between gap-2">
-                        <span>
-                          ✨ <strong>Aktivitas Layar Sentuh PID:</strong> Ketuk kartu poin karakter di bawah ini untuk <strong>melingkari / memberi stabilo spidol digital</strong> pada sikap teladan yang wajib kita tiru!
-                        </span>
-                        <span className="px-3 py-1 rounded-full bg-sky-600 text-white text-xs font-extrabold shrink-0">
-                          Ditandai: {Object.values(highlightedPoints).filter(Boolean).length} / 6 Poin
-                        </span>
-                      </div>
-
-                      {/* Papan Infografis yang Bisa Ditandai Spidol Digital */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {[
-                          {
-                            id: 'p1',
-                            founder: 'Ir. Sukarno',
-                            badge: 'Musyawarah & Persatuan',
-                            desc: 'Menyampaikan usulan dasar negara "Pancasila" dengan penuh semangat cinta tanah air dan merangkul semua golongan.',
-                            icon: '🔥'
-                          },
-                          {
-                            id: 'p2',
-                            founder: 'Drs. Moh. Hatta',
-                            badge: 'Rela Berkorban & Toleransi',
-                            desc: 'Menjadi penengah yang sejuk dan rela mengorbankan kepentingan kelompok demi keutuhan Indonesia dari Sabang sampai Merauke.',
-                            icon: '🕊️'
-                          },
-                          {
-                            id: 'p3',
-                            founder: 'Prof. Mr. Moh. Yamin',
-                            badge: 'Bernalar Kritis & Literasi',
-                            desc: 'Menyusun pemikiran dasar negara secara runtut baik lisan maupun tulisan karena rajin membaca dan mempelajari sejarah bangsa.',
-                            icon: '📖'
-                          },
-                          {
-                            id: 'p4',
-                            founder: 'Mr. Soepomo',
-                            badge: 'Semangat Kekeluargaan',
-                            desc: 'Mengajarkan bahwa bangsa Indonesia adalah satu keluarga besar yang harus saling menolong dan bergotong royong.',
-                            icon: '🏡'
-                          },
-                          {
-                            id: 'p5',
-                            founder: 'Panitia Sembilan',
-                            badge: 'Menghargai Perbedaan Pendapat',
-                            desc: 'Meski berbeda pandangan antara golongan kebangsaan dan keagamaan, mereka tetap duduk bersama mencari jalan tengah terbaik.',
-                            icon: '🤝'
-                          },
-                          {
-                            id: 'p6',
-                            founder: 'Pelajar Pancasila Kelas V',
-                            badge: 'Mandiri & Bertanggung Jawab',
-                            desc: 'Menerapkan nilai keteladanan pendiri bangsa dengan mengerjakan tugas piket, jujur, dan aktif berdiskusi di kelas.',
-                            icon: '🌟'
-                          }
-                        ].map((point) => {
-                          const isMarked = !!highlightedPoints[point.id];
-                          const highlightClass =
-                            activeMarkerColor === 'yellow'
-                              ? 'bg-yellow-100 border-amber-500 ring-4 ring-yellow-300/60'
-                              : activeMarkerColor === 'green'
-                              ? 'bg-emerald-100 border-emerald-500 ring-4 ring-emerald-300/60'
-                              : 'bg-sky-100 border-sky-500 ring-4 ring-sky-300/60';
-
-                          return (
-                            <button
-                              key={point.id}
-                              onClick={() => {
-                                const nextState = !isMarked;
-                                setHighlightedPoints((prev) => ({ ...prev, [point.id]: nextState }));
-                                if (nextState) {
-                                  showCheer('Poin Penting Dilingkari! 🖍️', `Bagus! Karakter "${point.badge}" dari ${point.founder} berhasil ditandai di layar PID!`, 'success');
-                                } else {
-                                  sfx.tap(soundEnabled);
-                                }
-                              }}
-                              className={`p-4 rounded-3xl border-3 text-left transition-all active:scale-95 relative overflow-hidden ${
-                                isMarked
-                                  ? highlightClass
-                                  : 'bg-slate-50 hover:bg-white border-2 border-slate-200'
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-2 mb-1.5">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-2xl">{point.icon}</span>
-                                  <div>
-                                    <span className="text-xs font-extrabold uppercase text-sky-700 block">
-                                      {point.founder}
-                                    </span>
-                                    <h3 className="font-display font-bold text-base sm:text-lg text-slate-900">
-                                      {point.badge}
-                                    </h3>
-                                  </div>
-                                </div>
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold border ${
-                                  isMarked
-                                    ? 'bg-rose-500 text-white border-rose-600 shadow'
-                                    : 'bg-white text-slate-500 border-slate-300'
-                                }`}>
-                                  {isMarked ? '⭕ Dilingkari Spidol' : 'Ketuk untuk Tandai'}
-                                </span>
-                              </div>
-                              <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed">
-                                {point.desc}
-                              </p>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  </div>
-                )}
-
-                {/* ============================================================== */}
-                {/* TAHAP B2: PENGORGANISASIAN KELOMPOK & AKSES PID (10 MENIT)     */}
-                {/* ============================================================== */}
-                {currentStage.id === 'inti2' && (
-                  <div className="space-y-6">
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-emerald-300 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl">
-                            🎡
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-emerald-600">
-                              Tahap 2 • Pembagian Kelompok & Roda Putar Interaktif (Spin the Wheel)
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              Akses Papan Digital Kelompok (Workspace PID)
-                            </h2>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={handleSpinGroupWheel}
-                          disabled={isSpinning}
-                          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-display font-bold text-sm sm:text-base shadow-lg transition active:scale-95 flex items-center gap-2"
-                        >
-                          <i className={`fa-solid fa-dharmachakra text-lg ${isSpinning ? 'animate-spin' : ''}`}></i>
-                          <span>{isSpinning ? 'Memutar Roda...' : 'Putar Roda Panggil Kelompok!'}</span>
-                        </button>
-                      </div>
-
-                      {/* Hasil Roda Putar */}
-                      {selectedSpinGroup && (
-                        <div className="mb-5 p-4 rounded-3xl bg-gradient-to-r from-amber-100 via-yellow-100 to-orange-100 border-3 border-amber-400 flex flex-wrap items-center justify-between gap-3 shadow-inner">
-                          <div className="flex items-center gap-3">
-                            <FounderAvatar id={selectedSpinGroup.id} size="w-14 h-14" />
-                            <div>
-                              <span className="text-xs font-extrabold uppercase text-orange-700">
-                                🎯 Kelompok Terpilih di Layar PID:
-                              </span>
-                              <h3 className="font-display font-bold text-lg sm:text-xl text-slate-900">
-                                Kelompok {selectedSpinGroup.name} ({selectedSpinGroup.nickname})
-                              </h3>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => {
-                              setActiveWorkspaceGroup(selectedSpinGroup.id);
-                              setActiveStageIndex(3); // Langsung ke Tahap 3 LKPD
-                              sfx.success(soundEnabled);
-                            }}
-                            className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-extrabold shadow"
-                          >
-                            Buka Kanvas Kelompok Ini <i className="fa-solid fa-arrow-right ml-1"></i>
-                          </button>
-                        </div>
-                      )}
-
-                      <p className="text-sm text-slate-600 font-semibold mb-4">
-                        Di layar PID, papan digital (Canva Whiteboard / Padlet) telah dibagi menjadi <strong>4 Area Kerja Kelompok</strong>. Ketuk tombol <strong>"Siap Kolaborasi!"</strong> pada masing-masing kelompok setelah anggota kelompok berkumpul:
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {FOUNDERS.map((f, index) => {
-                          const isReady = groupReadyStatus[f.id];
-                          return (
-                            <div
-                              key={f.id}
-                              className={`p-4 rounded-3xl border-3 transition-all flex flex-col justify-between ${
-                                isReady
-                                  ? 'bg-emerald-50 border-2 border-emerald-400 shadow-md'
-                                  : 'bg-slate-50 border-2 border-slate-200'
-                              }`}
-                            >
-                              <div className="flex items-start gap-3.5">
-                                <FounderAvatar id={f.id} size="w-16 h-16" />
-                                <div className="flex-1">
-                                  <span className="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-white border border-slate-200 text-slate-700">
-                                    Area Kanvas #{index + 1}
-                                  </span>
-                                  <h3 className="font-display font-bold text-lg text-slate-800 mt-1">
-                                    Kelompok {f.name}
-                                  </h3>
-                                  <p className="text-xs text-slate-600 font-semibold mt-0.5">
-                                    Fokus Kajian: {f.matchTrait}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
-                                <button
-                                  onClick={() => {
-                                    const next = !isReady;
-                                    setGroupReadyStatus((prev) => ({ ...prev, [f.id]: next }));
-                                    if (next) {
-                                      showCheer(`Kelompok ${f.name} Siap! 🚀`, 'Perangkat tablet/akses PID kelompok sudah tersinkronisasi!', 'success');
-                                    } else {
-                                      sfx.tap(soundEnabled);
-                                    }
-                                  }}
-                                  className={`px-3.5 py-2 rounded-2xl text-xs font-extrabold transition active:scale-95 ${
-                                    isReady
-                                      ? 'bg-emerald-500 text-white shadow'
-                                      : 'bg-white border-2 border-slate-300 text-slate-700 hover:bg-slate-100'
-                                  }`}
-                                >
-                                  {isReady ? '✓ Kelompok Sudah Siap!' : 'Tandai Kelompok Siap'}
-                                </button>
-
-                                <button
-                                  onClick={() => {
-                                    sfx.tap(soundEnabled);
-                                    setActiveWorkspaceGroup(f.id);
-                                    setActiveStageIndex(3);
-                                  }}
-                                  className="px-3.5 py-2 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold transition active:scale-95"
-                                >
-                                  Isi LKPD Digital <i className="fa-solid fa-pen-to-square ml-1"></i>
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  </div>
-                )}
-
-                {/* ============================================================== */}
-                {/* TAHAP B3: KOLABORASI LKPD DIGITAL "TELADAN HIDUPKU" (15 MENIT) */}
-                {/* ============================================================== */}
-                {currentStage.id === 'inti3' && (
-                  <div className="space-y-6">
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-violet-300 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl">
-                            📋
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-violet-600">
-                              Tahap 3 • Simulasi Canva Whiteboard / Padlet di PID
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              LKPD Digital Kolaboratif: "Teladan Hidupku"
-                            </h2>
-                          </div>
-                        </div>
-
-                        {/* Pemilih Kanvas Kelompok */}
-                        <div className="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
-                          {FOUNDERS.map((f, idx) => (
-                            <button
-                              key={f.id}
-                              onClick={() => {
-                                sfx.tap(soundEnabled);
-                                setActiveWorkspaceGroup(f.id);
-                                setSelectedBankItem(null);
-                              }}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition ${
-                                activeWorkspaceGroup === f.id
-                                  ? 'bg-violet-600 text-white shadow'
-                                  : 'text-slate-600 hover:bg-white'
-                              }`}
-                            >
-                              Kelompok {idx + 1} ({f.name.split(' ').pop()})
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {(() => {
-                        const activeFounder = FOUNDERS.find((f) => f.id === activeWorkspaceGroup);
-                        const activeCanvas = groupCanvases[activeWorkspaceGroup];
-
-                        return (
-                          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-                            {/* Panel Kiri: Alat Bantu Tap-to-Select & Input Sticky Note */}
-                            <div className="lg:col-span-5 space-y-4">
-                              {/* Langkah 1 & 2: Tempel Foto & Profil Singkat */}
-                              <div className="bg-violet-50 rounded-2xl p-4 border-2 border-violet-200">
-                                <h3 className="font-display font-bold text-sm sm:text-base text-violet-900 mb-2">
-                                  1️⃣ Kelengkapan Identitas Tokoh di Kanvas:
-                                </h3>
-                                <div className="grid grid-cols-2 gap-2">
-                                  <button
-                                    onClick={() => {
-                                      setGroupCanvases((prev) => ({
-                                        ...prev,
-                                        [activeWorkspaceGroup]: {
-                                          ...prev[activeWorkspaceGroup],
-                                          photoAttached: !prev[activeWorkspaceGroup].photoAttached
-                                        }
-                                      }));
-                                      showCheer('Foto Tokoh Diperbarui! 🖼️', 'Foto tokoh sudah tertempel rapi di kanvas digital kelompokmu!', 'success');
-                                    }}
-                                    className={`p-3 rounded-2xl border-2 text-xs font-extrabold flex items-center justify-center gap-1.5 transition active:scale-95 ${
-                                      activeCanvas.photoAttached
-                                        ? 'bg-emerald-500 text-white border-emerald-600'
-                                        : 'bg-white text-slate-700 border-slate-300'
-                                    }`}
-                                  >
-                                    <i className="fa-solid fa-image"></i>
-                                    <span>{activeCanvas.photoAttached ? '✓ Foto Tertempel' : '+ Tempel Foto'}</span>
-                                  </button>
-
-                                  <button
-                                    onClick={() => {
-                                      setGroupCanvases((prev) => ({
-                                        ...prev,
-                                        [activeWorkspaceGroup]: {
-                                          ...prev[activeWorkspaceGroup],
-                                          profileAttached: !prev[activeWorkspaceGroup].profileAttached
-                                        }
-                                      }));
-                                      showCheer('Profil Singkat Tertempel! 🪪', 'Hebat! Profil singkat tokoh sudah tampil di kanvas PID!', 'success');
-                                    }}
-                                    className={`p-3 rounded-2xl border-2 text-xs font-extrabold flex items-center justify-center gap-1.5 transition active:scale-95 ${
-                                      activeCanvas.profileAttached
-                                        ? 'bg-emerald-500 text-white border-emerald-600'
-                                        : 'bg-white text-slate-700 border-slate-300'
-                                    }`}
-                                  >
-                                    <i className="fa-solid fa-id-card"></i>
-                                    <span>{activeCanvas.profileAttached ? '✓ Profil Lengkap' : '+ Tempel Profil'}</span>
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Langkah 3: Bank Sikap Teladan (Tap-to-Select, Tanpa Drag-and-Drop!) */}
-                              <div className="bg-amber-50 rounded-2xl p-4 border-2 border-amber-200">
-                                <h3 className="font-display font-bold text-sm sm:text-base text-amber-900 mb-1">
-                                  2️⃣ Pilih Kartu Nilai & Sikap Teladan (Tap-to-Select):
-                                </h3>
-                                <p className="text-xs text-amber-800 font-semibold mb-3">
-                                  Ketuk salah satu kartu nilai di bawah ini, lalu ketuk tombol <strong>"Tempel ke Kanvas PID"</strong>:
-                                </p>
-
-                                <div className="space-y-2 mb-3">
-                                  {activeFounder.keyValues.map((kv) => {
-                                    const isSelected = selectedBankItem && selectedBankItem.id === kv.id;
-                                    return (
-                                      <button
-                                        key={kv.id}
-                                        onClick={() => {
-                                          sfx.tap(soundEnabled);
-                                          setSelectedBankItem(kv);
-                                        }}
-                                        className={`w-full p-3 rounded-2xl border-2 text-left transition active:scale-95 ${
-                                          isSelected
-                                            ? 'bg-sky-100 border-sky-500 ring-2 ring-sky-400 shadow'
-                                            : 'bg-white hover:bg-amber-100/50 border-amber-300'
-                                        }`}
-                                      >
-                                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-200 text-amber-900">
-                                          {kv.category}
-                                        </span>
-                                        <p className="font-bold text-xs sm:text-sm text-slate-800 mt-1">
-                                          {kv.label}
-                                        </p>
-                                        <p className="text-xs text-slate-600 mt-0.5">
-                                          Contoh: {kv.example}
-                                        </p>
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-
-                                <button
-                                  onClick={handlePlaceBankStickyToCanvas}
-                                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-display font-bold text-sm shadow-md transition active:scale-95"
-                                >
-                                  📌 Tempel Kartu Terpilih ke Kanvas PID!
-                                </button>
-                              </div>
-
-                              {/* Langkah 4: Tulis Sticky Note Sendiri */}
-                              <form onSubmit={handleAddCustomSticky} className="bg-emerald-50 rounded-2xl p-4 border-2 border-emerald-200 space-y-2.5">
-                                <h3 className="font-display font-bold text-sm sm:text-base text-emerald-900">
-                                  3️⃣ Tulis Sticky Note Sikap Teladan Kelompokmu:
-                                </h3>
-                                <select
-                                  value={customCategoryInput}
-                                  onChange={(e) => setCustomCategoryInput(e.target.value)}
-                                  className="w-full p-2.5 rounded-xl border-2 border-emerald-300 bg-white text-xs font-bold text-slate-700"
-                                >
-                                  <option value="Karakter & Nilai Perjuangan">Kategori: Karakter & Nilai Perjuangan</option>
-                                  <option value="Contoh Sikap di Sekolah/Rumah">Kategori: Contoh Sikap di Sekolah/Rumah</option>
-                                  <option value="Profil Pelajar Pancasila">Kategori: Profil Pelajar Pancasila</option>
-                                </select>
-                                <input
-                                  type="text"
-                                  value={customStickyInput}
-                                  onChange={(e) => setCustomStickyInput(e.target.value)}
-                                  placeholder="Contoh: Menghargai pendapat teman saat diskusi..."
-                                  className="w-full p-3 rounded-xl border-2 border-emerald-300 bg-white text-xs sm:text-sm font-semibold focus:outline-none focus:border-emerald-600"
-                                />
-                                <button
-                                  type="submit"
-                                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow transition active:scale-95"
-                                >
-                                  + Tambahkan Sticky Note ke Kanvas
-                                </button>
-                              </form>
-                            </div>
-
-                            {/* Panel Kanan: Area Kanvas Digital Kelompok (Whiteboard Workspace) */}
-                            <div className="lg:col-span-7">
-                              <div className="bg-slate-900 rounded-3xl p-4 sm:p-5 border-4 border-slate-700 shadow-xl min-h-[480px] flex flex-col justify-between relative overflow-hidden">
-                                {/* Grid Dot Pattern ala Smartboard / Miro / Canva Whiteboard */}
-                                <div
-                                  className="absolute inset-0 opacity-15 pointer-events-none"
-                                  style={{
-                                    backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)',
-                                    backgroundSize: '20px 20px'
-                                  }}
-                                ></div>
-
-                                <div className="relative z-10">
-                                  {/* Header Kanvas Kelompok */}
-                                  <div className="bg-white/95 rounded-2xl p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow">
-                                    <div className="flex items-center gap-3">
-                                      {activeCanvas.photoAttached ? (
-                                        <FounderAvatar id={activeFounder.id} size="w-16 h-16" />
-                                      ) : (
-                                        <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-slate-400 flex items-center justify-center text-xs text-slate-400 font-bold text-center p-1">
-                                          Foto Belum Ditempel
-                                        </div>
-                                      )}
-                                      <div>
-                                        <span className="px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800 text-[11px] font-extrabold">
-                                          LKPD Digital "Teladan Hidupku"
-                                        </span>
-                                        <h3 className="font-display font-bold text-lg sm:text-xl text-slate-900">
-                                          {activeCanvas.groupName}
-                                        </h3>
-                                        {activeCanvas.profileAttached ? (
-                                          <p className="text-xs font-semibold text-slate-600">
-                                            📍 {activeFounder.birth} • {activeFounder.role}
-                                          </p>
-                                        ) : (
-                                          <p className="text-xs italic text-rose-500 font-bold">
-                                            (Ketuk tombol "+ Tempel Profil" di sebelah kiri untuk menampilkan profil tokoh)
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  {/* Indikator Ketuntasan Degree (Minimal 3 Nilai Keteladanan) */}
-                                  <div className="mb-3 flex items-center justify-between text-xs font-extrabold text-white px-1">
-                                    <span>
-                                      📌 Sticky Notes Tertempel: {activeCanvas.stickies.length} Kartu (Target Minimal: 3)
-                                    </span>
-                                    {activeCanvas.stickies.length >= 3 ? (
-                                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-900">
-                                        🎉 Target Tercapai! Hebat!
-                                      </span>
-                                    ) : (
-                                      <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-900">
-                                        Yuk tambah {3 - activeCanvas.stickies.length} kartu lagi!
-                                      </span>
-                                    )}
-                                  </div>
-
-                                  {/* Daftar Sticky Notes di Kanvas */}
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {activeCanvas.stickies.map((sticky) => (
-                                      <div
-                                        key={sticky.id}
-                                        className={`p-4 rounded-2xl border-2 shadow-md relative transition transform hover:-rotate-1 ${sticky.color}`}
-                                      >
-                                        <div className="flex items-center justify-between gap-2 mb-1.5">
-                                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-black/10">
-                                            {sticky.category}
-                                          </span>
-                                          <button
-                                            onClick={() => handleDeleteSticky(activeWorkspaceGroup, sticky.id)}
-                                            className="w-6 h-6 rounded-full bg-black/10 hover:bg-red-500 hover:text-white text-xs flex items-center justify-center transition"
-                                            title="Hapus Sticky Note"
-                                          >
-                                            ×
-                                          </button>
-                                        </div>
-                                        <p className="font-bold text-xs sm:text-sm leading-snug">
-                                          {sticky.text}
-                                        </p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {/* Footer Kanvas */}
-                                <div className="relative z-10 mt-6 pt-3 border-t border-slate-700 flex items-center justify-between text-xs text-slate-300">
-                                  <span>💡 Tersinkronisasi otomatis ke tahap Gallery Walk PID</span>
-                                  <button
-                                    onClick={() => {
-                                      sfx.tap(soundEnabled);
-                                      setZoomFocusGroup(activeWorkspaceGroup);
-                                      setActiveStageIndex(4);
-                                    }}
-                                    className="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-extrabold shadow"
-                                  >
-                                    Presentasikan di PID (Zoom-In) <i className="fa-solid fa-magnifying-glass-plus ml-1"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })()}
-                    </section>
-                  </div>
-                )}
-
-                {/* ============================================================== */}
-                {/* TAHAP B4: PRESENTASI & GALLERY WALK DIGITAL DI PID (15 MENIT)  */}
-                {/* ============================================================== */}
-                {currentStage.id === 'inti4' && (
-                  <div className="space-y-6">
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-pink-300 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-2xl">
-                            🔍
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-pink-600">
-                              Tahap 4 • Feature Focus / Zoom-In PID & Gallery Walk Digital
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              Presentasi Kelompok & Stiker Apresiasi Teman
-                            </h2>
-                          </div>
-                        </div>
-
-                        {/* Tombol Zoom-In per Kelompok */}
-                        <div className="flex flex-wrap gap-1.5">
-                          {FOUNDERS.map((f, idx) => (
-                            <button
-                              key={f.id}
-                              onClick={() => {
-                                sfx.tap(soundEnabled);
-                                setZoomFocusGroup(f.id);
-                              }}
-                              className={`px-3.5 py-2 rounded-2xl text-xs font-extrabold transition flex items-center gap-1.5 ${
-                                zoomFocusGroup === f.id
-                                  ? 'bg-pink-500 text-white shadow-md scale-105'
-                                  : 'bg-slate-100 text-slate-700 hover:bg-pink-50'
-                              }`}
-                            >
-                              <i className="fa-solid fa-magnifying-glass-plus"></i>
-                              <span>Zoom Kelompok {idx + 1}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {(() => {
-                        const focusedFounder = FOUNDERS.find((f) => f.id === zoomFocusGroup);
-                        const focusedCanvas = groupCanvases[zoomFocusGroup];
-
-                        return (
-                          <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-5 sm:p-6 text-white border-4 border-pink-400 shadow-2xl">
-                            <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/15">
-                              <div className="flex items-center gap-4">
-                                <FounderAvatar id={focusedFounder.id} size="w-20 h-20" />
-                                <div>
-                                  <span className="px-3 py-1 rounded-full bg-pink-500 text-white text-xs font-extrabold uppercase">
-                                    🔍 Mode Zoom-In Layar PID Aktif
-                                  </span>
-                                  <h3 className="font-display font-bold text-2xl sm:text-3xl mt-1">
-                                    {focusedCanvas.groupName}
-                                  </h3>
-                                  <p className="text-xs sm:text-sm text-sky-200 font-semibold">
-                                    {focusedFounder.role}
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* Bar Stiker Apresiasi Interaktif */}
-                              <div className="bg-white/10 backdrop-blur p-3 rounded-2xl border border-white/20">
-                                <span className="block text-[11px] font-extrabold uppercase text-pink-200 mb-1.5">
-                                  Ketuk untuk Beri Stiker Apresiasi Kelompok Ini:
-                                </span>
-                                <div className="flex flex-wrap gap-2">
-                                  {[
-                                    { key: 'star', emoji: '🌟', label: 'Hebat!' },
-                                    { key: 'heart', emoji: '❤️', label: 'Inspiratif!' },
-                                    { key: 'clap', emoji: '👏', label: 'Kompak!' },
-                                    { key: 'bulb', emoji: '💡', label: 'Kritis!' }
-                                  ].map((st) => (
-                                    <button
-                                      key={st.key}
-                                      onClick={() => handleAddStickerReaction(zoomFocusGroup, st.key)}
-                                      className="px-3 py-2 rounded-xl bg-white text-slate-900 hover:bg-yellow-300 font-extrabold text-xs sm:text-sm flex items-center gap-1.5 shadow transition active:scale-90"
-                                    >
-                                      <span className="text-base">{st.emoji}</span>
-                                      <span>{st.label}</span>
-                                      <span className="px-1.5 py-0.5 rounded-full bg-slate-900 text-white text-xs">
-                                        {focusedCanvas.stickers[st.key]}
-                                      </span>
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Isi Sticky Notes yang Diperbesar */}
-                            <div className="my-5">
-                              <h4 className="font-display font-bold text-base text-amber-300 mb-3">
-                                📌 Hasil Karya Identifikasi Karakter & Sikap Teladan:
-                              </h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                {focusedCanvas.stickies.map((st) => (
-                                  <div
-                                    key={st.id}
-                                    className={`p-4 rounded-2xl border-2 shadow-lg ${st.color}`}
-                                  >
-                                    <span className="text-[11px] font-extrabold uppercase px-2 py-0.5 rounded bg-black/10">
-                                      {st.category}
-                                    </span>
-                                    <p className="font-bold text-sm sm:text-base mt-1.5">
-                                      {st.text}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-
-                            {/* Komentar & Tanggapan Teman / Penguatan Guru */}
-                            <div className="bg-white/10 rounded-2xl p-4 border border-white/15">
-                              <h4 className="font-display font-bold text-sm sm:text-base text-sky-200 mb-2">
-                                💬 Tanggapan Kelompok Lain & Penguatan Guru di PID:
-                              </h4>
-                              <div className="flex flex-wrap gap-2 mb-3">
-                                {focusedCanvas.comments.map((c, i) => (
-                                  <span
-                                    key={i}
-                                    className="px-3.5 py-2 rounded-2xl bg-white text-slate-800 text-xs sm:text-sm font-bold shadow"
-                                  >
-                                    {c}
-                                  </span>
-                                ))}
-                              </div>
-                              <form onSubmit={handleAddPeerComment} className="flex flex-col sm:flex-row gap-2">
-                                <input
-                                  type="text"
-                                  value={peerCommentInput}
-                                  onChange={(e) => setPeerCommentInput(e.target.value)}
-                                  placeholder="Tulis tanggapan positif atau apresiasi untuk kelompok yang tampil..."
-                                  className="flex-1 p-3 rounded-xl bg-white text-slate-800 text-xs sm:text-sm font-semibold focus:outline-none"
-                                />
-                                <button
-                                  type="submit"
-                                  className="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shrink-0 transition active:scale-95"
-                                >
-                                  Tempel Komentar di PID 💬
-                                </button>
-                              </form>
-                            </div>
-                          </div>
-                        );
-                      })()}
-                    </section>
-                  </div>
-                )}
-
-                {/* ============================================================== */}
-                {/* TAHAP C: KEGIATAN PENUTUP - REFLEKSI WORD CLOUD & KUIS (10 MNT)*/}
-                {/* ============================================================== */}
-                {currentStage.id === 'penutup' && (
-                  <div className="space-y-6">
-                    {/* 1. Refleksi Digital & Awan Kata (Simulasi Mentimeter / Slido) */}
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-teal-300 shadow-lg">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center text-2xl">
-                          ☁️
-                        </span>
-                        <div>
-                          <span className="text-xs font-extrabold uppercase text-teal-600">
-                            1. Refleksi Digital Interaktif (Simulasi Mentimeter / Slido di PID)
-                          </span>
-                          <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                            "Nilai keteladanan apa yang paling ingin kamu terapkan mulai hari ini?"
-                          </h2>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-                        {/* Input & Pilihan Cepat Siswa */}
-                        <div className="lg:col-span-5 space-y-3 bg-teal-50 p-4 rounded-2xl border-2 border-teal-200">
-                          <label className="block text-xs font-extrabold uppercase text-teal-800">
-                            Nama Panggilanmu (Opsional):
-                          </label>
-                          <input
-                            type="text"
-                            value={studentReflectionName}
-                            onChange={(e) => setStudentReflectionName(e.target.value)}
-                            placeholder="Contoh: Budi - Kelas 5A"
-                            className="w-full p-2.5 rounded-xl border-2 border-teal-300 bg-white text-xs sm:text-sm font-bold"
-                          />
-
-                          <label className="block text-xs font-extrabold uppercase text-teal-800 pt-1">
-                            Ketuk Cepat Nilai Keteladanan Pilihanmu:
-                          </label>
-                          <div className="flex flex-wrap gap-2">
-                            {['Musyawarah', 'Gotong Royong', 'Toleransi', 'Rela Berkorban', 'Disiplin', 'Mandiri', 'Menghargai Pendapat'].map((w) => (
-                              <button
-                                key={w}
-                                onClick={() => handleVoteWordCloud(w)}
-                                className="px-3 py-2 rounded-xl bg-white hover:bg-teal-600 hover:text-white border-2 border-teal-300 text-teal-900 font-extrabold text-xs transition active:scale-95 shadow-sm"
-                              >
-                                + {w}
-                              </button>
-                            ))}
-                          </div>
-
-                          <form
-                            onSubmit={(e) => {
-                              e.preventDefault();
-                              handleVoteWordCloud(customReflectionWord);
-                            }}
-                            className="pt-2 flex gap-2"
-                          >
-                            <input
-                              type="text"
-                              value={customReflectionWord}
-                              onChange={(e) => setCustomReflectionWord(e.target.value)}
-                              placeholder="Atau ketik sikap teladan lainnya..."
-                              className="flex-1 p-2.5 rounded-xl border-2 border-teal-300 bg-white text-xs font-bold"
-                            />
-                            <button
-                              type="submit"
-                              className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs shrink-0"
-                            >
-                              Kirim 🚀
-                            </button>
-                          </form>
-                        </div>
-
-                        {/* Visualisasi Live Word Cloud di PID */}
-                        <div className="lg:col-span-7 bg-slate-900 rounded-3xl p-5 border-4 border-teal-400 flex flex-col justify-between">
-                          <div className="flex items-center justify-between text-xs text-teal-200 font-bold mb-3">
-                            <span>🔴 LIVE WORD CLOUD (AWAN KATA) KELAS V SD</span>
-                            <span>Semakin sering dipilih, ukuran kata semakin besar!</span>
-                          </div>
-
-                          <div className="flex flex-wrap items-center justify-center gap-3 py-6 px-2 min-h-[200px]">
-                            {wordCloudItems.map((item, idx) => {
-                              const sizeClass =
-                                item.count >= 9
-                                  ? 'text-2xl sm:text-3xl px-5 py-2.5'
-                                  : item.count >= 7
-                                  ? 'text-xl sm:text-2xl px-4 py-2'
-                                  : item.count >= 5
-                                  ? 'text-base sm:text-lg px-3.5 py-1.5'
-                                  : 'text-xs sm:text-sm px-3 py-1';
-                              return (
-                                <button
-                                  key={idx}
-                                  onClick={() => handleVoteWordCloud(item.word)}
-                                  className={`rounded-2xl border-2 font-display font-bold shadow-md transition transform hover:scale-110 active:scale-95 ${sizeClass} ${item.color}`}
-                                >
-                                  {item.word} <span className="text-xs opacity-75">({item.count})</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          <div className="border-t border-slate-700 pt-2.5 flex flex-wrap items-center gap-2 text-xs text-slate-300">
-                            <span className="font-bold text-amber-300">Baru saja berkomitmen:</span>
-                            {reflectionHistory.slice(0, 4).map((rh, i) => (
-                              <span key={i} className="px-2.5 py-0.5 rounded-full bg-white/10 text-white">
-                                {rh.name}: <strong>{rh.word}</strong>
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </section>
-
-                    {/* 2. Kuis Evaluasi Singkat (Simulasi Quizizz / Wordwall - 5 Soal C3/C4) */}
-                    <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-sky-300 shadow-lg">
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl">
-                            🏆
-                          </span>
-                          <div>
-                            <span className="text-xs font-extrabold uppercase text-sky-600">
-                              2. Kuis Evaluasi Formatif (5 Soal HOTS C3/C4)
-                            </span>
-                            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                              Uji Pemahaman: Teladan Perumus Pancasila
-                            </h2>
-                          </div>
-                        </div>
-
-                        {quizSubmitted && (
-                          <div className="px-4 py-2 rounded-2xl bg-amber-300 text-slate-900 font-display font-bold text-lg shadow">
-                            Skor Kelas/Siswa: {quizScore} / 100 🌟
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-4">
-                        {QUIZ_QUESTIONS.map((q, qIndex) => {
-                          const selectedOpt = quizAnswers[q.id];
-                          const isCorrect = selectedOpt === q.correctIndex;
-                          return (
-                            <div key={q.id} className="p-4 sm:p-5 rounded-3xl bg-slate-50 border-2 border-slate-200">
-                              <div className="flex items-center justify-between gap-2 mb-2">
-                                <span className="px-2.5 py-0.5 rounded-full bg-sky-600 text-white text-xs font-extrabold">
-                                  Soal #{qIndex + 1}
-                                </span>
-                                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-extrabold">
-                                  Taksonomi Bloom: {q.level}
-                                </span>
-                              </div>
-                              <p className="font-bold text-sm sm:text-base text-slate-800 mb-3">
-                                {q.question}
-                              </p>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                {q.options.map((opt, optIdx) => {
-                                  const isChosen = selectedOpt === optIdx;
-                                  let btnStyle = 'bg-white hover:bg-sky-50 border-slate-300 text-slate-700';
-                                  if (quizSubmitted) {
-                                    if (optIdx === q.correctIndex) {
-                                      btnStyle = 'bg-emerald-500 border-emerald-600 text-white shadow';
-                                    } else if (isChosen && optIdx !== q.correctIndex) {
-                                      btnStyle = 'bg-rose-500 border-rose-600 text-white';
-                                    }
-                                  } else if (isChosen) {
-                                    btnStyle = 'bg-sky-500 border-sky-600 text-white shadow';
-                                  }
-
-                                  return (
-                                    <button
-                                      key={optIdx}
-                                      onClick={() => {
-                                        sfx.tap(soundEnabled);
-                                        setQuizAnswers((prev) => ({ ...prev, [q.id]: optIdx }));
-                                      }}
-                                      className={`p-3.5 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition active:scale-95 ${btnStyle}`}
-                                    >
-                                      <span className="inline-block w-6 font-extrabold">
-                                        {String.fromCharCode(65 + optIdx)}.
-                                      </span>
-                                      {opt}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-
-                              {quizSubmitted && (
-                                <div className={`mt-3 p-3 rounded-2xl text-xs sm:text-sm font-bold ${
-                                  isCorrect ? 'bg-emerald-100 text-emerald-900' : 'bg-orange-100 text-orange-900'
-                                }`}>
-                                  {isCorrect ? '✅ Hebat Sekali! ' : '💡 Yuk Perhatikan: '}
-                                  {q.explanation}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                        <button
-                          onClick={() => {
-                            if (Object.keys(quizAnswers).length < QUIZ_QUESTIONS.length) {
-                              showCheer('Masih Ada Soal yang Belum Dijawab! 😊', 'Yuk ketuk jawaban untuk kelima soal di atas terlebih dahulu, kamu pasti bisa!', 'retry');
-                              return;
-                            }
-                            setQuizSubmitted(true);
-                            showCheer('Hore! Kuis Selesai Dikerjakan! 🏆', `Skor kamu adalah ${quizScore}/100! Terima kasih sudah belajar dengan semangat hari ini!`, 'success');
-                          }}
-                          className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-display font-bold text-base shadow-lg transition active:scale-95"
-                        >
-                          ✅ Periksa Jawaban & Tampilkan Skor di PID
-                        </button>
-
-                        {quizSubmitted && (
-                          <button
-                            onClick={() => {
-                              sfx.tap(soundEnabled);
-                              setQuizAnswers({});
-                              setQuizSubmitted(false);
-                            }}
-                            className="px-4 py-3 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold text-xs sm:text-sm"
-                          >
-                            Ulangi Kuis
-                          </button>
-                        )}
-                      </div>
-                    </section>
-                  </div>
-                )}
-
-                {/* Navigasi Bawah Antar Tahapan */}
-                <div className="mt-6 flex items-center justify-between gap-3 bg-white p-4 rounded-3xl border-2 border-sky-200 shadow-md">
-                  <button
-                    disabled={activeStageIndex === 0}
-                    onClick={() => {
-                      sfx.tap(soundEnabled);
-                      setActiveStageIndex((i) => Math.max(0, i - 1));
-                      setIsTimerRunning(false);
-                    }}
-                    className="px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-800 font-extrabold text-xs sm:text-sm transition active:scale-95 flex items-center gap-2"
-                  >
-                    <i className="fa-solid fa-arrow-left"></i>
-                    <span>Tahap Sebelumnya</span>
-                  </button>
-
-                  <span className="text-xs sm:text-sm font-extrabold text-slate-600 text-center">
-                    Tahap {activeStageIndex + 1} dari {STAGES.length}
-                  </span>
-
-                  <button
-                    disabled={activeStageIndex === STAGES.length - 1}
-                    onClick={() => {
-                      sfx.tap(soundEnabled);
-                      setActiveStageIndex((i) => Math.min(STAGES.length - 1, i + 1));
-                      setIsTimerRunning(false);
-                    }}
-                    className="px-5 py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 disabled:opacity-40 text-white font-extrabold text-xs sm:text-sm shadow transition active:scale-95 flex items-center gap-2"
-                  >
-                    <span>Tahap Berikutnya</span>
-                    <i className="fa-solid fa-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              /* ================================================================ */
-              /* MODE PANDUAN GURU: TP ABCDE, PANDUAN PID, ATP 70 MENIT & RUBRIK  */
-              /* ================================================================ */
-              <div className="space-y-6">
-                {/* 1. Rumusan Tujuan Pembelajaran (TP) dengan ABCDE */}
-                <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-sky-300 shadow-lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl">
-                      🎯
-                    </span>
-                    <div>
-                      <span className="text-xs font-extrabold uppercase text-sky-600">
-                        Bagian 1 • Rumusan Tujuan Pembelajaran Berbasis Taksonomi Bloom
-                      </span>
-                      <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                        Rumusan Tujuan Pembelajaran (TP) Format ABCDE
-                      </h2>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-r from-sky-50 via-amber-50 to-emerald-50 p-4 sm:p-5 rounded-2xl border-2 border-sky-300 mb-5">
-                    <h3 className="text-xs font-extrabold uppercase text-sky-800 mb-1">
-                      Kalimat Lengkap Tujuan Pembelajaran (TP):
-                    </h3>
-                    <p className="text-sm sm:text-base font-bold text-slate-800 leading-relaxed">
-                      "Melalui kegiatan kajian ketokohan berbasis kolaborasi Papan Interaktif Digital (PID) <span className="px-1.5 py-0.5 rounded bg-amber-300 text-slate-900">(C)</span>, peserta didik kelas V <span className="px-1.5 py-0.5 rounded bg-sky-300 text-slate-900">(A)</span> dapat mengidentifikasi karakter dan nilai perjuangan perumus Pancasila serta menentukan contoh sikap teladan <span className="px-1.5 py-0.5 rounded bg-emerald-300 text-slate-900">(B - C3/C4)</span> dengan tepat dan kritis <span className="px-1.5 py-0.5 rounded bg-purple-300 text-slate-900">(D)</span> sebagai wujud pembentukan karakter Profil Pelajar Pancasila (bernalar kritis, gotong royong, dan mandiri) untuk diterapkan dalam kehidupan sehari-hari <span className="px-1.5 py-0.5 rounded bg-pink-300 text-slate-900">(E)</span>."
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                    {[
-                      {
-                        letter: 'A',
-                        name: 'Audience',
-                        desc: 'Peserta didik kelas V SD.',
-                        color: 'bg-sky-50 border-sky-300 text-sky-900'
-                      },
-                      {
-                        letter: 'B',
-                        name: 'Behavior (C3/C4)',
-                        desc: 'Mengidentifikasi karakter/nilai perjuangan serta menentukan contoh sikap teladan perumus Pancasila.',
-                        color: 'bg-emerald-50 border-emerald-300 text-emerald-900'
-                      },
-                      {
-                        letter: 'C',
-                        name: 'Condition',
-                        desc: 'Menggunakan media interaktif pada Papan Interaktif Digital (PID) melalui aplikasi kolaboratif (Canva Whiteboard / Padlet) dan game interaktif (Wordwall).',
-                        color: 'bg-amber-50 border-amber-300 text-amber-900'
-                      },
-                      {
-                        letter: 'D',
-                        name: 'Degree',
-                        desc: 'Tepat dan kritis (minimal mengidentifikasi 3 nilai keteladanan perumus Pancasila beserta contoh penerapannya).',
-                        color: 'bg-purple-50 border-purple-300 text-purple-900'
-                      },
-                      {
-                        letter: 'E',
-                        name: 'Element (Character)',
-                        desc: 'Internalisasi Profil Pelajar Pancasila (bernalar kritis, gotong royong, dan mandiri) dalam kehidupan sehari-hari di rumah dan sekolah.',
-                        color: 'bg-pink-50 border-pink-300 text-pink-900'
-                      }
-                    ].map((item) => (
-                      <div key={item.letter} className={`p-4 rounded-2xl border-2 ${item.color}`}>
-                        <div className="w-9 h-9 rounded-xl bg-white font-display font-bold text-lg flex items-center justify-center shadow-sm mb-2">
-                          {item.letter}
-                        </div>
-                        <h4 className="font-display font-bold text-sm mb-1">{item.name}</h4>
-                        <p className="text-xs font-semibold leading-relaxed">{item.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                {/* 2. Panduan Aplikasi & Perangkat Lunak PID yang Digunakan */}
-                <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-orange-300 shadow-lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl">
-                      🖥️
-                    </span>
-                    <div>
-                      <span className="text-xs font-extrabold uppercase text-orange-600">
-                        Bagian 2 • Rekomendasi Kombinasi Perangkat Lunak Smartboard / PID
-                      </span>
-                      <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                        Panduan Aplikasi Pendukung Papan Interaktif Digital (PID)
-                      </h2>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {PID_APPS_GUIDE.map((app, idx) => (
-                      <div key={idx} className="rounded-3xl border-2 border-slate-200 p-4 bg-slate-50 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className={`w-11 h-11 rounded-2xl ${app.color} text-white flex items-center justify-center text-lg shadow`}>
-                              <i className={`fa-solid ${app.icon}`}></i>
-                            </div>
-                            <div>
-                              <span className="text-[11px] font-extrabold uppercase text-slate-500">
-                                {app.stage}
-                              </span>
-                              <h3 className="font-display font-bold text-base text-slate-900">
-                                {app.name}
-                              </h3>
-                            </div>
-                          </div>
-                          <div className="mb-3">
-                            <span className="text-xs font-extrabold text-sky-700 block mb-0.5">
-                              Fungsi & Bentuk Kegiatan Interaktif:
-                            </span>
-                            <p className="text-xs font-semibold text-slate-700 leading-relaxed">
-                              {app.functionDesc}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="p-3 rounded-2xl bg-white border border-slate-200">
-                          <span className="text-xs font-extrabold text-emerald-700 block mb-0.5">
-                            Akses / Integrasi PID:
-                          </span>
-                          <p className="text-xs font-semibold text-slate-600">
-                            {app.integrationDesc}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                {/* 3. Alur Tujuan Pembelajaran (ATP) / Skenario 1 Pertemuan (2x35 Menit) */}
-                <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-emerald-300 shadow-lg">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-                    <div className="flex items-center gap-3">
-                      <span className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl">
-                        ⏱️
-                      </span>
-                      <div>
-                        <span className="text-xs font-extrabold uppercase text-emerald-600">
-                          Bagian 3 • Skenario Pembelajaran 1 Pertemuan (2 x 35 Menit = 70 Menit)
-                        </span>
-                        <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                          Alur Tujuan Pembelajaran (ATP) Model "Teladan Hidupku"
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    {STAGES.map((stg, idx) => (
-                      <div key={stg.id} className="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{stg.emoji}</span>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${stg.badgeColor}`}>
-                                {stg.durationMinutes} Menit
-                              </span>
-                              <span className="text-xs font-extrabold text-slate-500">
-                                Aplikasi: {stg.appUsed}
-                              </span>
-                            </div>
-                            <h3 className="font-display font-bold text-base text-slate-800 mt-0.5">
-                              {stg.title} — {stg.subtitle}
-                            </h3>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            sfx.tap(soundEnabled);
-                            setActiveStageIndex(idx);
-                            setViewMode('pid_interactive');
-                          }}
-                          className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-xs transition active:scale-95"
-                        >
-                          Buka Simulasi Tahap Ini <i className="fa-solid fa-play ml-1"></i>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                {/* 4. Rubrik Asesmen Sikap & Keterampilan/Pengetahuan Interaktif */}
-                <section className="bg-white rounded-3xl p-5 sm:p-6 border-4 border-purple-300 shadow-lg">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
-                      📊
-                    </span>
-                    <div>
-                      <span className="text-xs font-extrabold uppercase text-purple-600">
-                        Bagian 4 • Instrumen Penilaian Guru Langsung di Layar
-                      </span>
-                      <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
-                        Asesmen Formatif Sikap (P3) & Unjuk Kerja LKPD Digital
-                      </h2>
-                    </div>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-slate-600 font-semibold mb-4">
-                    Ketuk angka skor (1–4) pada tabel di bawah ini untuk memberikan penilaian langsung terhadap proses kolaborasi kelompok di PID:
-                  </p>
-
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="bg-purple-100 text-purple-950 text-xs uppercase font-extrabold">
-                          <th className="p-3 rounded-tl-2xl">Kelompok Kajian Tokoh</th>
-                          <th className="p-3">Sikap: Bernalar Kritis (1-4)</th>
-                          <th className="p-3">Sikap: Gotong Royong (1-4)</th>
-                          <th className="p-3">LKPD: Ketepatan Karakter (1-4)</th>
-                          <th className="p-3">LKPD: Relevansi Contoh (1-4)</th>
-                          <th className="p-3 rounded-tr-2xl">Nilai Akhir</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200 text-xs sm:text-sm font-bold">
-                        {FOUNDERS.map((f) => {
-                          const sc = rubricScores[f.id];
-                          const total = Math.round(((sc.kritis + sc.gotongRoyong + sc.ketepatanKarakter + sc.relevansiContoh) / 16) * 100);
-                          return (
-                            <tr key={f.id} className="hover:bg-purple-50/50">
-                              <td className="p-3 font-display text-slate-900">
-                                Kelompok {f.name}
-                              </td>
-                              {['kritis', 'gotongRoyong', 'ketepatanKarakter', 'relevansiContoh'].map((criteria) => (
-                                <td key={criteria} className="p-3">
-                                  <div className="flex gap-1">
-                                    {[1, 2, 3, 4].map((val) => (
-                                      <button
-                                        key={val}
-                                        onClick={() => {
-                                          sfx.tap(soundEnabled);
-                                          setRubricScores((prev) => ({
-                                            ...prev,
-                                            [f.id]: { ...prev[f.id], [criteria]: val }
-                                          }));
-                                        }}
-                                        className={`w-8 h-8 rounded-lg font-extrabold transition ${
-                                          sc[criteria] === val
-                                            ? 'bg-purple-600 text-white shadow'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                        }`}
-                                      >
-                                        {val}
-                                      </button>
-                                    ))}
-                                  </div>
-                                </td>
-                              ))}
-                              <td className="p-3">
-                                <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-extrabold">
-                                  {total} / 100
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-              </div>
-            )}
-          </main>
+                <button onclick="switchTab('visual')" id="btn-visual" class="nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600">
+                    <i class="fa-solid fa-border-all mr-1.5"></i>Eksplor Gambar
+                </button>
+                <button onclick="switchTab('kuis')" id="btn-kuis" class="nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600">
+                    <i class="fa-solid fa-gamepad mr-1.5"></i>Kuis Seru
+                </button>
+            </nav>
         </div>
-      );
-    };
+    </header>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ================= SECTION 1: MATERI ================= -->
+        <section id="sec-materi" class="space-y-6 animate-pop">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider mb-3 inline-block">Cara Termudah & Cepat!</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-2">Dua Cara Membandingkan Pecahan 🎯</h2>
+                    <p class="text-indigo-100 text-sm sm:text-base">Untuk kelas 5 SD, kamu bisa menggunakan <b>Gambar Kertas Berpetak</b> atau <b>Metode Perkalian Silang</b>!</p>
+                </div>
+                <i class="fa-solid fa-star text-white/10 text-9xl absolute -right-6 -bottom-6 pointer-events-none"></i>
+            </div>
+
+            <!-- TAB METODE: Kertas Berpetak vs Perkalian Silang -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Metode 1 -->
+                <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold font-fun text-xl">1</span>
+                        <h3 class="text-xl font-bold text-indigo-950">Penyebut Sama (Gambar Grid)</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">Jika penyebutnya (angka di bawah) sudah **sama**, kamu tinggal membandingkan angka pembilang (angka di atas).</p>
+                    
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4">
+                        <div class="text-center font-bold text-amber-900 mb-2 text-sm">Contoh: Membandingkan <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> dan <span class="fraction"><span class="top">4</span><span class="bottom">5</span></span></div>
+                        <div class="flex justify-around items-center gap-2">
+                            <!-- Mini Grid 1 -->
+                            <div class="text-center">
+                                <div class="grid grid-cols-5 gap-1 bg-white p-2 border border-slate-300 rounded-xl grid-paper w-28 h-12">
+                                    <div class="bg-indigo-500 rounded-xs"></div>
+                                    <div class="bg-indigo-500 rounded-xs"></div>
+                                    <div class="bg-slate-200 rounded-xs"></div>
+                                    <div class="bg-slate-200 rounded-xs"></div>
+                                    <div class="bg-slate-200 rounded-xs"></div>
+                                </div>
+                                <span class="text-xs font-bold text-slate-600 mt-1 block">2 dari 5 diarsir</span>
+                            </div>
+                            <span class="text-2xl font-bold text-amber-600">&lt;</span>
+                            <!-- Mini Grid 2 -->
+                            <div class="text-center">
+                                <div class="grid grid-cols-5 gap-1 bg-white p-2 border border-slate-300 rounded-xl grid-paper w-28 h-12">
+                                    <div class="bg-indigo-500 rounded-xs"></div>
+                                    <div class="bg-indigo-500 rounded-xs"></div>
+                                    <div class="bg-indigo-500 rounded-xs"></div>
+                                    <div class="bg-indigo-500 rounded-xs"></div>
+                                    <div class="bg-slate-200 rounded-xs"></div>
+                                </div>
+                                <span class="text-xs font-bold text-slate-600 mt-1 block">4 dari 5 diarsir</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-xl text-xs text-indigo-900 font-medium">
+                        💡 <b>Kesimpulan:</b> Luas arsir 4 kotak lebih besar dari 2 kotak. Jadi, <span class="font-bold">2/5 &lt; 4/5</span>.
+                    </div>
+                </div>
+
+                <!-- Metode 2 -->
+                <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <span class="w-10 h-10 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center font-bold font-fun text-xl">2</span>
+                        <h3 class="text-xl font-bold text-indigo-950">Penyebut Beda (Perkalian Silang)</h3>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">Trik kilat tanpa harus menyamakan penyebut! Cukup **kalikan silang** secara diagonal.</p>
+
+                    <div class="bg-pink-50 border border-pink-200 rounded-2xl p-4 mb-4">
+                        <div class="text-center font-bold text-pink-900 mb-3 text-sm">Contoh: Membandingkan <span class="fraction"><span class="top">2</span><span class="bottom">3</span></span> dan <span class="fraction"><span class="top">3</span><span class="bottom">4</span></span></div>
+                        
+                        <!-- Cross Multiplier Illustration -->
+                        <div class="flex justify-center items-center gap-6 my-2 text-center">
+                            <div>
+                                <div class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full mb-1">2 × 4 = 8</div>
+                                <div class="text-2xl font-bold text-indigo-600">2/3</div>
+                            </div>
+                            <div class="text-xl font-bold text-slate-400">?</div>
+                            <div>
+                                <div class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full mb-1">3 × 3 = 9</div>
+                                <div class="text-2xl font-bold text-pink-600">3/4</div>
+                            </div>
+                        </div>
+                        <p class="text-center text-xs text-slate-600 mt-2">Bandingkan hasil kali: <b>8</b> dengan <b>9</b>. Karena 8 &lt; 9, maka:</p>
+                        <p class="text-center text-base font-extrabold text-pink-600 mt-1">2/3 &lt; 3/4</p>
+                    </div>
+
+                    <div class="bg-emerald-50 p-3 rounded-xl text-xs text-emerald-900 font-medium flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-emerald-600 text-lg"></i>
+                        <span><b>Ingat Tanda:</b> <b>&lt;</b> (Kecil = mirip huruf K), <b>&gt;</b> (Besar = mirip huruf B), <b>=</b> (Sama).</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Example Cards -->
+            <div class="bg-white rounded-3xl p-6 border-2 border-slate-200 shadow-sm">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap text-indigo-600"></i> Cobalah Contoh Lain Secara Langsung!
+                </h3>
+                <div class="grid sm:grid-cols-3 gap-3">
+                    <button onclick="loadExample(1)" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-indigo-50 hover:border-indigo-300 text-left transition group">
+                        <span class="text-xs font-bold text-indigo-600 block mb-1">Contoh 1 (Mudah)</span>
+                        <span class="font-bold text-slate-700 group-hover:text-indigo-900">1/4 ... 3/4</span>
+                    </button>
+                    <button onclick="loadExample(2)" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-indigo-50 hover:border-indigo-300 text-left transition group">
+                        <span class="text-xs font-bold text-indigo-600 block mb-1">Contoh 2 (Penyebut Beda)</span>
+                        <span class="font-bold text-slate-700 group-hover:text-indigo-900">4/5 ... 1/2</span>
+                    </button>
+                    <button onclick="loadExample(3)" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-indigo-50 hover:border-indigo-300 text-left transition group">
+                        <span class="text-xs font-bold text-indigo-600 block mb-1">Contoh 3 (Sama Senilai)</span>
+                        <span class="font-bold text-slate-700 group-hover:text-indigo-900">2/4 ... 1/2</span>
+                    </button>
+                </div>
+                <!-- Example Detail Box -->
+                <div id="example-detail" class="mt-4 p-4 bg-indigo-50 rounded-2xl border border-indigo-100 hidden">
+                    <h4 id="ex-title" class="font-bold text-indigo-900 mb-1 text-sm"></h4>
+                    <p id="ex-desc" class="text-sm text-slate-700"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: EKSPLOR VISUAL GRID / LINGKARAN ================= -->
+        <section id="sec-visual" class="space-y-6 hidden animate-pop">
+            <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm">
+                <div class="max-w-2xl mx-auto text-center mb-6">
+                    <span class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider inline-block mb-2">Visualisasi 1 Gambar Utuh</span>
+                    <h2 class="text-3xl font-bold text-slate-800">Eksplorasi Gambar Pecahan</h2>
+                    <p class="text-slate-600 text-sm mt-1">Ubah bentuk gambar (Persegi / Lingkaran) dan atur angka pecahan untuk melihat daerah arsir dalam 1 bentuk utuh!</p>
+                </div>
+
+                <!-- Shape Selector Toggle -->
+                <div class="flex justify-center mb-6">
+                    <div class="bg-indigo-50 p-1.5 rounded-2xl border border-indigo-100 inline-flex items-center gap-2 font-fun">
+                        <button onclick="setShape('rect')" id="btn-shape-rect" class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-square text-lg"></i> Persegi / Kertas Berpetak
+                        </button>
+                        <button onclick="setShape('circle')" id="btn-shape-circle" class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600 flex items-center gap-2">
+                            <i class="fa-solid fa-circle text-lg"></i> Lingkaran (Kue / Pizza)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="grid md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6">
+                    <!-- Fraction 1 Control -->
+                    <div class="space-y-3 bg-white p-4 rounded-xl border border-indigo-100 shadow-xs">
+                        <h4 class="font-bold text-indigo-900 text-center flex items-center justify-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-indigo-500"></span> Pecahan Pertama (Kiri)
+                        </h4>
+                        <div class="flex justify-center items-center gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 block">Pembilang (Arsir)</label>
+                                <input type="number" id="v-num1" min="1" max="12" value="2" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-indigo-200 rounded-xl font-bold text-indigo-700 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <span class="text-2xl font-bold text-slate-400 mt-5">/</span>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 block">Penyebut (Potongan)</label>
+                                <input type="number" id="v-den1" min="1" max="12" value="5" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-indigo-200 rounded-xl font-bold text-indigo-700 focus:outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fraction 2 Control -->
+                    <div class="space-y-3 bg-white p-4 rounded-xl border border-pink-100 shadow-xs">
+                        <h4 class="font-bold text-pink-900 text-center flex items-center justify-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-pink-500"></span> Pecahan Kedua (Kanan)
+                        </h4>
+                        <div class="flex justify-center items-center gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 block">Pembilang (Arsir)</label>
+                                <input type="number" id="v-num2" min="1" max="12" value="3" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-pink-200 rounded-xl font-bold text-pink-700 focus:outline-none focus:border-pink-500">
+                            </div>
+                            <span class="text-2xl font-bold text-slate-400 mt-5">/</span>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500 block">Penyebut (Potongan)</label>
+                                <input type="number" id="v-den2" min="1" max="12" value="5" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-pink-200 rounded-xl font-bold text-pink-700 focus:outline-none focus:border-pink-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SVG Shapes Canvas Display -->
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8 py-6">
+                    <!-- Display 1 -->
+                    <div class="flex flex-col items-center">
+                        <div id="grid-container-1" class="p-4 bg-white rounded-2xl border-2 border-indigo-200 shadow-md flex items-center justify-center min-w-[180px] min-h-[180px]">
+                            <!-- SVG Generated by JS -->
+                        </div>
+                        <div class="mt-3 font-fun text-2xl font-bold text-indigo-600" id="v-txt-1">2/5</div>
+                    </div>
+
+                    <!-- Comparison Badge Result -->
+                    <div class="flex flex-col items-center justify-center">
+                        <div id="v-symbol-badge" class="w-16 h-16 rounded-full bg-amber-400 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce">
+                            &lt;
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 mt-2">Hasil Perbandingan</span>
+                    </div>
+
+                    <!-- Display 2 -->
+                    <div class="flex flex-col items-center">
+                        <div id="grid-container-2" class="p-4 bg-white rounded-2xl border-2 border-pink-200 shadow-md flex items-center justify-center min-w-[180px] min-h-[180px]">
+                            <!-- SVG Generated by JS -->
+                        </div>
+                        <div class="mt-3 font-fun text-2xl font-bold text-pink-600" id="v-txt-2">3/5</div>
+                    </div>
+                </div>
+
+                <!-- Live Step Explanation -->
+                <div id="v-explanation" class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-center text-sm text-indigo-900 font-medium">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: KUIS INTERAKTIF ================= -->
+        <section id="sec-kuis" class="space-y-6 hidden animate-pop">
+            <!-- Quiz Card -->
+            <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm relative">
+                
+                <!-- Quiz Header Progress -->
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-indigo-500 uppercase tracking-wider block">Tantangan Pecahan</span>
+                        <h3 class="text-2xl font-bold text-slate-800" id="quiz-progress-text">Soal 1 dari 10</h3>
+                    </div>
+                    <!-- Score Badge -->
+                    <div class="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-2xl font-fun font-bold">
+                        <i class="fa-solid fa-trophy text-amber-500 text-lg"></i>
+                        <span id="quiz-score">Skor: 0</span>
+                    </div>
+                </div>
+
+                <!-- Question Main Display -->
+                <div id="quiz-box" class="space-y-6">
+                    <p class="text-center text-slate-600 font-medium">Pilihlah tanda perbandingan yang tepat untuk kedua pecahan di bawah ini!</p>
+
+                    <!-- Fraction Comparison Card -->
+                    <div class="flex justify-center items-center gap-6 py-4 bg-slate-50 rounded-3xl border border-slate-200">
+                        <!-- Left Fraction -->
+                        <div class="text-center">
+                            <div id="q-frac1" class="font-fun text-4xl sm:text-5xl font-bold text-indigo-600">
+                                <span class="fraction"><span class="top" id="q-num1">1</span><span class="bottom" id="q-den1">4</span></span>
+                            </div>
+                            <!-- SVG Preview -->
+                            <div id="q-grid1" class="mt-3 flex justify-center items-center"></div>
+                        </div>
+
+                        <!-- Question Mark Badge -->
+                        <div class="w-14 h-14 bg-white border-2 border-indigo-200 rounded-2xl flex items-center justify-center text-2xl font-bold text-slate-400 shadow-sm" id="q-symbol-placeholder">
+                            ?
+                        </div>
+
+                        <!-- Right Fraction -->
+                        <div class="text-center">
+                            <div id="q-frac2" class="font-fun text-4xl sm:text-5xl font-bold text-pink-600">
+                                <span class="fraction"><span class="top" id="q-num2">3</span><span class="bottom" id="q-den2">4</span></span>
+                            </div>
+                            <!-- SVG Preview -->
+                            <div id="q-grid2" class="mt-3 flex justify-center items-center"></div>
+                        </div>
+                    </div>
+
+                    <!-- Choice Buttons (< , > , =) -->
+                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
+                        <button onclick="submitAnswer('<')" class="answer-btn p-4 bg-white border-2 border-indigo-200 rounded-2xl text-3xl font-fun font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition shadow-sm hover:shadow active:scale-95">
+                            &lt;
+                            <span class="block text-xs font-sans font-semibold mt-1">Lebih Kecil</span>
+                        </button>
+                        <button onclick="submitAnswer('=')" class="answer-btn p-4 bg-white border-2 border-indigo-200 rounded-2xl text-3xl font-fun font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition shadow-sm hover:shadow active:scale-95">
+                            =
+                            <span class="block text-xs font-sans font-semibold mt-1">Sama Dengan</span>
+                        </button>
+                        <button onclick="submitAnswer('>')" class="answer-btn p-4 bg-white border-2 border-indigo-200 rounded-2xl text-3xl font-fun font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition shadow-sm hover:shadow active:scale-95">
+                            &gt;
+                            <span class="block text-xs font-sans font-semibold mt-1">Lebih Besar</span>
+                        </button>
+                    </div>
+
+                    <!-- Feedback Alert Box -->
+                    <div id="quiz-feedback" class="hidden p-4 rounded-2xl text-center text-sm font-bold border animate-pop"></div>
+
+                    <!-- Next Question Button -->
+                    <div class="text-center pt-2">
+                        <button id="btn-next" onclick="nextQuestion()" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white font-fun text-lg px-8 py-3 rounded-2xl shadow-md hover:shadow-lg transition">
+                            Soal Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Completion Screen -->
+                <div id="quiz-finish-screen" class="hidden text-center py-8 space-y-6">
+                    <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto shadow-inner animate-bounce">
+                        🏆
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-bold text-slate-800">Hebat Sekali! 🎉</h3>
+                        <p class="text-slate-600 mt-1">Kamu telah menyelesaikan semua soal latihan membandingkan pecahan.</p>
+                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 p-6 rounded-3xl inline-block min-w-[240px]">
+                        <span class="text-xs font-bold text-indigo-500 uppercase">Skor Akhir Kamu</span>
+                        <div class="text-5xl font-fun font-extrabold text-indigo-600 mt-1" id="final-score-val">100</div>
+                    </div>
+                    <div>
+                        <button onclick="resetQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-fun text-lg px-8 py-3 rounded-2xl shadow-md transition">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>Coba Lagi
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-indigo-100 py-4 mt-8">
+        <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500 font-medium">
+            Media Pembelajaran Interaktif Matematika Kelas 5 SD &bull; Membandingkan Pecahan
+        </div>
+    </footer>
+
+    <script>
+        // Global States
+        let currentShape = 'rect'; // 'rect' or 'circle'
+        let currentTab = 'materi';
+
+        // Tab Navigation Logic
+        function switchTab(tab) {
+            currentTab = tab;
+            ['materi', 'visual', 'kuis'].forEach(t => {
+                const sec = document.getElementById(`sec-${t}`);
+                const btn = document.getElementById(`btn-${t}`);
+                if (t === tab) {
+                    sec.classList.remove('hidden');
+                    btn.className = "nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm";
+                } else {
+                    sec.classList.add('hidden');
+                    btn.className = "nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600";
+                }
+            });
+
+            if (tab === 'visual') {
+                updateVisualizer();
+            }
+        }
+
+        // Shape Toggle Handler
+        function setShape(shape) {
+            currentShape = shape;
+            const btnRect = document.getElementById('btn-shape-rect');
+            const btnCircle = document.getElementById('btn-shape-circle');
+
+            if (shape === 'rect') {
+                btnRect.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm flex items-center gap-2";
+                btnCircle.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600 flex items-center gap-2";
+            } else {
+                btnCircle.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm flex items-center gap-2";
+                btnRect.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600 flex items-center gap-2";
+            }
+            updateVisualizer();
+        }
+
+        /* -------------------------------------------------------------
+           1. SINGLE SHAPE SVG GENERATOR (RECT & CIRCLE)
+        ------------------------------------------------------------- */
+        function createSingleShapeSVG(num, den, colorHex, strokeHex, customSize = 160) {
+            const size = customSize;
+            
+            // Limit bounds to avoid math break
+            if (den < 1) den = 1;
+            if (num > den) num = den;
+            if (num < 0) num = 0;
+
+            if (currentShape === 'rect') {
+                // 1 Single Rectangle Divided into 'den' Equal Columns
+                let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="rounded-xl overflow-hidden border-2 border-slate-300 shadow-xs">`;
+                const colWidth = size / den;
+                
+                for (let i = 0; i < den; i++) {
+                    const x = i * colWidth;
+                    const isShaded = i < num;
+                    const fillColor = isShaded ? colorHex : '#F8FAFC';
+                    svg += `<rect x="${x}" y="0" width="${colWidth}" height="${size}" fill="${fillColor}" stroke="${strokeHex}" stroke-width="2"/>`;
+                    
+                    if (isShaded) {
+                        svg += `<line x1="${x}" y1="0" x2="${x + colWidth}" y2="${size}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`;
+                    }
+                }
+                svg += `</svg>`;
+                return svg;
+            } else {
+                // 1 Single Circle (Pie Chart) Divided into 'den' Equal Sectors
+                const cx = size / 2;
+                const cy = size / 2;
+                const r = (size / 2) - 4;
+                let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="drop-shadow-xs">`;
+
+                if (den === 1) {
+                    const fillColor = num >= 1 ? colorHex : '#F8FAFC';
+                    svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fillColor}" stroke="${strokeHex}" stroke-width="3"/>`;
+                } else {
+                    const angleStep = (2 * Math.PI) / den;
+                    for (let i = 0; i < den; i++) {
+                        const startAngle = i * angleStep - Math.PI / 2;
+                        const endAngle = (i + 1) * angleStep - Math.PI / 2;
+
+                        const x1 = cx + r * Math.cos(startAngle);
+                        const y1 = cy + r * Math.sin(startAngle);
+                        const x2 = cx + r * Math.cos(endAngle);
+                        const y2 = cy + r * Math.sin(endAngle);
+
+                        const largeArc = angleStep > Math.PI ? 1 : 0;
+                        const isShaded = i < num;
+                        const fillColor = isShaded ? colorHex : '#F8FAFC';
+
+                        const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                        svg += `<path d="${pathData}" fill="${fillColor}" stroke="${strokeHex}" stroke-width="2"/>`;
+                    }
+                }
+                svg += `</svg>`;
+                return svg;
+            }
+        }
+
+        /* -------------------------------------------------------------
+           2. VISUALIZER UPDATE LOGIC
+        ------------------------------------------------------------- */
+        function updateVisualizer() {
+            let num1 = parseInt(document.getElementById('v-num1').value) || 1;
+            let den1 = parseInt(document.getElementById('v-den1').value) || 1;
+            let num2 = parseInt(document.getElementById('v-num2').value) || 1;
+            let den2 = parseInt(document.getElementById('v-den2').value) || 1;
+
+            // Ensure valid inputs
+            if (num1 > den1) num1 = den1;
+            if (num2 > den2) num2 = den2;
+
+            document.getElementById('v-txt-1').innerText = `${num1}/${den1}`;
+            document.getElementById('v-txt-2').innerText = `${num2}/${den2}`;
+
+            // Render SVG 1
+            const c1 = document.getElementById('grid-container-1');
+            c1.innerHTML = createSingleShapeSVG(num1, den1, '#6366F1', '#4338CA', 160);
+
+            // Render SVG 2
+            const c2 = document.getElementById('grid-container-2');
+            c2.innerHTML = createSingleShapeSVG(num2, den2, '#EC4899', '#BE185D', 160);
+
+            // Compare Values
+            const val1 = num1 / den1;
+            const val2 = num2 / den2;
+            const badge = document.getElementById('v-symbol-badge');
+            const exp = document.getElementById('v-explanation');
+
+            const cross1 = num1 * den2;
+            const cross2 = num2 * den1;
+            const shapeName = currentShape === 'rect' ? 'Persegi' : 'Lingkaran';
+
+            if (val1 < val2) {
+                badge.innerText = '<';
+                badge.className = "w-16 h-16 rounded-full bg-indigo-500 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce";
+                exp.innerHTML = `Pada 1 Gambar ${shapeName} Utuh: Luas daerah arsir <b>${num1}/${den1}</b> lebih KECIL daripada <b>${num2}/${den2}</b>.<br><span class="text-xs text-indigo-700 font-bold mt-1 block">Perkalian Silang: (${num1} × ${den2} = <b>${cross1}</b>) &lt; (${num2} × ${den1} = <b>${cross2}</b>). Maka <b>${num1}/${den1} &lt; ${num2}/${den2}</b></span>`;
+            } else if (val1 > val2) {
+                badge.innerText = '>';
+                badge.className = "w-16 h-16 rounded-full bg-pink-500 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce";
+                exp.innerHTML = `Pada 1 Gambar ${shapeName} Utuh: Luas daerah arsir <b>${num1}/${den1}</b> lebih BESAR daripada <b>${num2}/${den2}</b>.<br><span class="text-xs text-pink-700 font-bold mt-1 block">Perkalian Silang: (${num1} × ${den2} = <b>${cross1}</b>) &gt; (${num2} × ${den1} = <b>${cross2}</b>). Maka <b>${num1}/${den1} &gt; ${num2}/${den2}</b></span>`;
+            } else {
+                badge.innerText = '=';
+                badge.className = "w-16 h-16 rounded-full bg-emerald-500 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce";
+                exp.innerHTML = `Pada 1 Gambar ${shapeName} Utuh: Luas daerah arsir kedua pecahan SAMA BESAR.<br><span class="text-xs text-emerald-700 font-bold mt-1 block">Perkalian Silang: (${num1} × ${den2} = <b>${cross1}</b>) = (${num2} × ${den1} = <b>${cross2}</b>). Kedua pecahan <b>Senilai</b>!</span>`;
+            }
+        }
+
+        /* -------------------------------------------------------------
+           3. MATERI EXAMPLES LOGIC
+        ------------------------------------------------------------- */
+        function loadExample(id) {
+            const detailBox = document.getElementById('example-detail');
+            const title = document.getElementById('ex-title');
+            const desc = document.getElementById('ex-desc');
+            
+            detailBox.classList.remove('hidden');
+
+            if (id === 1) {
+                title.innerText = "Contoh 1: 1/4 ... 3/4 (Penyebut Sama)";
+                desc.innerHTML = "Penyebutnya sama-sama <b>4</b>. Kita cukup lihat pembilang (angka atas): <b>1 &lt; 3</b>.<br>Jadi: <b>1/4 &lt; 3/4</b>.";
+            } else if (id === 2) {
+                title.innerText = "Contoh 2: 4/5 ... 1/2 (Penyebut Beda)";
+                desc.innerHTML = "Gunakan perkalian silang:<br>&bull; Kiri: 4 × 2 = <b>8</b><br>&bull; Kanan: 1 × 5 = <b>5</b><br>Karena 8 &gt; 5, maka: <b>4/5 &gt; 1/2</b>.";
+            } else if (id === 3) {
+                title.innerText = "Contoh 3: 2/4 ... 1/2 (Pecahan Senilai)";
+                desc.innerHTML = "Perkalian silang:<br>&bull; Kiri: 2 × 2 = <b>4</b><br>&bull; Kanan: 1 × 4 = <b>4</b><br>Hasilnya sama! Maka: <b>2/4 = 1/2</b>.";
+            }
+        }
+
+        /* -------------------------------------------------------------
+           4. QUIZ / GAME LOGIC
+        ------------------------------------------------------------- */
+        const quizData = [
+            { n1: 1, d1: 4, n2: 3, d2: 4, ans: '<', exp: 'Penyebut sama (4). Angka 1 lebih kecil dari 3.' },
+            { n1: 4, d1: 5, n2: 2, d2: 5, ans: '>', exp: 'Penyebut sama (5). Angka 4 lebih besar dari 2.' },
+            { n1: 2, d1: 6, n2: 5, d2: 6, ans: '<', exp: 'Penyebut sama (6). Angka 2 lebih kecil dari 5.' },
+            { n1: 3, d1: 8, n2: 3, d2: 8, ans: '=', exp: 'Kedua pecahan persis sama.' },
+            { n1: 2, d1: 3, n2: 3, d2: 4, ans: '<', exp: 'Perkalian silang: 2×4=8 dan 3×3=9. Karena 8 < 9.' },
+            { n1: 4, d1: 5, n2: 1, d2: 2, ans: '>', exp: 'Perkalian silang: 4×2=8 dan 1×5=5. Karena 8 > 5.' },
+            { n1: 1, d1: 3, n2: 1, d2: 2, ans: '<', exp: 'Perkalian silang: 1×2=2 dan 1×3=3. Karena 2 < 3.' },
+            { n1: 2, d1: 4, n2: 1, d2: 2, ans: '=', exp: 'Perkalian silang: 2×2=4 dan 1×4=4. Hasilnya sama (senilai).' },
+            { n1: 3, d1: 5, n2: 4, d2: 5, ans: '<', exp: 'Penyebut sama (5). Angka 3 lebih kecil dari 4.' },
+            { n1: 5, d1: 6, n2: 2, d2: 3, ans: '>', exp: 'Perkalian silang: 5×3=15 dan 2×6=12. Karena 15 > 12.' }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const q = quizData[currentQuestion];
+
+            // Update Text
+            document.getElementById('quiz-progress-text').innerText = `Soal ${currentQuestion + 1} dari ${quizData.length}`;
+            document.getElementById('q-num1').innerText = q.n1;
+            document.getElementById('q-den1').innerText = q.d1;
+            document.getElementById('q-num2').innerText = q.n2;
+            document.getElementById('q-den2').innerText = q.d2;
+
+            document.getElementById('q-symbol-placeholder').innerText = '?';
+            document.getElementById('q-symbol-placeholder').className = "w-14 h-14 bg-white border-2 border-indigo-200 rounded-2xl flex items-center justify-center text-2xl font-bold text-slate-400 shadow-sm";
+
+            // Hide Feedback & Next Button
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('btn-next').classList.add('hidden');
+
+            // Render SVG Preview Shapes
+            document.getElementById('q-grid1').innerHTML = createSingleShapeSVG(q.n1, q.d1, '#6366F1', '#4338CA', 90);
+            document.getElementById('q-grid2').innerHTML = createSingleShapeSVG(q.n2, q.d2, '#EC4899', '#BE185D', 90);
+        }
+
+        function submitAnswer(userAns) {
+            if (answered) return;
+            answered = true;
+
+            const q = quizData[currentQuestion];
+            const feedback = document.getElementById('quiz-feedback');
+            const placeholder = document.getElementById('q-symbol-placeholder');
+
+            placeholder.innerText = userAns;
+
+            if (userAns === q.ans) {
+                score += 10;
+                document.getElementById('quiz-score').innerText = `Skor: ${score}`;
+                placeholder.className = "w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-md animate-bounce";
+                
+                feedback.className = "p-4 rounded-2xl text-center text-sm font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 block animate-pop";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i><b>Jawaban Benar! 🎉</b><br><span class="font-normal text-xs mt-1 block">${q.exp}</span>`;
+            } else {
+                placeholder.className = "w-14 h-14 bg-rose-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-md";
+                
+                feedback.className = "p-4 rounded-2xl text-center text-sm font-bold bg-rose-100 text-rose-800 border border-rose-300 block animate-pop";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-2"></i><b>Kurang Tepat! Jawaban yang benar adalah "${q.ans}"</b><br><span class="font-normal text-xs mt-1 block">${q.exp}</span>`;
+            }
+
+            document.getElementById('btn-next').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                // Finish Quiz
+                document.getElementById('quiz-box').classList.add('hidden');
+                document.getElementById('quiz-finish-screen').classList.remove('hidden');
+                document.getElementById('final-score-val').innerText = score;
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quiz-score').innerText = 'Skor: 0';
+            document.getElementById('quiz-finish-screen').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // Initialize App Window OnLoad
+        window.onload = function() {
+            loadQuestion();
+            updateVisualizer();
+        };
+    </script>
 </body>
 </html>
