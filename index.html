@@ -3,694 +3,670 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petualangan Pecahan - Belajar Membandingkan Pecahan SD</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Sumatif Tengah Semester KKA Kelas V</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
+    
+    <!-- Google Fonts: Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font - Fredoka (Comic/Child Friendly) & Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            blue: '#4F46E5',
-                            yellow: '#F59E0B',
-                            green: '#10B981',
-                            pink: '#EC4899',
-                            purple: '#8B5CF6',
-                            bg: '#F0F9FF'
-                        }
-                    },
-                    fontFamily: {
-                        fredoka: ['Fredoka', 'sans-serif'],
-                        sans: ['Plus Jakarta Sans', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F0F9FF;
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bae6fd 3px, transparent 3px);
+            background-size: 40px 40px;
+            overflow-x: hidden;
         }
-        h1, h2, h3, .font-fun {
-            font-family: 'Fredoka', cursive;
+
+        /* Juicy 3D Button Styles as requested */
+        .btn-3d {
+            transition: all 0.1s;
+            border-bottom-width: 4px;
+            border-bottom-color: rgba(0,0,0,0.2);
+            position: relative;
         }
-        /* Grid Paper Effect */
-        .grid-paper {
-            background-size: 20px 20px;
-            background-image: 
-                linear-gradient(to right, rgba(99, 102, 241, 0.15) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(99, 102, 241, 0.15) 1px, transparent 1px);
+        
+        .btn-3d:active:not(:disabled) {
+            transform: translateY(4px);
+            border-bottom-width: 0px;
+            margin-bottom: 4px; /* Prevent layout shift */
+        }
+
+        .btn-3d:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: translateY(4px);
+            border-bottom-width: 0px;
+            margin-bottom: 4px;
+        }
+
+        /* Specific Color Variations */
+        .btn-blue { background-color: #3b82f6; color: white; }
+        .btn-blue:hover:not(:disabled) { background-color: #60a5fa; }
+
+        .btn-green { background-color: #22c55e; color: white; }
+        .btn-green:hover:not(:disabled) { background-color: #4ade80; }
+
+        .btn-yellow { background-color: #facc15; color: #713f12; }
+        .btn-yellow:hover:not(:disabled) { background-color: #fde047; }
+        
+        .btn-purple { background-color: #a855f7; color: white; }
+        .btn-purple:hover:not(:disabled) { background-color: #c084fc; }
+
+        .btn-option {
             background-color: #ffffff;
+            color: #334155;
+            border: 2px solid #e2e8f0;
+            border-bottom: 4px solid #cbd5e1;
+            text-align: left;
         }
-        /* Bounce & Pop Animations */
-        @keyframes pop {
-            0% { transform: scale(0.9); opacity: 0; }
-            70% { transform: scale(1.05); }
+        .btn-option:hover:not(:disabled) {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            border-bottom-color: #94a3b8;
+        }
+
+        /* Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
         .animate-pop {
-            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        /* Fraction Styling */
-        .fraction {
-            display: inline-flex;
-            flex-direction: column;
-            vertical-align: middle;
-            text-align: center;
-            font-weight: bold;
+
+        @keyframes bounceGently {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        .fraction .top {
-            border-bottom: 3px solid currentColor;
-            padding-bottom: 2px;
+        .animate-float {
+            animation: bounceGently 3s infinite ease-in-out;
         }
-        .fraction .bottom {
-            padding-top: 2px;
+
+        /* Card Pattern */
+        .card-bg {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.2) 2px, transparent 2px);
+            background-size: 20px 20px;
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
 
-    <header class="bg-white border-b-4 border-indigo-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 text-white p-3 rounded-2xl shadow-md transform -rotate-3">
-                    <i class="fa-solid fa-shapes text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-indigo-900 tracking-wide">Dunia Pecahan</h1>
-                    <p class="text-xs font-bold text-indigo-500 uppercase tracking-wider">Matematika Kelas 5 SD</p>
+    <!-- App Container -->
+    <div id="app-container" class="max-w-4xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-white relative z-10 animate-pop">
+        
+        <!-- 1. START SCREEN -->
+        <div id="start-screen" class="p-8 md:p-16 text-center">
+            <div class="mb-8 inline-block animate-float">
+                <div class="w-36 h-36 bg-blue-100 rounded-[2rem] rotate-3 flex items-center justify-center mx-auto border-4 border-blue-400 shadow-lg">
+                    <i class="fa-solid fa-gamepad text-7xl text-blue-500 -rotate-3"></i>
                 </div>
             </div>
-
-            <!-- Navigation Tabs -->
-            <nav class="flex bg-indigo-50 p-1.5 rounded-2xl border border-indigo-100 font-fun">
-                <button onclick="switchTab('materi')" id="btn-materi" class="nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm">
-                    <i class="fa-solid fa-book-open mr-1.5"></i>Materi Paham
-                </button>
-                <button onclick="switchTab('visual')" id="btn-visual" class="nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600">
-                    <i class="fa-solid fa-border-all mr-1.5"></i>Eksplor Gambar
-                </button>
-                <button onclick="switchTab('kuis')" id="btn-kuis" class="nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600">
-                    <i class="fa-solid fa-gamepad mr-1.5"></i>Kuis Seru
-                </button>
-            </nav>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-800 mb-4 leading-tight tracking-tight">Sumatif Tengah Semester KKA Kelas V</h1>
+            <p class="text-xl text-blue-600 font-extrabold mb-8 uppercase tracking-widest bg-blue-50 py-2 px-6 rounded-full inline-block">SDN 4 Rambutan</p>
+            
+            <p class="text-slate-500 mb-10 max-w-lg mx-auto font-semibold text-lg">Siap menguji pengetahuanmu tentang Koding & Kecerdasan Artifisial? Ada 20 soal seru yang menantimu!</p>
+            
+            <button onclick="startQuiz()" class="btn-3d btn-yellow text-2xl font-black px-12 py-5 rounded-2xl w-full md:w-auto inline-flex items-center justify-center gap-4 mx-auto shadow-xl">
+                <i class="fa-solid fa-rocket"></i> Mulai Kuis
+            </button>
         </div>
-    </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
-
-        <!-- ================= SECTION 1: MATERI ================= -->
-        <section id="sec-materi" class="space-y-6 animate-pop">
-            <!-- Hero Banner -->
-            <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
-                <div class="relative z-10 max-w-2xl">
-                    <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider mb-3 inline-block">Cara Termudah & Cepat!</span>
-                    <h2 class="text-3xl sm:text-4xl font-bold mb-2">Dua Cara Membandingkan Pecahan 🎯</h2>
-                    <p class="text-indigo-100 text-sm sm:text-base">Untuk kelas 5 SD, kamu bisa menggunakan <b>Gambar Kertas Berpetak</b> atau <b>Metode Perkalian Silang</b>!</p>
+        <!-- 2. QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden flex-col h-full min-h-[60vh]">
+            <!-- Header -->
+            <div class="bg-blue-500 p-5 text-white flex justify-between items-center">
+                <div class="font-black bg-blue-600 px-5 py-2 rounded-xl text-lg flex gap-2 items-center shadow-inner">
+                    <i class="fa-solid fa-list-ol"></i> <span id="current-question-num">1</span> / 20
                 </div>
-                <i class="fa-solid fa-star text-white/10 text-9xl absolute -right-6 -bottom-6 pointer-events-none"></i>
-            </div>
-
-            <!-- TAB METODE: Kertas Berpetak vs Perkalian Silang -->
-            <div class="grid md:grid-cols-2 gap-6">
-                <!-- Metode 1 -->
-                <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <span class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-bold font-fun text-xl">1</span>
-                        <h3 class="text-xl font-bold text-indigo-950">Penyebut Sama (Gambar Grid)</h3>
-                    </div>
-                    <p class="text-slate-600 text-sm mb-4">Jika penyebutnya (angka di bawah) sudah **sama**, kamu tinggal membandingkan angka pembilang (angka di atas).</p>
-                    
-                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4">
-                        <div class="text-center font-bold text-amber-900 mb-2 text-sm">Contoh: Membandingkan <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> dan <span class="fraction"><span class="top">4</span><span class="bottom">5</span></span></div>
-                        <div class="flex justify-around items-center gap-2">
-                            <!-- Mini Grid 1 -->
-                            <div class="text-center">
-                                <div class="grid grid-cols-5 gap-1 bg-white p-2 border border-slate-300 rounded-xl grid-paper w-28 h-12">
-                                    <div class="bg-indigo-500 rounded-xs"></div>
-                                    <div class="bg-indigo-500 rounded-xs"></div>
-                                    <div class="bg-slate-200 rounded-xs"></div>
-                                    <div class="bg-slate-200 rounded-xs"></div>
-                                    <div class="bg-slate-200 rounded-xs"></div>
-                                </div>
-                                <span class="text-xs font-bold text-slate-600 mt-1 block">2 dari 5 diarsir</span>
-                            </div>
-                            <span class="text-2xl font-bold text-amber-600">&lt;</span>
-                            <!-- Mini Grid 2 -->
-                            <div class="text-center">
-                                <div class="grid grid-cols-5 gap-1 bg-white p-2 border border-slate-300 rounded-xl grid-paper w-28 h-12">
-                                    <div class="bg-indigo-500 rounded-xs"></div>
-                                    <div class="bg-indigo-500 rounded-xs"></div>
-                                    <div class="bg-indigo-500 rounded-xs"></div>
-                                    <div class="bg-indigo-500 rounded-xs"></div>
-                                    <div class="bg-slate-200 rounded-xs"></div>
-                                </div>
-                                <span class="text-xs font-bold text-slate-600 mt-1 block">4 dari 5 diarsir</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-indigo-50 p-3 rounded-xl text-xs text-indigo-900 font-medium">
-                        💡 <b>Kesimpulan:</b> Luas arsir 4 kotak lebih besar dari 2 kotak. Jadi, <span class="font-bold">2/5 &lt; 4/5</span>.
-                    </div>
-                </div>
-
-                <!-- Metode 2 -->
-                <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <span class="w-10 h-10 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center font-bold font-fun text-xl">2</span>
-                        <h3 class="text-xl font-bold text-indigo-950">Penyebut Beda (Perkalian Silang)</h3>
-                    </div>
-                    <p class="text-slate-600 text-sm mb-4">Trik kilat tanpa harus menyamakan penyebut! Cukup **kalikan silang** secara diagonal.</p>
-
-                    <div class="bg-pink-50 border border-pink-200 rounded-2xl p-4 mb-4">
-                        <div class="text-center font-bold text-pink-900 mb-3 text-sm">Contoh: Membandingkan <span class="fraction"><span class="top">2</span><span class="bottom">3</span></span> dan <span class="fraction"><span class="top">3</span><span class="bottom">4</span></span></div>
-                        
-                        <!-- Cross Multiplier Illustration -->
-                        <div class="flex justify-center items-center gap-6 my-2 text-center">
-                            <div>
-                                <div class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full mb-1">2 × 4 = 8</div>
-                                <div class="text-2xl font-bold text-indigo-600">2/3</div>
-                            </div>
-                            <div class="text-xl font-bold text-slate-400">?</div>
-                            <div>
-                                <div class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full mb-1">3 × 3 = 9</div>
-                                <div class="text-2xl font-bold text-pink-600">3/4</div>
-                            </div>
-                        </div>
-                        <p class="text-center text-xs text-slate-600 mt-2">Bandingkan hasil kali: <b>8</b> dengan <b>9</b>. Karena 8 &lt; 9, maka:</p>
-                        <p class="text-center text-base font-extrabold text-pink-600 mt-1">2/3 &lt; 3/4</p>
-                    </div>
-
-                    <div class="bg-emerald-50 p-3 rounded-xl text-xs text-emerald-900 font-medium flex items-center gap-2">
-                        <i class="fa-solid fa-lightbulb text-emerald-600 text-lg"></i>
-                        <span><b>Ingat Tanda:</b> <b>&lt;</b> (Kecil = mirip huruf K), <b>&gt;</b> (Besar = mirip huruf B), <b>=</b> (Sama).</span>
-                    </div>
+                <div class="font-black bg-blue-600 px-5 py-2 rounded-xl text-lg flex gap-2 items-center shadow-inner">
+                    <i class="fa-solid fa-star text-yellow-300"></i> <span id="current-score">0</span>
                 </div>
             </div>
 
-            <!-- Interactive Example Cards -->
-            <div class="bg-white rounded-3xl p-6 border-2 border-slate-200 shadow-sm">
-                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-graduation-cap text-indigo-600"></i> Cobalah Contoh Lain Secara Langsung!
-                </h3>
-                <div class="grid sm:grid-cols-3 gap-3">
-                    <button onclick="loadExample(1)" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-indigo-50 hover:border-indigo-300 text-left transition group">
-                        <span class="text-xs font-bold text-indigo-600 block mb-1">Contoh 1 (Mudah)</span>
-                        <span class="font-bold text-slate-700 group-hover:text-indigo-900">1/4 ... 3/4</span>
-                    </button>
-                    <button onclick="loadExample(2)" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-indigo-50 hover:border-indigo-300 text-left transition group">
-                        <span class="text-xs font-bold text-indigo-600 block mb-1">Contoh 2 (Penyebut Beda)</span>
-                        <span class="font-bold text-slate-700 group-hover:text-indigo-900">4/5 ... 1/2</span>
-                    </button>
-                    <button onclick="loadExample(3)" class="p-3 bg-slate-50 border border-slate-200 rounded-2xl hover:bg-indigo-50 hover:border-indigo-300 text-left transition group">
-                        <span class="text-xs font-bold text-indigo-600 block mb-1">Contoh 3 (Sama Senilai)</span>
-                        <span class="font-bold text-slate-700 group-hover:text-indigo-900">2/4 ... 1/2</span>
-                    </button>
-                </div>
-                <!-- Example Detail Box -->
-                <div id="example-detail" class="mt-4 p-4 bg-indigo-50 rounded-2xl border border-indigo-100 hidden">
-                    <h4 id="ex-title" class="font-bold text-indigo-900 mb-1 text-sm"></h4>
-                    <p id="ex-desc" class="text-sm text-slate-700"></p>
-                </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 h-4">
+                <div id="progress-bar" class="bg-gradient-to-r from-yellow-400 to-yellow-300 h-4 transition-all duration-500 rounded-r-full w-0 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></div>
             </div>
-        </section>
 
-        <!-- ================= SECTION 2: EKSPLOR VISUAL GRID / LINGKARAN ================= -->
-        <section id="sec-visual" class="space-y-6 hidden animate-pop">
-            <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm">
-                <div class="max-w-2xl mx-auto text-center mb-6">
-                    <span class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider inline-block mb-2">Visualisasi 1 Gambar Utuh</span>
-                    <h2 class="text-3xl font-bold text-slate-800">Eksplorasi Gambar Pecahan</h2>
-                    <p class="text-slate-600 text-sm mt-1">Ubah bentuk gambar (Persegi / Lingkaran) dan atur angka pecahan untuk melihat daerah arsir dalam 1 bentuk utuh!</p>
+            <!-- Question Area -->
+            <div class="p-6 md:p-10 flex-grow flex flex-col justify-center">
+                <div class="mb-4 inline-block">
+                    <span id="question-type-badge" class="text-sm font-black text-white bg-purple-500 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                        Pilihan Ganda
+                    </span>
                 </div>
-
-                <!-- Shape Selector Toggle -->
-                <div class="flex justify-center mb-6">
-                    <div class="bg-indigo-50 p-1.5 rounded-2xl border border-indigo-100 inline-flex items-center gap-2 font-fun">
-                        <button onclick="setShape('rect')" id="btn-shape-rect" class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm flex items-center gap-2">
-                            <i class="fa-solid fa-square text-lg"></i> Persegi / Kertas Berpetak
-                        </button>
-                        <button onclick="setShape('circle')" id="btn-shape-circle" class="px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600 flex items-center gap-2">
-                            <i class="fa-solid fa-circle text-lg"></i> Lingkaran (Kue / Pizza)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <div class="grid md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6">
-                    <!-- Fraction 1 Control -->
-                    <div class="space-y-3 bg-white p-4 rounded-xl border border-indigo-100 shadow-xs">
-                        <h4 class="font-bold text-indigo-900 text-center flex items-center justify-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-indigo-500"></span> Pecahan Pertama (Kiri)
-                        </h4>
-                        <div class="flex justify-center items-center gap-4">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-500 block">Pembilang (Arsir)</label>
-                                <input type="number" id="v-num1" min="1" max="12" value="2" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-indigo-200 rounded-xl font-bold text-indigo-700 focus:outline-none focus:border-indigo-500">
-                            </div>
-                            <span class="text-2xl font-bold text-slate-400 mt-5">/</span>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-500 block">Penyebut (Potongan)</label>
-                                <input type="number" id="v-den1" min="1" max="12" value="5" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-indigo-200 rounded-xl font-bold text-indigo-700 focus:outline-none focus:border-indigo-500">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fraction 2 Control -->
-                    <div class="space-y-3 bg-white p-4 rounded-xl border border-pink-100 shadow-xs">
-                        <h4 class="font-bold text-pink-900 text-center flex items-center justify-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-pink-500"></span> Pecahan Kedua (Kanan)
-                        </h4>
-                        <div class="flex justify-center items-center gap-4">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-500 block">Pembilang (Arsir)</label>
-                                <input type="number" id="v-num2" min="1" max="12" value="3" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-pink-200 rounded-xl font-bold text-pink-700 focus:outline-none focus:border-pink-500">
-                            </div>
-                            <span class="text-2xl font-bold text-slate-400 mt-5">/</span>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-500 block">Penyebut (Potongan)</label>
-                                <input type="number" id="v-den2" min="1" max="12" value="5" onchange="updateVisualizer()" oninput="updateVisualizer()" class="w-20 p-2 text-center border-2 border-pink-200 rounded-xl font-bold text-pink-700 focus:outline-none focus:border-pink-500">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SVG Shapes Canvas Display -->
-                <div class="flex flex-col md:flex-row justify-center items-center gap-8 py-6">
-                    <!-- Display 1 -->
-                    <div class="flex flex-col items-center">
-                        <div id="grid-container-1" class="p-4 bg-white rounded-2xl border-2 border-indigo-200 shadow-md flex items-center justify-center min-w-[180px] min-h-[180px]">
-                            <!-- SVG Generated by JS -->
-                        </div>
-                        <div class="mt-3 font-fun text-2xl font-bold text-indigo-600" id="v-txt-1">2/5</div>
-                    </div>
-
-                    <!-- Comparison Badge Result -->
-                    <div class="flex flex-col items-center justify-center">
-                        <div id="v-symbol-badge" class="w-16 h-16 rounded-full bg-amber-400 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce">
-                            &lt;
-                        </div>
-                        <span class="text-xs font-bold text-slate-500 mt-2">Hasil Perbandingan</span>
-                    </div>
-
-                    <!-- Display 2 -->
-                    <div class="flex flex-col items-center">
-                        <div id="grid-container-2" class="p-4 bg-white rounded-2xl border-2 border-pink-200 shadow-md flex items-center justify-center min-w-[180px] min-h-[180px]">
-                            <!-- SVG Generated by JS -->
-                        </div>
-                        <div class="mt-3 font-fun text-2xl font-bold text-pink-600" id="v-txt-2">3/5</div>
-                    </div>
-                </div>
-
-                <!-- Live Step Explanation -->
-                <div id="v-explanation" class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl text-center text-sm text-indigo-900 font-medium">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= SECTION 3: KUIS INTERAKTIF ================= -->
-        <section id="sec-kuis" class="space-y-6 hidden animate-pop">
-            <!-- Quiz Card -->
-            <div class="bg-white rounded-3xl p-6 border-2 border-indigo-100 shadow-sm relative">
                 
-                <!-- Quiz Header Progress -->
-                <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
-                    <div>
-                        <span class="text-xs font-bold text-indigo-500 uppercase tracking-wider block">Tantangan Pecahan</span>
-                        <h3 class="text-2xl font-bold text-slate-800" id="quiz-progress-text">Soal 1 dari 10</h3>
-                    </div>
-                    <!-- Score Badge -->
-                    <div class="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-2xl font-fun font-bold">
-                        <i class="fa-solid fa-trophy text-amber-500 text-lg"></i>
-                        <span id="quiz-score">Skor: 0</span>
-                    </div>
+                <h2 id="question-text" class="text-2xl md:text-3xl font-extrabold text-slate-700 mb-8 leading-snug">
+                    <!-- Pertanyaan masuk sini -->
+                </h2>
+
+                <!-- Options -->
+                <div id="options-container" class="grid gap-4 w-full">
+                    <!-- Tombol masuk sini -->
                 </div>
-
-                <!-- Question Main Display -->
-                <div id="quiz-box" class="space-y-6">
-                    <p class="text-center text-slate-600 font-medium">Pilihlah tanda perbandingan yang tepat untuk kedua pecahan di bawah ini!</p>
-
-                    <!-- Fraction Comparison Card -->
-                    <div class="flex justify-center items-center gap-6 py-4 bg-slate-50 rounded-3xl border border-slate-200">
-                        <!-- Left Fraction -->
-                        <div class="text-center">
-                            <div id="q-frac1" class="font-fun text-4xl sm:text-5xl font-bold text-indigo-600">
-                                <span class="fraction"><span class="top" id="q-num1">1</span><span class="bottom" id="q-den1">4</span></span>
-                            </div>
-                            <!-- SVG Preview -->
-                            <div id="q-grid1" class="mt-3 flex justify-center items-center"></div>
-                        </div>
-
-                        <!-- Question Mark Badge -->
-                        <div class="w-14 h-14 bg-white border-2 border-indigo-200 rounded-2xl flex items-center justify-center text-2xl font-bold text-slate-400 shadow-sm" id="q-symbol-placeholder">
-                            ?
-                        </div>
-
-                        <!-- Right Fraction -->
-                        <div class="text-center">
-                            <div id="q-frac2" class="font-fun text-4xl sm:text-5xl font-bold text-pink-600">
-                                <span class="fraction"><span class="top" id="q-num2">3</span><span class="bottom" id="q-den2">4</span></span>
-                            </div>
-                            <!-- SVG Preview -->
-                            <div id="q-grid2" class="mt-3 flex justify-center items-center"></div>
-                        </div>
-                    </div>
-
-                    <!-- Choice Buttons (< , > , =) -->
-                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                        <button onclick="submitAnswer('<')" class="answer-btn p-4 bg-white border-2 border-indigo-200 rounded-2xl text-3xl font-fun font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition shadow-sm hover:shadow active:scale-95">
-                            &lt;
-                            <span class="block text-xs font-sans font-semibold mt-1">Lebih Kecil</span>
-                        </button>
-                        <button onclick="submitAnswer('=')" class="answer-btn p-4 bg-white border-2 border-indigo-200 rounded-2xl text-3xl font-fun font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition shadow-sm hover:shadow active:scale-95">
-                            =
-                            <span class="block text-xs font-sans font-semibold mt-1">Sama Dengan</span>
-                        </button>
-                        <button onclick="submitAnswer('>')" class="answer-btn p-4 bg-white border-2 border-indigo-200 rounded-2xl text-3xl font-fun font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition shadow-sm hover:shadow active:scale-95">
-                            &gt;
-                            <span class="block text-xs font-sans font-semibold mt-1">Lebih Besar</span>
-                        </button>
-                    </div>
-
-                    <!-- Feedback Alert Box -->
-                    <div id="quiz-feedback" class="hidden p-4 rounded-2xl text-center text-sm font-bold border animate-pop"></div>
-
-                    <!-- Next Question Button -->
-                    <div class="text-center pt-2">
-                        <button id="btn-next" onclick="nextQuestion()" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white font-fun text-lg px-8 py-3 rounded-2xl shadow-md hover:shadow-lg transition">
-                            Soal Berikutnya <i class="fa-solid fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Quiz Completion Screen -->
-                <div id="quiz-finish-screen" class="hidden text-center py-8 space-y-6">
-                    <div class="w-24 h-24 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-5xl mx-auto shadow-inner animate-bounce">
-                        🏆
-                    </div>
-                    <div>
-                        <h3 class="text-3xl font-bold text-slate-800">Hebat Sekali! 🎉</h3>
-                        <p class="text-slate-600 mt-1">Kamu telah menyelesaikan semua soal latihan membandingkan pecahan.</p>
-                    </div>
-                    <div class="bg-indigo-50 border border-indigo-100 p-6 rounded-3xl inline-block min-w-[240px]">
-                        <span class="text-xs font-bold text-indigo-500 uppercase">Skor Akhir Kamu</span>
-                        <div class="text-5xl font-fun font-extrabold text-indigo-600 mt-1" id="final-score-val">100</div>
-                    </div>
-                    <div>
-                        <button onclick="resetQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-fun text-lg px-8 py-3 rounded-2xl shadow-md transition">
-                            <i class="fa-solid fa-rotate-right mr-2"></i>Coba Lagi
-                        </button>
-                    </div>
-                </div>
-
             </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-white border-t border-indigo-100 py-4 mt-8">
-        <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500 font-medium">
-            Media Pembelajaran Interaktif Matematika Kelas 5 SD &bull; Membandingkan Pecahan
         </div>
-    </footer>
 
+        <!-- 3. END SCREEN & TRADING CARD -->
+        <div id="end-screen" class="hidden p-6 md:p-10 flex flex-col items-center">
+            
+            <div class="text-center mb-8 animate-pop">
+                <h1 class="text-4xl md:text-5xl font-black text-slate-800 mb-2">Kuis Selesai!</h1>
+                <p class="text-lg text-slate-500 font-bold">Hebat, kamu berhasil menyelesaikan semua soal.</p>
+            </div>
+
+            <!-- Input Nama -->
+            <div class="w-full max-w-md mb-8 animate-pop" style="animation-delay: 0.1s;">
+                <label class="block text-slate-700 font-bold mb-2 text-center text-lg">Siapa namamu Pahlawan Koding?</label>
+                <input type="text" id="student-name" placeholder="Ketik nama kamu di sini..." class="w-full p-4 rounded-2xl border-4 border-slate-200 text-center text-xl font-bold focus:border-blue-400 focus:outline-none transition-colors shadow-inner" oninput="updateCardPreview()">
+            </div>
+
+            <!-- Trading Card Preview (Target for html2canvas) -->
+            <div id="trading-card" class="card-bg w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border-8 border-white mb-8 transform hover:scale-105 transition-transform duration-300 animate-pop" style="animation-delay: 0.2s;">
+                <div class="bg-white/90 backdrop-blur rounded-2xl p-6 text-center border-4 border-white/50 shadow-inner h-full flex flex-col justify-between">
+                    <div>
+                        <div class="w-20 h-20 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center border-4 border-blue-400 shadow-md">
+                            <i class="fa-solid fa-user-astronaut text-4xl text-blue-500"></i>
+                        </div>
+                        <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Kartu Prestasi</h2>
+                        <h3 id="card-name-display" class="text-2xl font-black text-slate-800 break-words line-clamp-2 min-h-[2rem]">Siswa Hebat</h3>
+                        <p class="text-sm font-bold text-blue-600 mb-4">SDN 4 Rambutan - KKA Kelas V</p>
+                    </div>
+                    
+                    <div class="bg-slate-100 rounded-xl p-4 border-2 border-slate-200">
+                        <p class="text-slate-500 font-bold text-sm uppercase tracking-wide">Total Skor</p>
+                        <div id="card-score-display" class="text-6xl font-black text-yellow-500 drop-shadow-md">100</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md animate-pop" style="animation-delay: 0.3s;">
+                <button onclick="downloadCard()" class="btn-3d btn-green flex-1 text-lg font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-download text-xl"></i> Cetak Kartu
+                </button>
+                <button onclick="location.reload()" class="btn-3d btn-blue flex-1 text-lg font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-rotate-right text-xl"></i> Main Lagi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 4. FEEDBACK MODAL (Overlay) -->
+    <div id="feedback-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4 opacity-0 transition-opacity duration-200">
+        <div id="feedback-card" class="bg-white rounded-[2rem] w-full max-w-lg overflow-hidden shadow-2xl transform scale-90 transition-transform duration-300">
+            
+            <!-- Header section changes color based on true/false -->
+            <div id="fb-header" class="p-8 text-center text-white relative overflow-hidden">
+                <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==')]"></div>
+                <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white/40 backdrop-blur-sm relative z-10">
+                    <i id="fb-icon" class="text-6xl drop-shadow-md"></i>
+                </div>
+                <h2 id="fb-title" class="text-3xl font-black mb-2 relative z-10 tracking-tight">Status</h2>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6 md:p-8 bg-slate-50">
+                <div id="fb-correct-container" class="hidden mb-6 bg-white border-4 border-green-200 p-5 rounded-2xl shadow-sm">
+                    <p class="text-sm font-black text-green-600 uppercase tracking-widest mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-check-circle"></i> Jawaban Tepat:
+                    </p>
+                    <p id="fb-correct-text" class="text-slate-800 font-bold text-lg"></p>
+                </div>
+
+                <div class="bg-white border-2 border-slate-200 p-5 rounded-2xl shadow-sm">
+                    <h3 class="text-sm font-black text-yellow-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> Penjelasan:
+                    </h3>
+                    <p id="fb-explanation" class="text-slate-600 font-bold leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Footer / Action -->
+            <div class="p-6 bg-white border-t-2 border-slate-100">
+                <button onclick="nextQuestion()" id="btn-next" class="btn-3d btn-blue w-full text-xl font-black py-4 rounded-xl flex items-center justify-center gap-3">
+                    Lanjut <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Global States
-        let currentShape = 'rect'; // 'rect' or 'circle'
-        let currentTab = 'materi';
-
-        // Tab Navigation Logic
-        function switchTab(tab) {
-            currentTab = tab;
-            ['materi', 'visual', 'kuis'].forEach(t => {
-                const sec = document.getElementById(`sec-${t}`);
-                const btn = document.getElementById(`btn-${t}`);
-                if (t === tab) {
-                    sec.classList.remove('hidden');
-                    btn.className = "nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm";
-                } else {
-                    sec.classList.add('hidden');
-                    btn.className = "nav-btn px-4 py-2 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600";
-                }
-            });
-
-            if (tab === 'visual') {
-                updateVisualizer();
-            }
-        }
-
-        // Shape Toggle Handler
-        function setShape(shape) {
-            currentShape = shape;
-            const btnRect = document.getElementById('btn-shape-rect');
-            const btnCircle = document.getElementById('btn-shape-circle');
-
-            if (shape === 'rect') {
-                btnRect.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm flex items-center gap-2";
-                btnCircle.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600 flex items-center gap-2";
-            } else {
-                btnCircle.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-indigo-600 bg-white shadow-sm flex items-center gap-2";
-                btnRect.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-indigo-600 flex items-center gap-2";
-            }
-            updateVisualizer();
-        }
-
-        /* -------------------------------------------------------------
-           1. SINGLE SHAPE SVG GENERATOR (RECT & CIRCLE)
-        ------------------------------------------------------------- */
-        function createSingleShapeSVG(num, den, colorHex, strokeHex, customSize = 160) {
-            const size = customSize;
-            
-            // Limit bounds to avoid math break
-            if (den < 1) den = 1;
-            if (num > den) num = den;
-            if (num < 0) num = 0;
-
-            if (currentShape === 'rect') {
-                // 1 Single Rectangle Divided into 'den' Equal Columns
-                let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="rounded-xl overflow-hidden border-2 border-slate-300 shadow-xs">`;
-                const colWidth = size / den;
-                
-                for (let i = 0; i < den; i++) {
-                    const x = i * colWidth;
-                    const isShaded = i < num;
-                    const fillColor = isShaded ? colorHex : '#F8FAFC';
-                    svg += `<rect x="${x}" y="0" width="${colWidth}" height="${size}" fill="${fillColor}" stroke="${strokeHex}" stroke-width="2"/>`;
-                    
-                    if (isShaded) {
-                        svg += `<line x1="${x}" y1="0" x2="${x + colWidth}" y2="${size}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>`;
-                    }
-                }
-                svg += `</svg>`;
-                return svg;
-            } else {
-                // 1 Single Circle (Pie Chart) Divided into 'den' Equal Sectors
-                const cx = size / 2;
-                const cy = size / 2;
-                const r = (size / 2) - 4;
-                let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" class="drop-shadow-xs">`;
-
-                if (den === 1) {
-                    const fillColor = num >= 1 ? colorHex : '#F8FAFC';
-                    svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fillColor}" stroke="${strokeHex}" stroke-width="3"/>`;
-                } else {
-                    const angleStep = (2 * Math.PI) / den;
-                    for (let i = 0; i < den; i++) {
-                        const startAngle = i * angleStep - Math.PI / 2;
-                        const endAngle = (i + 1) * angleStep - Math.PI / 2;
-
-                        const x1 = cx + r * Math.cos(startAngle);
-                        const y1 = cy + r * Math.sin(startAngle);
-                        const x2 = cx + r * Math.cos(endAngle);
-                        const y2 = cy + r * Math.sin(endAngle);
-
-                        const largeArc = angleStep > Math.PI ? 1 : 0;
-                        const isShaded = i < num;
-                        const fillColor = isShaded ? colorHex : '#F8FAFC';
-
-                        const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-                        svg += `<path d="${pathData}" fill="${fillColor}" stroke="${strokeHex}" stroke-width="2"/>`;
-                    }
-                }
-                svg += `</svg>`;
-                return svg;
-            }
-        }
-
-        /* -------------------------------------------------------------
-           2. VISUALIZER UPDATE LOGIC
-        ------------------------------------------------------------- */
-        function updateVisualizer() {
-            let num1 = parseInt(document.getElementById('v-num1').value) || 1;
-            let den1 = parseInt(document.getElementById('v-den1').value) || 1;
-            let num2 = parseInt(document.getElementById('v-num2').value) || 1;
-            let den2 = parseInt(document.getElementById('v-den2').value) || 1;
-
-            // Ensure valid inputs
-            if (num1 > den1) num1 = den1;
-            if (num2 > den2) num2 = den2;
-
-            document.getElementById('v-txt-1').innerText = `${num1}/${den1}`;
-            document.getElementById('v-txt-2').innerText = `${num2}/${den2}`;
-
-            // Render SVG 1
-            const c1 = document.getElementById('grid-container-1');
-            c1.innerHTML = createSingleShapeSVG(num1, den1, '#6366F1', '#4338CA', 160);
-
-            // Render SVG 2
-            const c2 = document.getElementById('grid-container-2');
-            c2.innerHTML = createSingleShapeSVG(num2, den2, '#EC4899', '#BE185D', 160);
-
-            // Compare Values
-            const val1 = num1 / den1;
-            const val2 = num2 / den2;
-            const badge = document.getElementById('v-symbol-badge');
-            const exp = document.getElementById('v-explanation');
-
-            const cross1 = num1 * den2;
-            const cross2 = num2 * den1;
-            const shapeName = currentShape === 'rect' ? 'Persegi' : 'Lingkaran';
-
-            if (val1 < val2) {
-                badge.innerText = '<';
-                badge.className = "w-16 h-16 rounded-full bg-indigo-500 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce";
-                exp.innerHTML = `Pada 1 Gambar ${shapeName} Utuh: Luas daerah arsir <b>${num1}/${den1}</b> lebih KECIL daripada <b>${num2}/${den2}</b>.<br><span class="text-xs text-indigo-700 font-bold mt-1 block">Perkalian Silang: (${num1} × ${den2} = <b>${cross1}</b>) &lt; (${num2} × ${den1} = <b>${cross2}</b>). Maka <b>${num1}/${den1} &lt; ${num2}/${den2}</b></span>`;
-            } else if (val1 > val2) {
-                badge.innerText = '>';
-                badge.className = "w-16 h-16 rounded-full bg-pink-500 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce";
-                exp.innerHTML = `Pada 1 Gambar ${shapeName} Utuh: Luas daerah arsir <b>${num1}/${den1}</b> lebih BESAR daripada <b>${num2}/${den2}</b>.<br><span class="text-xs text-pink-700 font-bold mt-1 block">Perkalian Silang: (${num1} × ${den2} = <b>${cross1}</b>) &gt; (${num2} × ${den1} = <b>${cross2}</b>). Maka <b>${num1}/${den1} &gt; ${num2}/${den2}</b></span>`;
-            } else {
-                badge.innerText = '=';
-                badge.className = "w-16 h-16 rounded-full bg-emerald-500 text-white font-fun text-4xl flex items-center justify-center shadow-lg border-4 border-white animate-bounce";
-                exp.innerHTML = `Pada 1 Gambar ${shapeName} Utuh: Luas daerah arsir kedua pecahan SAMA BESAR.<br><span class="text-xs text-emerald-700 font-bold mt-1 block">Perkalian Silang: (${num1} × ${den2} = <b>${cross1}</b>) = (${num2} × ${den1} = <b>${cross2}</b>). Kedua pecahan <b>Senilai</b>!</span>`;
-            }
-        }
-
-        /* -------------------------------------------------------------
-           3. MATERI EXAMPLES LOGIC
-        ------------------------------------------------------------- */
-        function loadExample(id) {
-            const detailBox = document.getElementById('example-detail');
-            const title = document.getElementById('ex-title');
-            const desc = document.getElementById('ex-desc');
-            
-            detailBox.classList.remove('hidden');
-
-            if (id === 1) {
-                title.innerText = "Contoh 1: 1/4 ... 3/4 (Penyebut Sama)";
-                desc.innerHTML = "Penyebutnya sama-sama <b>4</b>. Kita cukup lihat pembilang (angka atas): <b>1 &lt; 3</b>.<br>Jadi: <b>1/4 &lt; 3/4</b>.";
-            } else if (id === 2) {
-                title.innerText = "Contoh 2: 4/5 ... 1/2 (Penyebut Beda)";
-                desc.innerHTML = "Gunakan perkalian silang:<br>&bull; Kiri: 4 × 2 = <b>8</b><br>&bull; Kanan: 1 × 5 = <b>5</b><br>Karena 8 &gt; 5, maka: <b>4/5 &gt; 1/2</b>.";
-            } else if (id === 3) {
-                title.innerText = "Contoh 3: 2/4 ... 1/2 (Pecahan Senilai)";
-                desc.innerHTML = "Perkalian silang:<br>&bull; Kiri: 2 × 2 = <b>4</b><br>&bull; Kanan: 1 × 4 = <b>4</b><br>Hasilnya sama! Maka: <b>2/4 = 1/2</b>.";
-            }
-        }
-
-        /* -------------------------------------------------------------
-           4. QUIZ / GAME LOGIC
-        ------------------------------------------------------------- */
+        // Data Soal Lengkap (20 Soal)
         const quizData = [
-            { n1: 1, d1: 4, n2: 3, d2: 4, ans: '<', exp: 'Penyebut sama (4). Angka 1 lebih kecil dari 3.' },
-            { n1: 4, d1: 5, n2: 2, d2: 5, ans: '>', exp: 'Penyebut sama (5). Angka 4 lebih besar dari 2.' },
-            { n1: 2, d1: 6, n2: 5, d2: 6, ans: '<', exp: 'Penyebut sama (6). Angka 2 lebih kecil dari 5.' },
-            { n1: 3, d1: 8, n2: 3, d2: 8, ans: '=', exp: 'Kedua pecahan persis sama.' },
-            { n1: 2, d1: 3, n2: 3, d2: 4, ans: '<', exp: 'Perkalian silang: 2×4=8 dan 3×3=9. Karena 8 < 9.' },
-            { n1: 4, d1: 5, n2: 1, d2: 2, ans: '>', exp: 'Perkalian silang: 4×2=8 dan 1×5=5. Karena 8 > 5.' },
-            { n1: 1, d1: 3, n2: 1, d2: 2, ans: '<', exp: 'Perkalian silang: 1×2=2 dan 1×3=3. Karena 2 < 3.' },
-            { n1: 2, d1: 4, n2: 1, d2: 2, ans: '=', exp: 'Perkalian silang: 2×2=4 dan 1×4=4. Hasilnya sama (senilai).' },
-            { n1: 3, d1: 5, n2: 4, d2: 5, ans: '<', exp: 'Penyebut sama (5). Angka 3 lebih kecil dari 4.' },
-            { n1: 5, d1: 6, n2: 2, d2: 3, ans: '>', exp: 'Perkalian silang: 5×3=15 dan 2×6=12. Karena 15 > 12.' }
+            // Bagian I: Pilihan Ganda (10 Soal)
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Pepi merasa bingung saat diminta ibu merapikan kamarnya yang sangat berantakan. Agar tugas terasa lebih ringan dan mudah dikerjakan, Pepi membaginya menjadi beberapa tugas kecil. Metode ini dinamakan...",
+                options: ["A. Abstraksi", "B. Dekomposisi", "C. Pengenalan Pola", "D. Algoritma"],
+                correct: 1, // B
+                explanation: "Dekomposisi adalah memecah masalah besar (kamar berantakan) menjadi bagian-bagian kecil (tugas kecil) yang lebih mudah diselesaikan."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Rafi sering terlambat bangun pagi. Lewat metode 'Rantai 5 Mengapa', ditemukan akar masalah: Rafi tidur larut malam akibat bermain gawai tanpa batas waktu. Tindakan pencegahan yang tepat adalah...",
+                options: ["A. Beli jam weker baru yang suaranya keras", "B. Membuat batasan waktu penggunaan gawai di malam hari", "C. Berlari kencang saat berangkat ke sekolah", "D. Tidur di sekolah agar tidak terlambat"],
+                correct: 1, // B
+                explanation: "Akar masalahnya adalah kurang tidur karena main gawai tanpa batas waktu, maka solusinya harus mengatasi akar masalah tersebut."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Alya mengamati setiap Senin ada upacara, dan Jumat ada senam. Ia memprediksi kegiatan sekolah minggu depan dengan mudah. Kemampuan Alya menunjukkan penerapan pondasi...",
+                options: ["A. Pengenalan Pola", "B. Dekomposisi", "C. Debugging", "D. Hardware"],
+                correct: 0, // A
+                explanation: "Mengenali kejadian yang berulang secara teratur untuk memprediksi hal selanjutnya adalah ciri pengenalan pola."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Melihat peta yang rumit, Budi hanya fokus mencari lokasi Ruang Komputer dan mengabaikan warna cat dinding serta hiasan yang tidak berkaitan. Proses ini disebut...",
+                options: ["A. Algoritma", "B. Abstraksi", "C. Pengolahan Data", "D. Input"],
+                correct: 1, // B
+                explanation: "Abstraksi adalah proses memfokuskan perhatian pada informasi penting saja dan mengabaikan detail tidak relevan."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Urutan teh manis: (1) Air panas, (2) Masukkan teh & gula, (3) Masukkan es batu besar, (4) Aduk hingga gula larut. Kesalahan logika (bug) terletak pada langkah nomor...",
+                options: ["A. Nomor (1)", "B. Nomor (3)", "C. Nomor (2)", "D. Nomor (4)"],
+                correct: 1, // B
+                explanation: "Jika es batu (Langkah 3) dimasukkan sebelum diaduk (Langkah 4), suhu akan jadi dingin dan gula akan sangat sulit larut."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Pernyataan yang benar mengenai perbedaan jam analog (jarum mekanis) dan jam digital di kelas adalah...",
+                options: ["A. Jam analog mengolah data elektronik", "B. Jam digital menampilkan informasi otomatis dalam angka/data elektronik", "C. Jam analog selalu butuh koneksi internet", "D. Jam digital tidak menggunakan komponen elektronik"],
+                correct: 1, // B
+                explanation: "Teknologi digital memproses dan menampilkan informasi secara elektronik (biasanya berupa angka di layar)."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Ibu Nita mengedit poster kegiatan sekolah menggunakan aplikasi Canva di komputer. Komponen yang berperan sebagai perangkat lunak (software) adalah...",
+                options: ["A. Papan Ketik (Keyboard)", "B. Layar Monitor", "C. Aplikasi Canva", "D. Kotak CPU"],
+                correct: 2, // C
+                explanation: "Software (perangkat lunak) adalah program atau aplikasi di dalam komputer, seperti Aplikasi Canva."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Petugas menggunakan barcode scanner untuk memindai kode buku, lalu judulnya muncul di monitor. Barcode scanner bertindak sebagai alat...",
+                options: ["A. Masukan (Input)", "B. Keluaran (Output)", "C. Proses", "D. Penyimpanan (Storage)"],
+                correct: 0, // A
+                explanation: "Scanner bertugas memasukkan (input) data kode dari dunia nyata ke dalam sistem komputer."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Manakah kelompok informasi pribadi yang WAJIB dijaga kerahasiaannya dan tidak boleh disebar bebas?",
+                options: ["A. Nama sekolah dan warna kesukaan", "B. Kata sandi akun, no HP orang tua, dan lokasi rumah", "C. Hobi membaca dan makanan favorit", "D. Nama mata pelajaran dan nama klub sepak bola"],
+                correct: 1, // B
+                explanation: "Kata sandi, nomor HP, dan alamat rumah adalah informasi pribadi yang sangat rawan disalahgunakan oleh orang jahat."
+            },
+            {
+                type: 'mc',
+                category: 'Bagian I: Pilihan Ganda',
+                question: "Doni menerima pesan asing: 'Selamat menang laptop! Kirim KTP orang tua dan kata sandi sekolah'. Sikap etis dan aman adalah...",
+                options: ["A. Segera kirim foto KTP agar dapat laptop", "B. Mengabaikan dan melaporkan pesan mencurigakan ke orang tua atau guru", "C. Membagikan kata sandi sekolah ke teman-teman", "D. Membalas pesan dengan kata-kata kasar"],
+                correct: 1, // B
+                explanation: "Sesuai janji digital, kita harus waspada penipuan online. Jangan berikan data pribadi dan lapor ke orang dewasa yang dipercaya."
+            },
+            
+            // Bagian II: Menjodohkan (5 Soal) -> UI disesuaikan jadi pilihan ganda tombol A-F
+            {
+                type: 'match',
+                category: 'Bagian II: Menjodohkan',
+                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Memecah masalah besar menjadi bagian-bagian kecil yang lebih mudah diselesaikan.\"",
+                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
+                correct: 1, // B
+                explanation: "Dekomposisi adalah teknik komputasional untuk memecah masalah yang kompleks menjadi bagian yang lebih kecil dan terkelola."
+            },
+            {
+                type: 'match',
+                category: 'Bagian II: Menjodohkan',
+                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Memfokuskan perhatian pada informasi penting dan mengabaikan detail yang tidak relevan.\"",
+                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
+                correct: 0, // A
+                explanation: "Inti dari proses Abstraksi adalah menyaring informasi sehingga kita hanya fokus pada bagian yang relevan saja."
+            },
+            {
+                type: 'match',
+                category: 'Bagian II: Menjodohkan',
+                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Komponen fisik komputer yang dapat dilihat dan disentuh (seperti papan ketik dan monitor).\"",
+                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
+                correct: 2, // C
+                explanation: "Hardware (Perangkat Keras) adalah wujud fisik dari teknologi atau komputer yang bisa kita raba."
+            },
+            {
+                type: 'match',
+                category: 'Bagian II: Menjodohkan',
+                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Hasil pengolahan data komputer yang ditampilkan di layar atau dicetak ke kertas.\"",
+                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
+                correct: 3, // D
+                explanation: "Informasi yang 'keluar' dari komputer menuju pengguna disebut Output (Luaran)."
+            },
+            {
+                type: 'match',
+                category: 'Bagian II: Menjodohkan',
+                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Informasi rahasia rawan retas yang tidak boleh dibagikan kepada siapapun di internet.\"",
+                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
+                correct: 4, // E
+                explanation: "Kata Sandi (Password) ibarat kunci gembok rumah digital kita yang harus selalu dirahasiakan."
+            },
+
+            // Bagian III: Benar / Salah (5 Soal)
+            {
+                type: 'tf',
+                category: 'Bagian III: Benar atau Salah',
+                question: "Pernyataan: 'Berpikir komputasional berarti manusia harus berpikir dan bertindak kaku persis seperti mesin komputer.'",
+                options: ["Benar", "Salah"],
+                correct: 1, // Salah
+                explanation: "Berpikir komputasional adalah menggunakan konsep dasar ilmu komputer untuk memecahkan masalah sehari-hari, bukan berarti manusia berubah wujud/sifat menjadi mesin."
+            },
+            {
+                type: 'tf',
+                category: 'Bagian III: Benar atau Salah',
+                question: "Pernyataan: 'Menuliskan algoritma atau instruksi dengan urutan langkah yang acak tetap akan menghasilkan luaran (output) yang tepat.'",
+                options: ["Benar", "Salah"],
+                correct: 1, // Salah
+                explanation: "Algoritma sangat bergantung pada urutan langkah yang logis dan teratur. Jika diacak, hasilnya pasti akan salah atau eror."
+            },
+            {
+                type: 'tf',
+                category: 'Bagian III: Benar atau Salah',
+                question: "Pernyataan: 'Perangkat keras (hardware) komputer tidak akan dapat berfungsi tanpa adanya perangkat lunak (software) di dalamnya.'",
+                options: ["Benar", "Salah"],
+                correct: 0, // Benar
+                explanation: "Hardware bagaikan tubuh, sedangkan software bagaikan rohnya. Tubuh tidak bisa bekerja tanpa instruksi dari roh (program/software)."
+            },
+            {
+                type: 'tf',
+                category: 'Bagian III: Benar atau Salah',
+                question: "Pernyataan: 'Mengabaikan informasi warna cat rumah warga saat membaca denah lokasi sekolah merupakan bentuk penerapan prinsip abstraksi.'",
+                options: ["Benar", "Salah"],
+                correct: 0, // Benar
+                explanation: "Warna cat rumah tidak penting untuk mencari arah jalan ke sekolah, sehingga mengabaikannya adalah tindakan Abstraksi yang tepat."
+            },
+            {
+                type: 'tf',
+                category: 'Bagian III: Benar atau Salah',
+                question: "Pernyataan: 'Membagikan nama lengkap, nomor HP orang tua, dan alamat rumah secara bebas di media sosial aman dilakukan oleh anak-anak.'",
+                options: ["Benar", "Salah"],
+                correct: 1, // Salah
+                explanation: "Itu adalah data pribadi yang sensitif. Membagikannya secara bebas sangat berbahaya karena bisa memicu penipuan atau kejahatan siber."
+            }
         ];
 
-        let currentQuestion = 0;
+        // State variables
+        let currentIdx = 0;
         let score = 0;
-        let answered = false;
+        const ptsPerQuestion = 5; // 20 soal * 5 = 100
 
-        function loadQuestion() {
-            answered = false;
-            const q = quizData[currentQuestion];
+        // DOM Elements
+        const screens = {
+            start: document.getElementById('start-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            end: document.getElementById('end-screen')
+        };
+        const modal = document.getElementById('feedback-modal');
+        const fbCard = document.getElementById('feedback-card');
+        const container = document.getElementById('app-container');
 
-            // Update Text
-            document.getElementById('quiz-progress-text').innerText = `Soal ${currentQuestion + 1} dari ${quizData.length}`;
-            document.getElementById('q-num1').innerText = q.n1;
-            document.getElementById('q-den1').innerText = q.d1;
-            document.getElementById('q-num2').innerText = q.n2;
-            document.getElementById('q-den2').innerText = q.d2;
+        function startQuiz() {
+            currentIdx = 0;
+            score = 0;
+            updateUI();
+            
+            screens.start.classList.add('hidden');
+            screens.quiz.classList.remove('hidden');
+            screens.quiz.classList.add('flex');
+            
+            container.classList.remove('animate-pop');
+            void container.offsetWidth; // reflow
+            container.classList.add('animate-pop');
 
-            document.getElementById('q-symbol-placeholder').innerText = '?';
-            document.getElementById('q-symbol-placeholder').className = "w-14 h-14 bg-white border-2 border-indigo-200 rounded-2xl flex items-center justify-center text-2xl font-bold text-slate-400 shadow-sm";
-
-            // Hide Feedback & Next Button
-            document.getElementById('quiz-feedback').classList.add('hidden');
-            document.getElementById('btn-next').classList.add('hidden');
-
-            // Render SVG Preview Shapes
-            document.getElementById('q-grid1').innerHTML = createSingleShapeSVG(q.n1, q.d1, '#6366F1', '#4338CA', 90);
-            document.getElementById('q-grid2').innerHTML = createSingleShapeSVG(q.n2, q.d2, '#EC4899', '#BE185D', 90);
+            renderQuestion();
         }
 
-        function submitAnswer(userAns) {
-            if (answered) return;
-            answered = true;
+        function renderQuestion() {
+            const qData = quizData[currentIdx];
+            
+            // Header Info
+            document.getElementById('current-question-num').innerText = currentIdx + 1;
+            document.getElementById('question-type-badge').innerText = qData.category;
+            
+            // Progress Bar (animate width)
+            const progress = ((currentIdx) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            const q = quizData[currentQuestion];
-            const feedback = document.getElementById('quiz-feedback');
-            const placeholder = document.getElementById('q-symbol-placeholder');
+            // Question Text
+            const qText = document.getElementById('question-text');
+            // Ganti baris baru (\n) menjadi <br>
+            qText.innerHTML = qData.question.replace(/\n/g, '<br>');
+            qText.classList.remove('animate-pop');
+            void qText.offsetWidth; 
+            qText.classList.add('animate-pop');
 
-            placeholder.innerText = userAns;
-
-            if (userAns === q.ans) {
-                score += 10;
-                document.getElementById('quiz-score').innerText = `Skor: ${score}`;
-                placeholder.className = "w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-md animate-bounce";
-                
-                feedback.className = "p-4 rounded-2xl text-center text-sm font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 block animate-pop";
-                feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i><b>Jawaban Benar! 🎉</b><br><span class="font-normal text-xs mt-1 block">${q.exp}</span>`;
+            // Options Grid Adjustments
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = ''; 
+            
+            // Adjust grid layout based on type
+            if (qData.type === 'match') {
+                optsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full';
+            } else if (qData.type === 'tf') {
+                optsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg mx-auto mt-4';
             } else {
-                placeholder.className = "w-14 h-14 bg-rose-500 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-md";
-                
-                feedback.className = "p-4 rounded-2xl text-center text-sm font-bold bg-rose-100 text-rose-800 border border-rose-300 block animate-pop";
-                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-2"></i><b>Kurang Tepat! Jawaban yang benar adalah "${q.ans}"</b><br><span class="font-normal text-xs mt-1 block">${q.exp}</span>`;
+                optsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 w-full';
             }
 
-            document.getElementById('btn-next').classList.remove('hidden');
+            // Create Buttons
+            qData.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                
+                if (qData.type === 'tf') {
+                    // True/False special styling
+                    btn.className = `btn-3d w-full p-6 rounded-2xl text-2xl font-black flex items-center justify-center gap-3 shadow-md animate-pop ${index === 0 ? 'btn-green' : 'btn-purple'}`;
+                    btn.innerHTML = index === 0 ? `<i class="fa-solid fa-check"></i> ${optText}` : `<i class="fa-solid fa-xmark"></i> ${optText}`;
+                } else {
+                    // Normal / Match styling
+                    btn.className = 'btn-3d btn-option w-full p-4 rounded-2xl text-lg font-bold flex items-center gap-4 shadow-sm animate-pop';
+                    
+                    // Pisahkan huruf A/B/C dengan teks
+                    const splitIndex = optText.indexOf('.');
+                    if (splitIndex !== -1 && splitIndex < 3) {
+                        const letter = optText.substring(0, splitIndex);
+                        const text = optText.substring(splitIndex + 1).trim();
+                        btn.innerHTML = `<span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 text-xl border-2 border-blue-200">${letter}</span> <span class="text-left">${text}</span>`;
+                    } else {
+                        btn.innerHTML = `<span class="text-left w-full">${optText}</span>`;
+                    }
+                }
+                
+                btn.style.animationDelay = `${index * 0.1}s`;
+                btn.onclick = () => handleAnswer(index, btn);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIndex, clickedBtn) {
+            const qData = quizData[currentIdx];
+            const isCorrect = selectedIndex === qData.correct;
+
+            // Disable all buttons
+            const buttons = document.querySelectorAll('#options-container button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Add visual cue to clicked button temporarily
+            if (isCorrect) {
+                clickedBtn.classList.add('bg-green-100', 'border-green-400');
+                score += ptsPerQuestion;
+                updateUI();
+            } else {
+                clickedBtn.classList.add('bg-rose-100', 'border-rose-400');
+            }
+
+            // Small delay before showing modal to let button animation finish
+            setTimeout(() => {
+                showFeedback(isCorrect, qData);
+            }, 300);
+        }
+
+        function showFeedback(isCorrect, qData) {
+            const header = document.getElementById('fb-header');
+            const icon = document.getElementById('fb-icon');
+            const title = document.getElementById('fb-title');
+            
+            const correctContainer = document.getElementById('fb-correct-container');
+            const correctText = document.getElementById('fb-correct-text');
+            const explanation = document.getElementById('fb-explanation');
+            const btnNext = document.getElementById('btn-next');
+
+            // Reset Classes
+            header.className = 'p-8 text-center text-white relative overflow-hidden transition-colors duration-300';
+            btnNext.className = 'btn-3d w-full text-xl font-black py-4 rounded-xl flex items-center justify-center gap-3 shadow-md transition-colors';
+
+            if (isCorrect) {
+                header.classList.add('bg-green-500');
+                icon.className = 'fa-solid fa-face-laugh-beam text-6xl drop-shadow-md text-white';
+                title.innerText = 'Benar! Luar Biasa!';
+                
+                btnNext.classList.add('btn-green');
+                correctContainer.classList.add('hidden');
+            } else {
+                header.classList.add('bg-rose-500');
+                icon.className = 'fa-solid fa-face-frown-open text-6xl drop-shadow-md text-white';
+                title.innerText = 'Kurang Tepat, Yuk Belajar Lagi!';
+                
+                btnNext.classList.add('btn-purple');
+                correctContainer.classList.remove('hidden');
+                // Format the correct text display
+                correctText.innerHTML = qData.options[qData.correct];
+            }
+
+            explanation.innerHTML = qData.explanation;
+
+            // Show Modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Trigger animation
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                fbCard.classList.remove('scale-90');
+                fbCard.classList.add('scale-100');
+            }, 10);
         }
 
         function nextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < quizData.length) {
-                loadQuestion();
-            } else {
-                // Finish Quiz
-                document.getElementById('quiz-box').classList.add('hidden');
-                document.getElementById('quiz-finish-screen').classList.remove('hidden');
-                document.getElementById('final-score-val').innerText = score;
-            }
+            // Hide Modal animation
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            fbCard.classList.remove('scale-100');
+            fbCard.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                
+                currentIdx++;
+                if (currentIdx < quizData.length) {
+                    renderQuestion();
+                } else {
+                    endQuiz();
+                }
+            }, 250); // match duration
         }
 
-        function resetQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            document.getElementById('quiz-score').innerText = 'Skor: 0';
-            document.getElementById('quiz-finish-screen').classList.add('hidden');
-            document.getElementById('quiz-box').classList.remove('hidden');
-            loadQuestion();
+        function endQuiz() {
+            screens.quiz.classList.add('hidden');
+            screens.quiz.classList.remove('flex');
+            screens.end.classList.remove('hidden');
+            
+            // Complete Progress Bar
+            document.getElementById('progress-bar').style.width = `100%`;
+
+            // Update Card
+            document.getElementById('card-score-display').innerText = score;
+            
+            // Score Color on Card
+            const scoreDisp = document.getElementById('card-score-display');
+            if(score >= 80) scoreDisp.className = 'text-6xl font-black text-green-500 drop-shadow-md';
+            else if(score >= 50) scoreDisp.className = 'text-6xl font-black text-blue-500 drop-shadow-md';
+            else scoreDisp.className = 'text-6xl font-black text-rose-500 drop-shadow-md';
+
+            updateCardPreview();
         }
 
-        // Initialize App Window OnLoad
-        window.onload = function() {
-            loadQuestion();
-            updateVisualizer();
-        };
+        function updateUI() {
+            document.getElementById('current-score').innerText = score;
+        }
+
+        function updateCardPreview() {
+            const inputVal = document.getElementById('student-name').value.trim();
+            const displayName = inputVal === '' ? 'Siswa Hebat' : inputVal;
+            document.getElementById('card-name-display').innerText = displayName;
+        }
+
+        function downloadCard() {
+            const card = document.getElementById('trading-card');
+            const name = document.getElementById('student-name').value.trim() || 'Siswa';
+            
+            // Add a brief scale up effect to the button
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xl"></i> Memproses...`;
+            btn.disabled = true;
+
+            // Gunakan html2canvas
+            html2canvas(card, {
+                scale: 2, // High resolution
+                backgroundColor: null,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                // Buat link download
+                const link = document.createElement('a');
+                link.download = `Sertifikat-KKA-${name}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Restore button
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }).catch(err => {
+                alert("Terjadi kesalahan saat membuat gambar.");
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            });
+        }
     </script>
 </body>
 </html>
