@@ -1,672 +1,1825 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sumatif Tengah Semester KKA Kelas V</title>
-    
+    <title>STS 1 Pendidikan Pancasila Kelas 5 - SDN 4 Rambutan</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Nunito -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- html2canvas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f0f9ff;
-            background-image: radial-gradient(#bae6fd 3px, transparent 3px);
-            background-size: 40px 40px;
-            overflow-x: hidden;
-        }
-
-        /* Juicy 3D Button Styles as requested */
-        .btn-3d {
-            transition: all 0.1s;
-            border-bottom-width: 4px;
-            border-bottom-color: rgba(0,0,0,0.2);
-            position: relative;
-        }
-        
-        .btn-3d:active:not(:disabled) {
-            transform: translateY(4px);
-            border-bottom-width: 0px;
-            margin-bottom: 4px; /* Prevent layout shift */
-        }
-
-        .btn-3d:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: translateY(4px);
-            border-bottom-width: 0px;
-            margin-bottom: 4px;
-        }
-
-        /* Specific Color Variations */
-        .btn-blue { background-color: #3b82f6; color: white; }
-        .btn-blue:hover:not(:disabled) { background-color: #60a5fa; }
-
-        .btn-green { background-color: #22c55e; color: white; }
-        .btn-green:hover:not(:disabled) { background-color: #4ade80; }
-
-        .btn-yellow { background-color: #facc15; color: #713f12; }
-        .btn-yellow:hover:not(:disabled) { background-color: #fde047; }
-        
-        .btn-purple { background-color: #a855f7; color: white; }
-        .btn-purple:hover:not(:disabled) { background-color: #c084fc; }
-
-        .btn-option {
-            background-color: #ffffff;
-            color: #334155;
-            border: 2px solid #e2e8f0;
-            border-bottom: 4px solid #cbd5e1;
-            text-align: left;
-        }
-        .btn-option:hover:not(:disabled) {
+            font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
-            border-color: #cbd5e1;
-            border-bottom-color: #94a3b8;
         }
-
-        /* Animations */
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            60% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        .animate-pop {
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes bounceGently {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .animate-float {
-            animation: bounceGently 3s infinite ease-in-out;
-        }
-
-        /* Card Pattern */
-        .card-bg {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        /* Tally Mark Styling */
+        .tally-group {
+            display: inline-flex;
+            align-items: center;
             position: relative;
-            overflow: hidden;
+            padding: 0 4px;
+            margin-right: 8px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #1e293b;
+            font-family: monospace;
+            font-size: 1.15rem;
         }
-        .card-bg::after {
+        .tally-5::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.2) 2px, transparent 2px);
-            background-size: 20px 20px;
-            pointer-events: none;
+            left: 0;
+            right: 2px;
+            top: 50%;
+            height: 2.5px;
+            background-color: #dc2626;
+            transform: rotate(-18deg);
+            border-radius: 2px;
+        }
+        /* Smooth animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+<body class="text-slate-800 min-h-screen flex flex-col">
 
-    <!-- App Container -->
-    <div id="app-container" class="max-w-4xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-white relative z-10 animate-pop">
-        
-        <!-- 1. START SCREEN -->
-        <div id="start-screen" class="p-8 md:p-16 text-center">
-            <div class="mb-8 inline-block animate-float">
-                <div class="w-36 h-36 bg-blue-100 rounded-[2rem] rotate-3 flex items-center justify-center mx-auto border-4 border-blue-400 shadow-lg">
-                    <i class="fa-solid fa-gamepad text-7xl text-blue-500 -rotate-3"></i>
+    <!-- TOP OFFICIAL HEADER -->
+    <header class="bg-gradient-to-r from-red-700 via-red-600 to-rose-700 text-white shadow-lg sticky top-0 z-40 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <!-- Identity Brand -->
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-inner shrink-0">
+                        <i class="fa-solid fa-shield-halved text-2xl text-amber-300"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-[11px] font-bold uppercase tracking-wider bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-full">Kab. Banyuasin</span>
+                            <span class="text-xs text-red-100 font-medium">SD Negeri 4 Rambutan</span>
+                        </div>
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-snug">
+                            STS 1 Pendidikan Pancasila • Kelas V
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Live Stats & Audio Controls -->
+                <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 bg-black/20 px-3.5 py-2 rounded-2xl border border-white/10">
+                    <!-- Timer -->
+                    <div class="flex items-center gap-2 pr-2 sm:pr-3 border-r border-white/20" title="Sisa Waktu Pengerjaan">
+                        <i class="fa-regular fa-clock text-amber-300"></i>
+                        <div>
+                            <div class="text-[10px] uppercase text-red-200 leading-none">Waktu</div>
+                            <div id="timerDisplay" class="font-mono font-bold text-sm sm:text-base">60:00</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Counter -->
+                    <div class="flex items-center gap-2 pr-2 sm:pr-3 border-r border-white/20">
+                        <i class="fa-solid fa-list-check text-emerald-300"></i>
+                        <div>
+                            <div class="text-[10px] uppercase text-red-200 leading-none">Terjawab</div>
+                            <div class="font-bold text-sm sm:text-base"><span id="answeredCount">0</span>/20</div>
+                        </div>
+                    </div>
+
+                    <!-- Live Score out of 100 -->
+                    <div class="flex items-center gap-2 pr-1">
+                        <div class="w-8 h-8 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center font-extrabold text-sm shadow">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] uppercase text-amber-200 leading-none font-semibold">Skor Poin</div>
+                            <div class="font-extrabold text-base sm:text-lg text-amber-300"><span id="liveScoreDisplay">0</span> <span class="text-xs font-normal text-white">/ 100</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Sound Toggle -->
+                    <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition" title="Aktifkan/Matikan Suara Efek">
+                        <i id="soundIcon" class="fa-solid fa-volume-high text-sm"></i>
+                    </button>
                 </div>
             </div>
-            <h1 class="text-4xl md:text-5xl font-black text-slate-800 mb-4 leading-tight tracking-tight">Sumatif Tengah Semester KKA Kelas V</h1>
-            <p class="text-xl text-blue-600 font-extrabold mb-8 uppercase tracking-widest bg-blue-50 py-2 px-6 rounded-full inline-block">SDN 4 Rambutan</p>
-            
-            <p class="text-slate-500 mb-10 max-w-lg mx-auto font-semibold text-lg">Siap menguji pengetahuanmu tentang Koding & Kecerdasan Artifisial? Ada 20 soal seru yang menantimu!</p>
-            
-            <button onclick="startQuiz()" class="btn-3d btn-yellow text-2xl font-black px-12 py-5 rounded-2xl w-full md:w-auto inline-flex items-center justify-center gap-4 mx-auto shadow-xl">
-                <i class="fa-solid fa-rocket"></i> Mulai Kuis
-            </button>
+
+            <!-- Navigation Tabs -->
+            <div class="flex items-center gap-1.5 sm:gap-2 mt-3 pt-2.5 border-t border-white/15 overflow-x-auto no-scrollbar">
+                <button onclick="switchMainTab('quiz')" id="tabBtn-quiz" class="tab-nav-btn bg-white text-red-700 font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm transition shrink-0">
+                    <i class="fa-solid fa-pen-to-square"></i> Lembar Latihan Interaktif
+                </button>
+                <button onclick="switchMainTab('kisikisi')" id="tabBtn-kisikisi" class="tab-nav-btn bg-white/10 hover:bg-white/20 text-white font-medium px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 transition shrink-0">
+                    <i class="fa-solid fa-table-list"></i> Kisi-Kisi HOTS (Literasi & Numerasi)
+                </button>
+                <button onclick="switchMainTab('rapor')" id="tabBtn-rapor" class="tab-nav-btn bg-white/10 hover:bg-white/20 text-white font-medium px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 transition shrink-0">
+                    <i class="fa-solid fa-chart-pie"></i> Hasil & Pembahasan Lengkap
+                </button>
+            </div>
         </div>
+    </header>
 
-        <!-- 2. QUIZ SCREEN -->
-        <div id="quiz-screen" class="hidden flex-col h-full min-h-[60vh]">
-            <!-- Header -->
-            <div class="bg-blue-500 p-5 text-white flex justify-between items-center">
-                <div class="font-black bg-blue-600 px-5 py-2 rounded-xl text-lg flex gap-2 items-center shadow-inner">
-                    <i class="fa-solid fa-list-ol"></i> <span id="current-question-num">1</span> / 20
-                </div>
-                <div class="font-black bg-blue-600 px-5 py-2 rounded-xl text-lg flex gap-2 items-center shadow-inner">
-                    <i class="fa-solid fa-star text-yellow-300"></i> <span id="current-score">0</span>
-                </div>
-            </div>
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-100 h-4">
-                <div id="progress-bar" class="bg-gradient-to-r from-yellow-400 to-yellow-300 h-4 transition-all duration-500 rounded-r-full w-0 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></div>
-            </div>
+        <!-- ===================================================================== -->
+        <!-- TAB 1: LEMBAR LATIHAN INTERAKTIF                                      -->
+        <!-- ===================================================================== -->
+        <section id="tabContent-quiz" class="space-y-6">
 
-            <!-- Question Area -->
-            <div class="p-6 md:p-10 flex-grow flex flex-col justify-center">
-                <div class="mb-4 inline-block">
-                    <span id="question-type-badge" class="text-sm font-black text-white bg-purple-500 px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                        Pilihan Ganda
+            <!-- Student Info & Instructions Banner -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-900 text-white px-5 py-3.5 flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-id-card text-amber-400 text-lg"></i>
+                        <h2 class="font-bold text-sm sm:text-base">Identitas Peserta Didik & Petunjuk Pengerjaan</h2>
+                    </div>
+                    <span class="text-xs bg-red-600/90 text-white px-3 py-1 rounded-full font-semibold">
+                        Tahun Ajaran 2024/2025 • Semester 1
                     </span>
                 </div>
-                
-                <h2 id="question-text" class="text-2xl md:text-3xl font-extrabold text-slate-700 mb-8 leading-snug">
-                    <!-- Pertanyaan masuk sini -->
-                </h2>
 
-                <!-- Options -->
-                <div id="options-container" class="grid gap-4 w-full">
-                    <!-- Tombol masuk sini -->
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. END SCREEN & TRADING CARD -->
-        <div id="end-screen" class="hidden p-6 md:p-10 flex flex-col items-center">
-            
-            <div class="text-center mb-8 animate-pop">
-                <h1 class="text-4xl md:text-5xl font-black text-slate-800 mb-2">Kuis Selesai!</h1>
-                <p class="text-lg text-slate-500 font-bold">Hebat, kamu berhasil menyelesaikan semua soal.</p>
-            </div>
-
-            <!-- Input Nama -->
-            <div class="w-full max-w-md mb-8 animate-pop" style="animation-delay: 0.1s;">
-                <label class="block text-slate-700 font-bold mb-2 text-center text-lg">Siapa namamu Pahlawan Koding?</label>
-                <input type="text" id="student-name" placeholder="Ketik nama kamu di sini..." class="w-full p-4 rounded-2xl border-4 border-slate-200 text-center text-xl font-bold focus:border-blue-400 focus:outline-none transition-colors shadow-inner" oninput="updateCardPreview()">
-            </div>
-
-            <!-- Trading Card Preview (Target for html2canvas) -->
-            <div id="trading-card" class="card-bg w-full max-w-sm rounded-[2rem] p-6 shadow-2xl border-8 border-white mb-8 transform hover:scale-105 transition-transform duration-300 animate-pop" style="animation-delay: 0.2s;">
-                <div class="bg-white/90 backdrop-blur rounded-2xl p-6 text-center border-4 border-white/50 shadow-inner h-full flex flex-col justify-between">
-                    <div>
-                        <div class="w-20 h-20 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center border-4 border-blue-400 shadow-md">
-                            <i class="fa-solid fa-user-astronaut text-4xl text-blue-500"></i>
+                <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Form Input Siswa -->
+                    <div class="lg:col-span-5 space-y-3.5 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Lengkap Siswa</label>
+                            <div class="relative">
+                                <i class="fa-regular fa-user absolute left-3.5 top-3 text-slate-400"></i>
+                                <input type="text" id="studentName" oninput="updateStudentProfile()" placeholder="Ketik nama lengkapmu di sini..." class="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 outline-none text-sm font-medium bg-white">
+                            </div>
                         </div>
-                        <h2 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Kartu Prestasi</h2>
-                        <h3 id="card-name-display" class="text-2xl font-black text-slate-800 break-words line-clamp-2 min-h-[2rem]">Siswa Hebat</h3>
-                        <p class="text-sm font-bold text-blue-600 mb-4">SDN 4 Rambutan - KKA Kelas V</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nomor Absen</label>
+                                <input type="number" id="studentAbsen" oninput="updateStudentProfile()" placeholder="Contoh: 12" min="1" max="50" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 outline-none text-sm font-medium bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Kelas</label>
+                                <input type="text" value="V (Lima) - SDN 4 Rambutan" disabled class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100 text-slate-600 text-xs sm:text-sm font-semibold">
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="bg-slate-100 rounded-xl p-4 border-2 border-slate-200">
-                        <p class="text-slate-500 font-bold text-sm uppercase tracking-wide">Total Skor</p>
-                        <div id="card-score-display" class="text-6xl font-black text-yellow-500 drop-shadow-md">100</div>
+
+                    <!-- Scoring & Instructions Summary -->
+                    <div class="lg:col-span-7 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-extrabold shrink-0">A</div>
+                                <div>
+                                    <div class="text-xs font-bold text-blue-900">10 Pilihan Ganda</div>
+                                    <div class="text-[11px] text-blue-700">10 × 5 poin = <strong>50 Poin</strong></div>
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-purple-50 border border-purple-200 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-extrabold shrink-0">B</div>
+                                <div>
+                                    <div class="text-xs font-bold text-purple-900">5 Menjodohkan</div>
+                                    <div class="text-[11px] text-purple-700">5 × 4 poin = <strong>20 Poin</strong></div>
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-extrabold shrink-0">C</div>
+                                <div>
+                                    <div class="text-xs font-bold text-emerald-900">5 Benar / Salah</div>
+                                    <div class="text-[11px] text-emerald-700">5 × 6 poin = <strong>30 Poin</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50/90 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-900 space-y-1">
+                            <div class="font-bold flex items-center gap-1.5 text-amber-950">
+                                <i class="fa-solid fa-lightbulb text-amber-600"></i> Petunjuk Fitur Verifikasi Interaktif:
+                            </div>
+                            <p class="leading-relaxed">
+                                Pilih jawabanmu pada setiap nomor lalu klik tombol <strong>"Verifikasi Jawaban"</strong>. Sistem akan langsung menampilkan <strong>Verifikasi Alasan</strong> jika jawabanmu benar, atau <strong>Penjelasan Konsep & Perhitungan</strong> jika jawabanmu kurang tepat! Kamu juga dapat mencoba ulang soal untuk belajar.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md animate-pop" style="animation-delay: 0.3s;">
-                <button onclick="downloadCard()" class="btn-3d btn-green flex-1 text-lg font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
-                    <i class="fa-solid fa-download text-xl"></i> Cetak Kartu
-                </button>
-                <button onclick="location.reload()" class="btn-3d btn-blue flex-1 text-lg font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg">
-                    <i class="fa-solid fa-rotate-right text-xl"></i> Main Lagi
-                </button>
+            <!-- MAIN QUIZ LAYOUT: SIDEBAR NAV + QUESTIONS -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- Left/Top Section Filter & Question Map (Sticky on Desktop) -->
+                <aside class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 space-y-4">
+                    <!-- Section Filter Pills -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-compass text-red-600"></i> Navigasi Bagian Soal
+                            </h3>
+                            <button onclick="resetAllQuiz()" class="text-xs text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1" title="Ulangi semua soal dari awal">
+                                <i class="fa-solid fa-rotate-left"></i> Reset
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-1 gap-2">
+                            <button onclick="filterSection('all')" id="secBtn-all" class="sec-filter-btn w-full text-left px-3 py-2 rounded-xl text-xs font-bold bg-red-600 text-white flex items-center justify-between transition">
+                                <span>Semua Bagian (1–20)</span>
+                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-[10px]">100 Poin</span>
+                            </button>
+                            <button onclick="filterSection('A')" id="secBtn-A" class="sec-filter-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-between transition">
+                                <span>Bagian A: Pilihan Ganda</span>
+                                <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-bold">50 Poin</span>
+                            </button>
+                            <button onclick="filterSection('B')" id="secBtn-B" class="sec-filter-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-between transition">
+                                <span>Bagian B: Menjodohkan</span>
+                                <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-bold">20 Poin</span>
+                            </button>
+                            <button onclick="filterSection('C')" id="secBtn-C" class="sec-filter-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-between transition">
+                                <span>Bagian C: Benar / Salah</span>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">30 Poin</span>
+                            </button>
+                        </div>
+
+                        <!-- Number Grid Map -->
+                        <div class="pt-3 border-t border-slate-100">
+                            <div class="text-[11px] font-semibold text-slate-500 mb-2">Peta Nomor Soal (Klik untuk melompat):</div>
+                            <div id="questionNumberGrid" class="grid grid-cols-5 gap-1.5">
+                                <!-- Populated via JS -->
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 mt-3 pt-2 border-t border-slate-100">
+                                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Benar</span>
+                                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Salah</span>
+                                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-200 inline-block"></span> Belum</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Score Breakdown Card -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3">
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-500">Rincian Perolehan Poin</h4>
+                        <div class="space-y-2 text-xs">
+                            <div>
+                                <div class="flex justify-between font-semibold mb-1">
+                                    <span>Bagian A (Pilihan Ganda)</span>
+                                    <span class="text-blue-700"><span id="scorePartA">0</span> / 50</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div id="barPartA" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-semibold mb-1">
+                                    <span>Bagian B (Menjodohkan)</span>
+                                    <span class="text-purple-700"><span id="scorePartB">0</span> / 20</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div id="barPartB" class="h-full bg-purple-600 transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-semibold mb-1">
+                                    <span>Bagian C (Benar / Salah)</span>
+                                    <span class="text-emerald-700"><span id="scorePartC">0</span> / 30</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div id="barPartC" class="h-full bg-emerald-600 transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="switchMainTab('rapor')" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-award text-amber-400"></i> Lihat Rapor Nilai Akhir
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Right/Main Questions Feed -->
+                <div class="lg:col-span-8 xl:col-span-9 space-y-8">
+
+                    <!-- ================================================= -->
+                    <!-- BAGIAN A: PILIHAN GANDA (10 SOAL)                 -->
+                    <!-- ================================================= -->
+                    <div id="sectionContainer-A" class="space-y-5">
+                        <div class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full">Bagian A • Nomor 1 – 10</span>
+                                <h2 class="text-lg sm:text-xl font-extrabold mt-1">Soal Pilihan Ganda (HOTS Literasi & Numerasi)</h2>
+                                <p class="text-xs text-blue-100">Pilihlah salah satu jawaban (A, B, C, atau D) yang paling tepat kemudian klik Verifikasi!</p>
+                            </div>
+                            <div class="bg-white/15 backdrop-blur px-4 py-2 rounded-xl border border-white/20 text-right shrink-0">
+                                <div class="text-[11px] text-blue-100">Bobot Nilai</div>
+                                <div class="text-base font-extrabold">5 Poin / Soal (Total 50)</div>
+                            </div>
+                        </div>
+
+                        <div id="pgQuestionsContainer" class="space-y-6">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- BAGIAN B: MENJODOHKAN (5 SOAL)                    -->
+                    <!-- ================================================= -->
+                    <div id="sectionContainer-B" class="space-y-5">
+                        <div class="bg-gradient-to-r from-purple-700 to-fuchsia-700 text-white p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full">Bagian B • Nomor 11 – 15</span>
+                                <h2 class="text-lg sm:text-xl font-extrabold mt-1">Soal Menjodohkan (Konsep Sejarah & Norma)</h2>
+                                <p class="text-xs text-purple-100">Jodohkanlah pernyataan di Kolom A dengan pasangan jawaban yang tepat di Kolom B!</p>
+                            </div>
+                            <div class="bg-white/15 backdrop-blur px-4 py-2 rounded-xl border border-white/20 text-right shrink-0">
+                                <div class="text-[11px] text-purple-100">Bobot Nilai</div>
+                                <div class="text-base font-extrabold">4 Poin / Soal (Total 20)</div>
+                            </div>
+                        </div>
+
+                        <!-- Reference Bank Kolom B -->
+                        <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4">
+                            <div class="text-xs font-bold uppercase tracking-wider text-purple-900 mb-2.5 flex items-center gap-2">
+                                <i class="fa-solid fa-tags text-purple-600"></i> Daftar Pilihan Jawaban di Kolom B:
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
+                                <div class="bg-white p-2.5 rounded-xl border border-purple-200 shadow-sm flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center shrink-0">A</span>
+                                    <span class="font-semibold text-slate-800">Hak Anak di Sekolah</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-purple-200 shadow-sm flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center shrink-0">B</span>
+                                    <span class="font-semibold text-slate-800">1 Juni 1945</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-purple-200 shadow-sm flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center shrink-0">C</span>
+                                    <span class="font-semibold text-slate-800">Norma Kesopanan</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-purple-200 shadow-sm flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center shrink-0">D</span>
+                                    <span class="font-semibold text-slate-800">Kewajiban Siswa</span>
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border border-purple-200 shadow-sm flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center shrink-0">E</span>
+                                    <span class="font-semibold text-slate-800">Tanggung Jawab</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="matchingQuestionsContainer" class="space-y-5">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- BAGIAN C: BENAR / SALAH (5 SOAL)                  -->
+                    <!-- ================================================= -->
+                    <div id="sectionContainer-C" class="space-y-5">
+                        <div class="bg-gradient-to-r from-emerald-700 to-teal-700 text-white p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full">Bagian C • Nomor 16 – 20</span>
+                                <h2 class="text-lg sm:text-xl font-extrabold mt-1">Soal Benar / Salah (Analisis Penalaran Konsep)</h2>
+                                <p class="text-xs text-emerald-100">Tentukan apakah pernyataan berikut BENAR (B) atau SALAH (S) berdasarkan analisis konsep yang tepat!</p>
+                            </div>
+                            <div class="bg-white/15 backdrop-blur px-4 py-2 rounded-xl border border-white/20 text-right shrink-0">
+                                <div class="text-[11px] text-emerald-100">Bobot Nilai</div>
+                                <div class="text-base font-extrabold">6 Poin / Soal (Total 30)</div>
+                            </div>
+                        </div>
+
+                        <div id="tfQuestionsContainer" class="space-y-5">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bottom Submit / Finish Banner -->
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="space-y-1 text-center sm:text-left">
+                            <h3 class="text-lg font-extrabold flex items-center justify-center sm:justify-start gap-2">
+                                <i class="fa-solid fa-flag-checkered text-amber-400"></i> Selesai Mengerjakan Seluruh Soal?
+                            </h3>
+                            <p class="text-xs text-slate-300">
+                                Periksa kembali peta nomor soal. Kamu dapat melihat rekapitulasi nilai akhir dan pembahasan lengkap di halaman Rapor.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <button onclick="verifyAllUnverified()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow">
+                                <i class="fa-solid fa-check-double mr-1"></i> Verifikasi Semua Pilihan
+                            </button>
+                            <button onclick="switchMainTab('rapor')" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs sm:text-sm transition shadow">
+                                Lihat Rapor Nilai <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 2: KISI-KISI SOAL HOTS (LITERASI & NUMERASI)                      -->
+        <!-- ===================================================================== -->
+        <section id="tabContent-kisikisi" class="hidden space-y-6 animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-red-600 bg-red-50 px-3 py-1 rounded-full">Dokumen Kurikulum Merdeka • Fase C</span>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2">Kisi-Kisi Soal Sumatif Tengah Semester (STS) 1</h2>
+                        <p class="text-sm text-slate-600">SD Negeri 4 Rambutan • Mata Pelajaran Pendidikan Pancasila Kelas V • Berprinsip HOTS, Literasi & Numerasi</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                        <div class="px-3.5 py-2 rounded-xl bg-slate-100 font-semibold text-slate-700">
+                            <strong>Bab 1:</strong> Pancasila dalam Kehidupanku
+                        </div>
+                        <div class="px-3.5 py-2 rounded-xl bg-slate-100 font-semibold text-slate-700">
+                            <strong>Bab 2:</strong> Norma dalam Kehidupanku
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Kisi-Kisi -->
+                <div class="overflow-x-auto mt-5">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-900 text-white">
+                                <th class="p-3 rounded-tl-xl">No</th>
+                                <th class="p-3">Elemen / Capaian Pembelajaran</th>
+                                <th class="p-3">Lingkup Materi</th>
+                                <th class="p-3">Indikator Soal</th>
+                                <th class="p-3">Level Kognitif</th>
+                                <th class="p-3">Aspek Integrasi</th>
+                                <th class="p-3">Bentuk</th>
+                                <th class="p-3 rounded-tr-xl text-center">No. Soal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kisiKisiTableBody" class="divide-y divide-slate-200">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 3: RAPOR EVALUASI AKHIR & PEMBAHASAN LENGKAP                      -->
+        <!-- ===================================================================== -->
+        <section id="tabContent-rapor" class="hidden space-y-6 animate-fade-in">
+            <!-- Rapor Header Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-red-900 text-white p-6 sm:p-8">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="space-y-2 text-center md:text-left">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                                <i class="fa-solid fa-certificate"></i> Laporan Hasil Belajar STS 1
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold">SD Negeri 4 Rambutan</h2>
+                            <p class="text-sm text-slate-300">Mata Pelajaran: <strong>Pendidikan Pancasila</strong> • Kelas V (Semester 1)</p>
+                            <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-slate-200">
+                                <span><i class="fa-regular fa-user mr-1 text-amber-400"></i> Nama: <strong id="raporStudentName"> Siswa Kelas V</strong></span>
+                                <span><i class="fa-solid fa-hashtag mr-1 text-amber-400"></i> No. Absen: <strong id="raporStudentAbsen">-</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Big Score Circle -->
+                        <div class="flex items-center gap-5 bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/15">
+                            <div class="text-center">
+                                <div class="text-xs uppercase tracking-wider text-amber-200 font-bold">Nilai Akhir (NA)</div>
+                                <div id="raporFinalScore" class="text-5xl font-extrabold text-amber-400 my-1">0</div>
+                                <div class="text-[11px] text-slate-300">Skor Maksimal: 100</div>
+                            </div>
+                            <div class="border-l border-white/20 pl-5 space-y-1.5 text-xs">
+                                <div id="raporPredikatBadge" class="px-3 py-1 rounded-full bg-amber-400 text-slate-900 font-extrabold text-center">
+                                    Belum Selesai
+                                </div>
+                                <div>Bagian A (PG): <strong id="raporScoreA">0</strong> / 50</div>
+                                <div>Bagian B (Jodoh): <strong id="raporScoreB">0</strong> / 20</div>
+                                <div>Bagian C (B/S): <strong id="raporScoreC">0</strong> / 30</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formula & Pedagogical Feedback -->
+                <div class="p-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-xs sm:text-sm text-slate-700 space-y-1">
+                        <div class="font-bold text-slate-900">Rumus Pedoman Penskoran Resmi:</div>
+                        <p class="font-mono text-xs bg-white px-3 py-1.5 rounded-lg border border-slate-200 inline-block">
+                            Nilai Akhir (NA) = Skor Bagian A (10 × 5) + Skor Bagian B (5 × 4) + Skor Bagian C (5 × 6) = Maks. 100 Poin
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2.5 no-print">
+                        <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-2 shadow transition">
+                            <i class="fa-solid fa-print"></i> Cetak Hasil & Pembahasan
+                        </button>
+                        <button onclick="switchMainTab('quiz')" class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-2 shadow transition">
+                            <i class="fa-solid fa-arrow-left"></i> Kembali ke Soal
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Review of All 20 Questions -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+                <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass-chart text-red-600"></i>
+                    Rekapitulasi Kunci Jawaban, Verifikasi Alasan, & Pembahasan (20 Soal)
+                </h3>
+                <div id="raporReviewList" class="space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-5 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-red-600"></i>
+                <span><strong>SD Negeri 4 Rambutan</strong> • Pemerintah Kabupaten Banyuasin • Dinas Pendidikan dan Kebudayaan</span>
+            </div>
+            <div>
+                Asesmen HOTS Literasi & Numerasi • Pendidikan Pancasila Fase C Kelas V
             </div>
         </div>
+    </footer>
 
-    </div>
-
-    <!-- 4. FEEDBACK MODAL (Overlay) -->
-    <div id="feedback-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4 opacity-0 transition-opacity duration-200">
-        <div id="feedback-card" class="bg-white rounded-[2rem] w-full max-w-lg overflow-hidden shadow-2xl transform scale-90 transition-transform duration-300">
-            
-            <!-- Header section changes color based on true/false -->
-            <div id="fb-header" class="p-8 text-center text-white relative overflow-hidden">
-                <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==')]"></div>
-                <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white/40 backdrop-blur-sm relative z-10">
-                    <i id="fb-icon" class="text-6xl drop-shadow-md"></i>
-                </div>
-                <h2 id="fb-title" class="text-3xl font-black mb-2 relative z-10 tracking-tight">Status</h2>
-            </div>
-
-            <!-- Content Area -->
-            <div class="p-6 md:p-8 bg-slate-50">
-                <div id="fb-correct-container" class="hidden mb-6 bg-white border-4 border-green-200 p-5 rounded-2xl shadow-sm">
-                    <p class="text-sm font-black text-green-600 uppercase tracking-widest mb-1 flex items-center gap-2">
-                        <i class="fa-solid fa-check-circle"></i> Jawaban Tepat:
-                    </p>
-                    <p id="fb-correct-text" class="text-slate-800 font-bold text-lg"></p>
-                </div>
-
-                <div class="bg-white border-2 border-slate-200 p-5 rounded-2xl shadow-sm">
-                    <h3 class="text-sm font-black text-yellow-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-lightbulb"></i> Penjelasan:
-                    </h3>
-                    <p id="fb-explanation" class="text-slate-600 font-bold leading-relaxed"></p>
-                </div>
-            </div>
-
-            <!-- Footer / Action -->
-            <div class="p-6 bg-white border-t-2 border-slate-100">
-                <button onclick="nextQuestion()" id="btn-next" class="btn-3d btn-blue w-full text-xl font-black py-4 rounded-xl flex items-center justify-center gap-3">
-                    Lanjut <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC & COMPLETE QUESTION DATABASE -->
     <script>
-        // Data Soal Lengkap (20 Soal)
-        const quizData = [
-            // Bagian I: Pilihan Ganda (10 Soal)
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Pepi merasa bingung saat diminta ibu merapikan kamarnya yang sangat berantakan. Agar tugas terasa lebih ringan dan mudah dikerjakan, Pepi membaginya menjadi beberapa tugas kecil. Metode ini dinamakan...",
-                options: ["A. Abstraksi", "B. Dekomposisi", "C. Pengenalan Pola", "D. Algoritma"],
-                correct: 1, // B
-                explanation: "Dekomposisi adalah memecah masalah besar (kamar berantakan) menjadi bagian-bagian kecil (tugas kecil) yang lebih mudah diselesaikan."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Rafi sering terlambat bangun pagi. Lewat metode 'Rantai 5 Mengapa', ditemukan akar masalah: Rafi tidur larut malam akibat bermain gawai tanpa batas waktu. Tindakan pencegahan yang tepat adalah...",
-                options: ["A. Beli jam weker baru yang suaranya keras", "B. Membuat batasan waktu penggunaan gawai di malam hari", "C. Berlari kencang saat berangkat ke sekolah", "D. Tidur di sekolah agar tidak terlambat"],
-                correct: 1, // B
-                explanation: "Akar masalahnya adalah kurang tidur karena main gawai tanpa batas waktu, maka solusinya harus mengatasi akar masalah tersebut."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Alya mengamati setiap Senin ada upacara, dan Jumat ada senam. Ia memprediksi kegiatan sekolah minggu depan dengan mudah. Kemampuan Alya menunjukkan penerapan pondasi...",
-                options: ["A. Pengenalan Pola", "B. Dekomposisi", "C. Debugging", "D. Hardware"],
-                correct: 0, // A
-                explanation: "Mengenali kejadian yang berulang secara teratur untuk memprediksi hal selanjutnya adalah ciri pengenalan pola."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Melihat peta yang rumit, Budi hanya fokus mencari lokasi Ruang Komputer dan mengabaikan warna cat dinding serta hiasan yang tidak berkaitan. Proses ini disebut...",
-                options: ["A. Algoritma", "B. Abstraksi", "C. Pengolahan Data", "D. Input"],
-                correct: 1, // B
-                explanation: "Abstraksi adalah proses memfokuskan perhatian pada informasi penting saja dan mengabaikan detail tidak relevan."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Urutan teh manis: (1) Air panas, (2) Masukkan teh & gula, (3) Masukkan es batu besar, (4) Aduk hingga gula larut. Kesalahan logika (bug) terletak pada langkah nomor...",
-                options: ["A. Nomor (1)", "B. Nomor (3)", "C. Nomor (2)", "D. Nomor (4)"],
-                correct: 1, // B
-                explanation: "Jika es batu (Langkah 3) dimasukkan sebelum diaduk (Langkah 4), suhu akan jadi dingin dan gula akan sangat sulit larut."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Pernyataan yang benar mengenai perbedaan jam analog (jarum mekanis) dan jam digital di kelas adalah...",
-                options: ["A. Jam analog mengolah data elektronik", "B. Jam digital menampilkan informasi otomatis dalam angka/data elektronik", "C. Jam analog selalu butuh koneksi internet", "D. Jam digital tidak menggunakan komponen elektronik"],
-                correct: 1, // B
-                explanation: "Teknologi digital memproses dan menampilkan informasi secara elektronik (biasanya berupa angka di layar)."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Ibu Nita mengedit poster kegiatan sekolah menggunakan aplikasi Canva di komputer. Komponen yang berperan sebagai perangkat lunak (software) adalah...",
-                options: ["A. Papan Ketik (Keyboard)", "B. Layar Monitor", "C. Aplikasi Canva", "D. Kotak CPU"],
-                correct: 2, // C
-                explanation: "Software (perangkat lunak) adalah program atau aplikasi di dalam komputer, seperti Aplikasi Canva."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Petugas menggunakan barcode scanner untuk memindai kode buku, lalu judulnya muncul di monitor. Barcode scanner bertindak sebagai alat...",
-                options: ["A. Masukan (Input)", "B. Keluaran (Output)", "C. Proses", "D. Penyimpanan (Storage)"],
-                correct: 0, // A
-                explanation: "Scanner bertugas memasukkan (input) data kode dari dunia nyata ke dalam sistem komputer."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Manakah kelompok informasi pribadi yang WAJIB dijaga kerahasiaannya dan tidak boleh disebar bebas?",
-                options: ["A. Nama sekolah dan warna kesukaan", "B. Kata sandi akun, no HP orang tua, dan lokasi rumah", "C. Hobi membaca dan makanan favorit", "D. Nama mata pelajaran dan nama klub sepak bola"],
-                correct: 1, // B
-                explanation: "Kata sandi, nomor HP, dan alamat rumah adalah informasi pribadi yang sangat rawan disalahgunakan oleh orang jahat."
-            },
-            {
-                type: 'mc',
-                category: 'Bagian I: Pilihan Ganda',
-                question: "Doni menerima pesan asing: 'Selamat menang laptop! Kirim KTP orang tua dan kata sandi sekolah'. Sikap etis dan aman adalah...",
-                options: ["A. Segera kirim foto KTP agar dapat laptop", "B. Mengabaikan dan melaporkan pesan mencurigakan ke orang tua atau guru", "C. Membagikan kata sandi sekolah ke teman-teman", "D. Membalas pesan dengan kata-kata kasar"],
-                correct: 1, // B
-                explanation: "Sesuai janji digital, kita harus waspada penipuan online. Jangan berikan data pribadi dan lapor ke orang dewasa yang dipercaya."
-            },
-            
-            // Bagian II: Menjodohkan (5 Soal) -> UI disesuaikan jadi pilihan ganda tombol A-F
-            {
-                type: 'match',
-                category: 'Bagian II: Menjodohkan',
-                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Memecah masalah besar menjadi bagian-bagian kecil yang lebih mudah diselesaikan.\"",
-                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
-                correct: 1, // B
-                explanation: "Dekomposisi adalah teknik komputasional untuk memecah masalah yang kompleks menjadi bagian yang lebih kecil dan terkelola."
-            },
-            {
-                type: 'match',
-                category: 'Bagian II: Menjodohkan',
-                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Memfokuskan perhatian pada informasi penting dan mengabaikan detail yang tidak relevan.\"",
-                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
-                correct: 0, // A
-                explanation: "Inti dari proses Abstraksi adalah menyaring informasi sehingga kita hanya fokus pada bagian yang relevan saja."
-            },
-            {
-                type: 'match',
-                category: 'Bagian II: Menjodohkan',
-                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Komponen fisik komputer yang dapat dilihat dan disentuh (seperti papan ketik dan monitor).\"",
-                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
-                correct: 2, // C
-                explanation: "Hardware (Perangkat Keras) adalah wujud fisik dari teknologi atau komputer yang bisa kita raba."
-            },
-            {
-                type: 'match',
-                category: 'Bagian II: Menjodohkan',
-                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Hasil pengolahan data komputer yang ditampilkan di layar atau dicetak ke kertas.\"",
-                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
-                correct: 3, // D
-                explanation: "Informasi yang 'keluar' dari komputer menuju pengguna disebut Output (Luaran)."
-            },
-            {
-                type: 'match',
-                category: 'Bagian II: Menjodohkan',
-                question: "Pilih konsep yang tepat untuk pernyataan berikut:\n\n\"Informasi rahasia rawan retas yang tidak boleh dibagikan kepada siapapun di internet.\"",
-                options: ["A. Abstraksi", "B. Dekomposisi", "C. Hardware", "D. Luaran (Output)", "E. Kata Sandi", "F. Software"],
-                correct: 4, // E
-                explanation: "Kata Sandi (Password) ibarat kunci gembok rumah digital kita yang harus selalu dirahasiakan."
-            },
+        // =========================================================================
+        // 1. DATA KISI-KISI SOAL (12 INDIKATOR SESUAI DOKUMEN)
+        // =========================================================================
+        const kisiKisiData = [
+            { no: 1, elemen: "Pancasila: Memahami kronologi lahirnya Pancasila & meneladani perumus Pancasila.", materi: "Sejarah Kelahiran Pancasila", indikator: "Disajikan narasi linimasa sidang BPUPKI dan Panitia Sembilan, peserta didik dapat menganalisis peran tokoh dan rentang waktu perumusan Pancasila.", level: "L3 (C4 - Menganalisis)", aspek: "Literasi Teks Sejarah & Numerasi", bentuk: "PG", nomorSoal: "1" },
+            { no: 2, elemen: "Pancasila: Menghubungkan sila Pancasila & musyawarah.", materi: "Musyawarah & Pemungutan Suara", indikator: "Disajikan tabel hasil penghitungan suara (tally) pemilihan ketua kelas, peserta didik dapat menghitung selisih suara dan menyimpulkan sikap demokrasi yang sesuai.", level: "L3 (C5 - Evaluasi)", aspek: "Numerasi & Literasi Data", bentuk: "PG", nomorSoal: "2" },
+            { no: 3, elemen: "Pancasila: Meneladani sikap perumus Pancasila.", materi: "Sikap Keteladanan Tokoh", indikator: "Disajikan cerita singkat dinamika perumusan Piagam Jakarta, peserta didik dapat mengevaluasi nilai jiwa besar dan toleransi para pendiri bangsa.", level: "L3 (C5 - Evaluasi)", aspek: "Literasi Naratif", bentuk: "PG", nomorSoal: "3" },
+            { no: 4, elemen: "Pancasila: Menguraikan nilai Pancasila sebagai kesatuan utuh.", materi: "Keutuhan Sila Pancasila", indikator: "Disajikan ilustrasi tindakan di masyarakat, peserta didik dapat menganalisis keterhubungan antara sila pertama, kedua, dan ketiga.", level: "L3 (C4 - Menganalisis)", aspek: "Literasi Konteks", bentuk: "PG", nomorSoal: "4" },
+            { no: 5, elemen: "Pancasila: Menerapkan nilai Pancasila di masyarakat.", materi: "Perilaku Berpancasila", indikator: "Disajikan data kegiatan gotong royong warga, peserta didik dapat menentukan persentase kehadiran dan bentuk penerapan nilai Pancasila yang tepat.", level: "L3 (C4 - Menganalisis)", aspek: "Numerasi & Literasi", bentuk: "PG", nomorSoal: "5" },
+            { no: 6, elemen: "UUD NRI 1945: Mengidentifikasi norma, hak, dan kewajiban.", materi: "Macam-Macam Norma", indikator: "Disajikan beberapa contoh situasi harian, peserta didik dapat mengategorikan jenis norma (Agama, Kesusilaan, Kesopanan, Hukum) secara berurutan.", level: "L2 (C3 - Menerapkan)", aspek: "Literasi Kasus", bentuk: "PG", nomorSoal: "6" },
+            { no: 7, elemen: "UUD NRI 1945: Hak dan kewajiban di rumah & sekolah.", materi: "Keseimbangan Hak & Kewajiban", indikator: "Disajikan data pembagian waktu belajar dan membantu orang tua, peserta didik dapat menganalisis keseimbangan hak dan kewajiban.", level: "L3 (C4 - Menganalisis)", aspek: "Numerasi & Literasi", bentuk: "PG", nomorSoal: "7" },
+            { no: 8, elemen: "UUD NRI 1945: Bentuk-bentuk norma di masyarakat.", materi: "Penerapan Norma Kesusilaan", indikator: "Disajikan studi kasus perilaku murid saat menemukan barang di lingkungan sekolah, peserta didik dapat menilai tindakan yang mematuhi norma hati nurani.", level: "L3 (C5 - Evaluasi)", aspek: "Literasi Sosial", bentuk: "PG", nomorSoal: "8" },
+            { no: 9, elemen: "UUD NRI 1945: Melaksanakan musyawarah.", materi: "Prinsip Musyawarah Mufakat", indikator: "Disajikan cerita konflik perbedaan pendapat saat kerja kelompok, peserta didik dapat merumuskan solusi terbaik berdasarkan prinsip musyawarah.", level: "L3 (C6 - Mencipta/Solusi)", aspek: "Literasi Penyelesaian Masalah", bentuk: "PG", nomorSoal: "9" },
+            { no: 10, elemen: "UUD NRI 1945: Hak dan kewajiban warga negara.", materi: "Akibat Pelanggaran Aturan", indikator: "Disajikan data jumlah pelanggaran tata tertib sekolah, peserta didik dapat menghitung persentase dan menyimpulkan dampak ketidakpatuhan terhadap kewajiban.", level: "L3 (C4 - Menganalisis)", aspek: "Numerasi & Literasi Data", bentuk: "PG", nomorSoal: "10" },
+            { no: 11, elemen: "Pancasila & UUD 1945", materi: "Sejarah & Norma", indikator: "Menghubungkan tanggal bersejarah/istilah norma dengan deskripsi atau contoh perbuatannya yang tepat.", level: "L2 (C3 - Menghubungkan)", aspek: "Literasi Konsep", bentuk: "Menjodohkan", nomorSoal: "11–15" },
+            { no: 12, elemen: "Pancasila & UUD 1945", materi: "Nilai Sila & Kewajiban", indikator: "Menganalisis kebenaran pernyataan seputar penerapan sila Pancasila, sejarah BPUPKI, sanksi norma, musyawarah, serta hak dan kewajiban.", level: "L3 (C4 - Menganalisis)", aspek: "Literasi Penalaran", bentuk: "Benar / Salah", nomorSoal: "16–20" }
+        ];
 
-            // Bagian III: Benar / Salah (5 Soal)
+        // =========================================================================
+        // 2. DATABASE 20 SOAL LENGKAP DENGAN FEEDBACK VERIFIKASI BENAR & SALAH
+        // =========================================================================
+
+        // BAGIAN A: 10 SOAL PILIHAN GANDA (5 Poin per soal = 50 Poin)
+        const pgQuestions = [
             {
-                type: 'tf',
-                category: 'Bagian III: Benar atau Salah',
-                question: "Pernyataan: 'Berpikir komputasional berarti manusia harus berpikir dan bertindak kaku persis seperti mesin komputer.'",
-                options: ["Benar", "Salah"],
-                correct: 1, // Salah
-                explanation: "Berpikir komputasional adalah menggunakan konsep dasar ilmu komputer untuk memecahkan masalah sehari-hari, bukan berarti manusia berubah wujud/sifat menjadi mesin."
+                id: 1,
+                part: 'A',
+                points: 5,
+                badge: "Literasi Sejarah & Numerasi Kalender",
+                level: "L3 (C4 - Menganalisis)",
+                stimulusTitle: "Stimulus untuk Soal No. 1 (Literasi Sejarah)",
+                stimulusHtml: `
+                    <div class="space-y-3">
+                        <p class="text-slate-700 leading-relaxed">
+                            Pada perumusan dasar negara Indonesia, <strong>BPUPKI</strong> menggelar sidang pertama pada <strong>29 Mei – 1 Juni 1945</strong>. Tokoh-tokoh bangsa menyampaikan gagasan dasar negara. Selanjutnya dibentuk <strong>Panitia Sembilan</strong> yang berhasil menyusun <strong>Piagam Jakarta</strong> pada tanggal <strong>22 Juni 1945</strong>. Setelah melalui musyawarah dan penyesuaian demi menjaga persatuan bangsa, <strong>Pancasila disahkan secara resmi</strong> sebagai dasar negara oleh <strong>PPKI</strong> pada tanggal <strong>18 Agustus 1945</strong>.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                            <div class="bg-white p-2.5 rounded-xl border border-amber-200 flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-xs shrink-0">1</span>
+                                <div class="text-xs"><div class="font-bold text-slate-800">29 Mei – 1 Juni 1945</div><div class="text-slate-500">Sidang I BPUPKI</div></div>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-red-200 flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-lg bg-red-100 text-red-800 font-bold flex items-center justify-center text-xs shrink-0">2</span>
+                                <div class="text-xs"><div class="font-bold text-red-700">22 Juni 1945</div><div class="text-slate-500">Piagam Jakarta (Panitia 9)</div></div>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-emerald-200 flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs shrink-0">3</span>
+                                <div class="text-xs"><div class="font-bold text-emerald-700">18 Agustus 1945</div><div class="text-slate-500">Pengesahan PPKI</div></div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                question: "Berdasarkan narasi di atas, jarak waktu antara perumusan Rancangan Piagam Jakarta oleh Panitia Sembilan hingga pengesahan resmi Pancasila oleh PPKI adalah ....",
+                options: {
+                    A: "22 hari",
+                    B: "57 hari",
+                    C: "81 hari",
+                    D: "2 bulan 18 hari"
+                },
+                correct: "B",
+                verifyRight: "Tepat sekali! Kamu berhasil menganalisis linimasa sejarah sekaligus menghitung rentang hari antarbulan dengan cermat: Dari tanggal 22 Juni 1945 menuju 18 Agustus 1945 terdiri atas sisa bulan Juni (30 - 22 = 8 hari) + penuh bulan Juli (31 hari) + bulan Agustus (18 hari) = 8 + 31 + 18 = 57 hari.",
+                explainWrong: {
+                    A: "Pilihan A (22 hari) kurang tepat karena angka 22 merupakan tanggal lahirnya Piagam Jakarta (22 Juni) atau selisih dari 1 Juni ke 22 Juni (21 hari), bukan jarak ke 18 Agustus.",
+                    C: "Pilihan C (81 hari) kurang tepat karena itu adalah jarak waktu dari hari pertama sidang BPUPKI (29 Mei 1945) hingga 18 Agustus 1945, sedangkan soal menanyakan dari perumusan Piagam Jakarta (22 Juni 1945).",
+                    D: "Pilihan D (2 bulan 18 hari) kurang tepat karena dari 22 Juni ke 18 Agustus belum genap 2 bulan penuh (kurang dari 22 Agustus)."
+                },
+                generalExplanation: "Langkah perhitungan: Bulan Juni memiliki 30 hari, sehingga sisa hari di bulan Juni setelah tanggal 22 adalah 30 - 22 = 8 hari (atau 27 hari jika dihitung inklusif dikurangi penyesuaian). Ditambah 31 hari di bulan Juli dan 18 hari di bulan Agustus: 8 + 31 + 18 = 57 hari."
             },
             {
-                type: 'tf',
-                category: 'Bagian III: Benar atau Salah',
-                question: "Pernyataan: 'Menuliskan algoritma atau instruksi dengan urutan langkah yang acak tetap akan menghasilkan luaran (output) yang tepat.'",
-                options: ["Benar", "Salah"],
-                correct: 1, // Salah
-                explanation: "Algoritma sangat bergantung pada urutan langkah yang logis dan teratur. Jika diacak, hasilnya pasti akan salah atau eror."
+                id: 2,
+                part: 'A',
+                points: 5,
+                badge: "Numerasi & Literasi Musyawarah",
+                level: "L3 (C5 - Evaluasi)",
+                stimulusTitle: "Stimulus untuk Soal No. 2 (Numerasi & Literasi Musyawarah)",
+                stimulusHtml: `
+                    <div class="space-y-3">
+                        <p class="text-slate-700">Kelas V SDN 4 Rambutan mengadakan pemilihan ketua kelas secara demokratis. Hasil penghitungan suara (<em>tally</em> / turus) dicatat pada papan tulis sebagai berikut:</p>
+                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                            <table class="w-full text-xs sm:text-sm text-left">
+                                <thead class="bg-slate-800 text-white">
+                                    <tr>
+                                        <th class="py-2 px-3">Nama Calon Ketua Kelas</th>
+                                        <th class="py-2 px-3">Catatan Turus (Tally)</th>
+                                        <th class="py-2 px-3 text-right">Jumlah Suara</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200">
+                                    <tr class="bg-emerald-50/60">
+                                        <td class="py-2.5 px-3 font-bold text-slate-900">1. Kadir</td>
+                                        <td class="py-2.5 px-3">
+                                            <span class="tally-group tally-5">||||</span>
+                                            <span class="tally-group tally-5">||||</span>
+                                            <span class="tally-group tally-5">||||</span>
+                                        </td>
+                                        <td class="py-2.5 px-3 text-right font-extrabold text-emerald-700">15 suara</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 font-bold text-slate-900">2. Yamid</td>
+                                        <td class="py-2.5 px-3">
+                                            <span class="tally-group tally-5">||||</span>
+                                            <span class="tally-group tally-5">||||</span>
+                                        </td>
+                                        <td class="py-2.5 px-3 text-right font-bold text-slate-700">10 suara</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2.5 px-3 font-bold text-slate-900">3. Ona</td>
+                                        <td class="py-2.5 px-3">
+                                            <span class="tally-group tally-5">||||</span>
+                                            <span class="tally-group tally-5">||||</span>
+                                            <span class="tally-group">|||</span>
+                                        </td>
+                                        <td class="py-2.5 px-3 text-right font-bold text-slate-700">13 suara</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="bg-slate-100 font-bold text-slate-800">
+                                    <tr>
+                                        <td colspan="2" class="py-2 px-3">Total Peserta Didik yang Memberikan Suara</td>
+                                        <td class="py-2 px-3 text-right text-red-700">38 orang</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                `,
+                question: "Berdasarkan data di atas, kesimpulan hasil musyawarah dan sikap berpancasila yang wajib ditunjukkan oleh seluruh siswa Kelas V adalah ....",
+                options: {
+                    A: "Kadir terpilih menjadi ketua kelas karena unggul 5 suara dari Yamid, dan para calon lain harus saling bekerja sama.",
+                    B: "Ona terpilih menjadi ketua kelas karena meraih suara terbanyak kedua.",
+                    C: "Pemilihan harus diulang karena jumlah suara Kadir kurang dari setengah total pemilih (38 suara).",
+                    D: "Yamid tidak perlu menerima hasil keputusan karena selisih suaranya terlalu jauh."
+                },
+                correct: "A",
+                verifyRight: "Luar biasa! Kamu tepat menghitung data suara sekaligus memahami etika demokrasi Pancasila: Kadir meraih suara tertinggi (15 suara), unggul 5 suara dibandingkan Yamid (15 - 10 = 5 suara) dan unggul 2 suara dari Ona (15 - 13 = 2 suara). Sesuai Sila ke-4, seluruh calon dan siswa wajib menerima hasil dengan lapang dada dan saling bekerja sama.",
+                explainWrong: {
+                    B: "Pilihan B salah karena dalam pemungutan suara (voting), pemenang ditentukan oleh peraih suara terbanyak pertama (Kadir dengan 15 suara), bukan suara terbanyak kedua.",
+                    C: "Pilihan C salah karena dalam pemilihan ketua kelas dengan 3 kandidat, pemenang ditentukan berdasarkan suara terbanyak (pluralitas), sehingga Kadir sah terpilih.",
+                    D: "Pilihan D bertentangan dengan nilai Sila ke-4 Pancasila. Meskipun kalah suara, setiap peserta wajib menghormati dan melaksanakan keputusan bersama dengan ikhlas."
+                },
+                generalExplanation: "Perhitungan: Kadir = 15 suara (terbanyak), Ona = 13 suara, Yamid = 10 suara. Selisih Kadir dan Yamid = 15 - 10 = 5 suara. Sikap demokratis yang benar adalah menerima kemenangan Kadir dan tetap rukun bekerja sama."
             },
             {
-                type: 'tf',
-                category: 'Bagian III: Benar atau Salah',
-                question: "Pernyataan: 'Perangkat keras (hardware) komputer tidak akan dapat berfungsi tanpa adanya perangkat lunak (software) di dalamnya.'",
-                options: ["Benar", "Salah"],
-                correct: 0, // Benar
-                explanation: "Hardware bagaikan tubuh, sedangkan software bagaikan rohnya. Tubuh tidak bisa bekerja tanpa instruksi dari roh (program/software)."
+                id: 3,
+                part: 'A',
+                points: 5,
+                badge: "Literasi Naratif • Sikap Tokoh",
+                level: "L3 (C5 - Evaluasi)",
+                stimulusTitle: null,
+                stimulusHtml: null,
+                question: "Saat penyusunan Piagam Jakarta pada 22 Juni 1945, terdapat perbedaan pendapat mengenai rumusan sila pertama. Para perumus Pancasila sepakat mengutamakan persatuan nasional di atas kepentingan kelompok sehingga menyetujui perubahan rumusan sila pertama menjadi \"Ketuhanan Yang Maha Esa\". Sikap perumus Pancasila yang wajib kita teladani dalam kehidupan sehari-hari adalah ....",
+                options: {
+                    A: "Mempertahankan pendapat pribadi hingga semua orang mengalah",
+                    B: "Berjiwa besar, bertoleransi, dan mendahulukan kepentingan bersama",
+                    C: "Menolak hasil musyawarah jika tidak sesuai dengan keinginan diri sendiri",
+                    D: "Mengikuti pendapat mayoritas hanya jika mendapatkan keuntungan pribadi"
+                },
+                correct: "B",
+                verifyRight: "Benar sekali! Para tokoh pendiri bangsa (seperti Moh. Hatta dan tokoh-tokoh Panitia Sembilan) menunjukkan keteladanan berjiwa besar (lapang dada), toleransi tinggi terhadap keberagaman agama di Indonesia Timur, serta mengutamakan keutuhan bangsa dan negara di atas kepentingan golongan.",
+                explainWrong: {
+                    A: "Pilihan A menunjukkan sikap egois dan anti-musyawarah yang justru dapat memecah belah persatuan bangsa.",
+                    C: "Pilihan C bertentangan dengan semangat Sila ke-3 dan Sila ke-4 yang mengharuskan kita menerima kesepakatan bersama dengan tanggung jawab.",
+                    D: "Pilihan D menunjukkan sikap pamrih (mencari keuntungan sendiri), sedangkan para perumus Pancasila berkorban tanpa pamrih demi kemerdekaan dan persatuan Indonesia."
+                },
+                generalExplanation: "Perubahan tujuh kata dalam Piagam Jakarta menjadi 'Ketuhanan Yang Maha Esa' pada 18 Agustus 1945 adalah bukti nyata sikap toleransi, jiwa besar, dan cinta tanah air demi menjaga persatuan Indonesia."
             },
             {
-                type: 'tf',
-                category: 'Bagian III: Benar atau Salah',
-                question: "Pernyataan: 'Mengabaikan informasi warna cat rumah warga saat membaca denah lokasi sekolah merupakan bentuk penerapan prinsip abstraksi.'",
-                options: ["Benar", "Salah"],
-                correct: 0, // Benar
-                explanation: "Warna cat rumah tidak penting untuk mencari arah jalan ke sekolah, sehingga mengabaikannya adalah tindakan Abstraksi yang tepat."
+                id: 4,
+                part: 'A',
+                points: 5,
+                badge: "Literasi Konteks • Keutuhan Sila",
+                level: "L3 (C4 - Menganalisis)",
+                stimulusTitle: null,
+                stimulusHtml: null,
+                question: "Ketika bencana banjir menimpa warga sekitar sekolah, siswa kelas V SDN 4 Rambutan mengumpulkan sumbangan sukarela (Sila ke-2), berdoa bersama untuk keselamatan korban (Sila ke-1), dan menyalurkan bantuan secara gotong royong tanpa membedakan suku (Sila ke-3). Hal ini membuktikan bahwa sila-sila dalam Pancasila ....",
+                options: {
+                    A: "Dapat diterapkan secara terpisah sesuai kebutuhan situasi",
+                    B: "Merupakan satu kesatuan utuh yang saling berkaitan dan menjiwai satu sama lain",
+                    C: "Hanya sila kedua yang paling penting diterapkan dalam aksi sosial",
+                    D: "Berdiri sendiri-sendiri tanpa ada hubungan antarsila"
+                },
+                correct: "B",
+                verifyRight: "Sangat tepat! Satu kegiatan kemanusiaan di SDN 4 Rambutan sekaligus mengamalkan Sila ke-1 (berdoa), Sila ke-2 (peduli sesama), dan Sila ke-3 (gotong royong tanpa membedakan suku). Ini membuktikan bahwa kelima sila Pancasila merupakan satu kesatuan bulat dan utuh yang saling menjiwai.",
+                explainWrong: {
+                    A: "Pilihan A salah karena sila-sila Pancasila tidak boleh dipisah-pisahkan; pengamalan satu sila selalu terhubung dengan sila lainnya.",
+                    C: "Pilihan C salah karena semua sila Pancasila memiliki kedudukan yang sama pentingnya dan saling melengkapi.",
+                    D: "Pilihan D salah karena sila pertama hingga kelima saling mengikat seperti rantai kesatuan yang utuh."
+                },
+                generalExplanation: "Pancasila bersifat hierarkis-piramidal dan bulat utuh: Sila ke-1 menjiwai Sila ke-2, 3, 4, dan 5. Dalam satu tindakan terpuji, beberapa nilai sila Pancasila bekerja secara bersamaan."
             },
             {
-                type: 'tf',
-                category: 'Bagian III: Benar atau Salah',
-                question: "Pernyataan: 'Membagikan nama lengkap, nomor HP orang tua, dan alamat rumah secara bebas di media sosial aman dilakukan oleh anak-anak.'",
-                options: ["Benar", "Salah"],
-                correct: 1, // Salah
-                explanation: "Itu adalah data pribadi yang sensitif. Membagikannya secara bebas sangat berbahaya karena bisa memicu penipuan atau kejahatan siber."
+                id: 5,
+                part: 'A',
+                points: 5,
+                badge: "Numerasi Persentase & Literasi Pancasila",
+                level: "L3 (C4 - Menganalisis)",
+                stimulusTitle: "Stimulus untuk Soal No. 5 (Numerasi & Literasi Gotong Royong)",
+                stimulusHtml: `
+                    <div class="space-y-2.5">
+                        <p class="text-slate-700 leading-relaxed">
+                            Warga Desa Rambutan mengadakan gotong royong membersihkan saluran air. Kegiatan dimulai pukul <strong>07.00 WIB</strong> dan selesai pukul <strong>10.00 WIB</strong> (durasi 3 jam). Dari total <strong>60 KK</strong> (Kepala Keluarga) warga, sebanyak <strong>45 KK hadir</strong> bergotong royong secara langsung, sedangkan sisanya (15 KK) berhalangan karena sakit dan memberikan bantuan makanan.
+                        </p>
+                        <div class="flex flex-wrap items-center gap-3 pt-1 text-xs">
+                            <span class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-900 font-bold"><i class="fa-solid fa-users mr-1"></i> Total Warga: 60 KK</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-900 font-bold"><i class="fa-solid fa-person-digging mr-1"></i> Hadir Langsung: 45 KK</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-900 font-bold"><i class="fa-solid fa-bowl-food mr-1"></i> Bantuan Makanan: 15 KK</span>
+                        </div>
+                    </div>
+                `,
+                question: "Persentase tingkat partisipasi warga yang hadir langsung dalam kegiatan gotong royong tersebut serta nilai Pancasila yang tercermin adalah ....",
+                options: {
+                    A: "50% - Nilai Keadilan Sosial",
+                    B: "65% - Nilai Persatuan Indonesia",
+                    C: "75% - Nilai Persatuan dan Gotong Royong",
+                    D: "80% - Nilai Kerakyatan"
+                },
+                correct: "C",
+                verifyRight: "Jawabanmu sangat akurat! Secara numerasi: (45 KK hadir ÷ 60 total KK) × 100% = (3/4) × 100% = 75%. Secara literasi Pancasila: Kerja bakti membersihkan saluran air bersama-sama mencerminkan Nilai Persatuan dan Gotong Royong (Sila ke-3 dan Sila ke-5).",
+                explainWrong: {
+                    A: "Pilihan A salah hitung karena 50% dari 60 KK adalah 30 KK, padahal yang hadir langsung sebanyak 45 KK.",
+                    B: "Pilihan B salah hitung karena 45 dibagi 60 dikali 100% hasilnya adalah 75%, bukan 65%.",
+                    D: "Pilihan D salah hitung karena 80% dari 60 KK adalah 48 KK, dan kegiatan kerja bakti lebih menonjolkan nilai persatuan & gotong royong dibanding nilai kerakyatan (musyawarah)."
+                },
+                generalExplanation: "Rumus Persentase Kehadiran = (Jumlah Hadir / Total Warga) × 100% = (45 / 60) × 100%. Sederhanakan pecahan 45/60 dengan membagi pembilang dan penyebut dengan 15 menjadi 3/4. Maka (3/4) × 100% = 75%."
+            },
+            {
+                id: 6,
+                part: 'A',
+                points: 5,
+                badge: "Literasi Kasus • Klasifikasi Norma",
+                level: "L2 (C3 - Menerapkan)",
+                stimulusTitle: null,
+                stimulusHtml: null,
+                question: "Setiap berangkat sekolah, Ani selalu mencium tangan orang tuanya dan mengucapkan salam. Di jalan raya, ayah Ani memakai helm standar dan berhenti saat lampu lalu lintas berwarna merah. Secara berurutan, norma yang diterapkan oleh Ani dan Ayahnya adalah norma ....",
+                options: {
+                    A: "Kesopanan dan Norma Hukum",
+                    B: "Kesusilaan dan Norma Agama",
+                    C: "Agama dan Norma Kesopanan",
+                    D: "Hukum dan Norma Kesusilaan"
+                },
+                correct: "A",
+                verifyRight: "Benar sekali! Perilaku Ani mencium tangan orang tua adalah wujud tata krama dan santun pergaulan dalam masyarakat (Norma Kesopanan). Sedangkan kepatuhan Ayah Ani memakai helm dan berhenti saat lampu merah adalah kepatuhan terhadap peraturan resmi negara/UU Lalu Lintas (Norma Hukum).",
+                explainWrong: {
+                    B: "Pilihan B kurang tepat karena memakai helm dan menaati rambu lalu lintas merupakan aturan resmi negara yang bersifat memaksa dan bersanksi tilang/denda (Norma Hukum).",
+                    C: "Pilihan C terbalik pada tindakan kedua: menaati lampu merah di jalan raya bukan sekadar norma kesopanan, melainkan Norma Hukum yang wajib dipatuhi setiap pengendara.",
+                    D: "Pilihan D terbalik urutannya dan kurang tepat; mencium tangan orang tua adalah Norma Kesopanan, bukan Norma Hukum."
+                },
+                generalExplanation: "1) Mencium tangan orang tua = Norma Kesopanan (bersumber dari adat/kebiasaan sopan santun masyarakat). 2) Memakai helm & taat lampu lalu lintas = Norma Hukum (bersumber dari peraturan perundang-undangan negara)."
+            },
+            {
+                id: 7,
+                part: 'A',
+                points: 5,
+                badge: "Numerasi Data Waktu & Hak-Kewajiban",
+                level: "L3 (C4 - Menganalisis)",
+                stimulusTitle: "Stimulus untuk Soal No. 7 (Numerasi & Literasi Hak-Kewajiban)",
+                stimulusHtml: `
+                    <div class="space-y-3">
+                        <p class="text-slate-700">Berikut adalah alokasi waktu kegiatan harian Dodi setelah pulang sekolah (pukul 14.00 – 20.00 WIB / <strong>total 6 jam</strong>):</p>
+                        <div class="space-y-2 bg-white p-3.5 rounded-xl border border-slate-200 text-xs">
+                            <div>
+                                <div class="flex justify-between font-bold text-rose-700 mb-1">
+                                    <span><i class="fa-solid fa-gamepad mr-1"></i> Bermain game / gawai (Hak hiburan)</span>
+                                    <span>3 Jam (50%)</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-rose-500" style="width: 50%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold text-emerald-700 mb-1">
+                                    <span><i class="fa-solid fa-broom mr-1"></i> Membantu orang tua merapikan rumah (Kewajiban)</span>
+                                    <span>30 Menit / 0,5 Jam (8,3%)</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width: 8.3%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold text-blue-700 mb-1">
+                                    <span><i class="fa-solid fa-book-open mr-1"></i> Mengerjakan PR dan belajar (Kewajiban)</span>
+                                    <span>1 Jam (16,7%)</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500" style="width: 16.7%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold text-slate-600 mb-1">
+                                    <span><i class="fa-solid fa-bed mr-1"></i> Istirahat dan mandi</span>
+                                    <span>1,5 Jam (25%)</span>
+                                </div>
+                                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-slate-400" style="width: 25%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                question: "Analisis yang tepat mengenai pemenuhan hak dan pelaksanaan kewajiban Dodi sebagai anak adalah ....",
+                options: {
+                    A: "Dodi sudah seimbang karena waktu bermain game sama dengan waktu belajarnya.",
+                    B: "Dodi belum seimbang karena porsi waktu bermain game (50% dari waktu luang) jauh lebih dominan dibanding kewajiban belajar dan membantu orang tua.",
+                    C: "Dodi tidak mendapatkan haknya untuk menikmati waktu luang bersama keluarga.",
+                    D: "Dodi telah melaksanakan kewajibannya melebihi hak yang diterimanya di rumah."
+                },
+                correct: "B",
+                verifyRight: "Analisis yang sangat tajam! Dari total 6 jam waktu sore-malam, Dodi menghabiskan 3 jam (3/6 × 100% = 50%) hanya untuk bermain game, sedangkan total waktu kewajiban belajarnya (1 jam) dan membantu orang tua (0,5 jam) jika digabung baru 1,5 jam (25%). Artinya pelaksanaan kewajiban Dodi belum seimbang dengan penuntutan hak bermainnya.",
+                explainWrong: {
+                    A: "Pilihan A tidak sesuai data tabel: waktu bermain game Dodi adalah 3 jam, sedangkan waktu belajarnya hanya 1 jam (tidak sama).",
+                    C: "Pilihan C salah karena Dodi justru mengambil porsi waktu bermain/hiburan yang sangat besar (3 jam).",
+                    D: "Pilihan D terbalik dari data: total kewajiban Dodi (1,5 jam) justru hanya setengah dari waktu bermain gamenya (3 jam)."
+                },
+                generalExplanation: "Total waktu = 6 jam. Bermain game = 3 jam (3/6 = 50%). Total Kewajiban (Belajar 1 jam + Membantu orang tua 0,5 jam) = 1,5 jam (25%). Karena hak bermain (50%) jauh melebihi kewajiban (25%), maka perilaku Dodi belum seimbang."
+            },
+            {
+                id: 8,
+                part: 'A',
+                points: 5,
+                badge: "Literasi Sosial • Norma Hati Nurani",
+                level: "L3 (C5 - Evaluasi)",
+                stimulusTitle: null,
+                stimulusHtml: null,
+                question: "Di perpustakaan SDN 4 Rambutan, Riko menemukan uang jatuh sebesar Rp20.000,00. Meskipun tidak ada orang yang melihat, Riko tidak mengambil uang tersebut melainkan menyerahkannya kepada petugas perpustakaan. Tindakan Riko didasari oleh dorongan hati nurani yang mencerminkan pelaksanaan norma ....",
+                options: {
+                    A: "Kesopanan",
+                    B: "Kesusilaan",
+                    C: "Hukum",
+                    D: "Agama"
+                },
+                correct: "B",
+                verifyRight: "Tepat sekali! Kata kunci pada kasus ini adalah 'meskipun tidak ada orang yang melihat, tindakan Riko didasari oleh dorongan hati nurani'. Norma yang bersumber dari bisikan kalbu atau hati nurani manusia untuk berbuat jujur dan baik disebut Norma Kesusilaan.",
+                explainWrong: {
+                    A: "Pilihan A (Norma Kesopanan) bersumber dari tata krama atau kebiasaan pergaulan lahiriah di masyarakat (seperti cara berpakaian atau menyapa).",
+                    C: "Pilihan C (Norma Hukum) bersumber dari peraturan resmi negara/pemerintah.",
+                    D: "Pilihan D (Norma Agama) bersumber dari wahyu Tuhan/kitab suci; meskipun jujur juga diajarkan agama, penekanan soal pada 'dorongan hati nurani' secara spesifik merujuk pada definisi Norma Kesusilaan."
+                },
+                generalExplanation: "Norma Kesusilaan adalah aturan hidup yang bersumber dari hati nurani manusia tentang baik dan buruk (contoh: bersikap jujur saat tidak ada yang mengawasi, tidak mengambil hak orang lain)."
+            },
+            {
+                id: 9,
+                part: 'A',
+                points: 5,
+                badge: "Literasi Pemecahan Masalah • Musyawarah",
+                level: "L3 (C6 - Merumuskan Solusi)",
+                stimulusTitle: null,
+                stimulusHtml: null,
+                question: "Kelompok belajar Sintia mengalami perdebatan sengit saat menentukan tema kliping Pendidikan Pancasila. Dua anggota kelompok saling memaksakan kehendaknya. Langkah terbaik yang harus diambil Sintia sesuai prinsip musyawarah Pancasila adalah ....",
+                options: {
+                    A: "Menghentikan kerja kelompok dan melaporkan teman-temannya ke kepala sekolah",
+                    B: "Mengambil keputusan sendiri tanpa memedulikan anggota kelompok yang lain",
+                    C: "Mengajak seluruh anggota duduk bersama, mendengarkan alasan tiap usulan, dan mencari kesepakatan bersama secara santun",
+                    D: "Mengikuti usulan anggota yang paling galak agar diskusi cepat selesai"
+                },
+                correct: "C",
+                verifyRight: "Solusi yang sangat bijaksana dan mencerminkan Sila ke-4 Pancasila! Dalam musyawarah, ketika terjadi perbedaan pendapat, kita harus menengahi dengan kepala dingin, memberikan kesempatan setiap anggota menyampaikan argumennya, menghargai pendapat orang lain, dan mencari mufakat (kesepakatan bersama) secara santun.",
+                explainWrong: {
+                    A: "Pilihan A kurang tepat karena masalah diskusi kelompok sebaiknya diselesaikan melalui musyawarah antaranggota terlebih dahulu, bukan langsung berhenti bekerja.",
+                    B: "Pilihan B mencerminkan sikap otoriter/egois yang melanggar prinsip musyawarah mufakat.",
+                    D: "Pilihan D salah karena keputusan musyawarah harus didasarkan pada akal sehat dan kebaikan bersama, bukan karena takut pada teman yang galak/memaksa."
+                },
+                generalExplanation: "Prinsip musyawarah mufakat (Sila ke-4) mengajarkan kita untuk menyelesaikan perbedaan pendapat melalui dialog yang santun, mendengarkan alasan tiap pihak, dan mengutamakan kesepakatan bersama."
+            },
+            {
+                id: 10,
+                part: 'A',
+                points: 5,
+                badge: "Numerasi & Literasi Dampak Pelanggaran",
+                level: "L3 (C4 - Menganalisis)",
+                stimulusTitle: null,
+                stimulusHtml: null,
+                question: "Dalam sebuah data tata tertib sekolah, tercatat 12 dari 120 siswa kelas V sering terlambat masuk kelas setelah jam istirahat. Jika hal ini dibiarkan, akibat buruk yang terjadi terhadap penerapan norma di sekolah adalah ....",
+                options: {
+                    A: "Persentase siswa yang disiplin mencapai 10%, sehingga suasana kelas menjadi tenang.",
+                    B: "Sebanyak 10% siswa melanggar aturan, yang dapat mengganggu hak siswa lain untuk belajar dengan tertib dan nyaman.",
+                    C: "Sekolah akan menghapuskan aturan jam istirahat agar siswa tidak terlambat lagi.",
+                    D: "Hak siswa yang terlambat akan bertambah karena guru memberikan dispensasi khusus."
+                },
+                correct: "B",
+                verifyRight: "Benar sekali! Mari kita verifikasi perhitungan dan konsepnya: Jumlah siswa yang melanggar adalah 12 dari 120 siswa = (12 ÷ 120) × 100% = 10% siswa melanggar aturan (sedangkan yang disiplin adalah 90%). Ketika 10% siswa masuk terlambat, konsentrasi guru dan teman-teman yang sedang belajar akan terpecah, sehingga mengganggu hak siswa lain untuk belajar dengan tenang.",
+                explainWrong: {
+                    A: "Pilihan A salah memahami data: 10% (12 dari 120 siswa) adalah persentase siswa yang TERLAMBAT (melanggar), sedangkan siswa yang disiplin adalah 90% (108 siswa).",
+                    C: "Pilihan C tidak logis karena jam istirahat adalah hak seluruh siswa; yang harus diperbaiki adalah kedisiplinan siswa yang melanggar.",
+                    D: "Pilihan D salah karena melanggar kewajiban tata tertib justru akan mendapatkan sanksi/teguran edukatif, bukan tambahan hak."
+                },
+                generalExplanation: "Perhitungan: Persentase pelanggaran = (12 / 120) × 100% = 10%. Pelanggaran kewajiban menaati tata tertib oleh sebagian siswa akan merugikan hak siswa lain untuk memperoleh suasana belajar yang kondusif."
             }
         ];
 
-        // State variables
-        let currentIdx = 0;
-        let score = 0;
-        const ptsPerQuestion = 5; // 20 soal * 5 = 100
-
-        // DOM Elements
-        const screens = {
-            start: document.getElementById('start-screen'),
-            quiz: document.getElementById('quiz-screen'),
-            end: document.getElementById('end-screen')
+        // BAGIAN B: 5 SOAL MENJODOHKAN (4 Poin per soal = 20 Poin)
+        const matchingOptionsBank = {
+            A: "Hak Anak di Sekolah",
+            B: "1 Juni 1945",
+            C: "Norma Kesopanan",
+            D: "Kewajiban Siswa",
+            E: "Tanggung Jawab"
         };
-        const modal = document.getElementById('feedback-modal');
-        const fbCard = document.getElementById('feedback-card');
-        const container = document.getElementById('app-container');
 
-        function startQuiz() {
-            currentIdx = 0;
-            score = 0;
-            updateUI();
-            
-            screens.start.classList.add('hidden');
-            screens.quiz.classList.remove('hidden');
-            screens.quiz.classList.add('flex');
-            
-            container.classList.remove('animate-pop');
-            void container.offsetWidth; // reflow
-            container.classList.add('animate-pop');
+        const matchingQuestions = [
+            {
+                id: 11,
+                part: 'B',
+                points: 4,
+                badge: "Menjodohkan • Sejarah Pancasila",
+                statement: "Tanggal diperingatinya Hari Lahir Pancasila sesuai pidato Ir. Soekarno di sidang BPUPKI.",
+                correct: "B",
+                verifyRight: "Pasangan yang tepat! Pada tanggal 1 Juni 1945 (Pilihan B), Ir. Soekarno menyampaikan pidato gagasan dasar negara dan pertama kali memperkenalkan istilah 'Pancasila' dalam Sidang Pertama BPUPKI, sehingga setiap 1 Juni diperingati sebagai Hari Lahir Pancasila.",
+                explainWrong: "Kurang tepat. Pernyataan ini menanyakan tanggal bersejarah pidato Ir. Soekarno tentang lahirnya istilah Pancasila pada sidang pertama BPUPKI, yaitu 1 Juni 1945 (Pilihan B)."
+            },
+            {
+                id: 12,
+                part: 'B',
+                points: 4,
+                badge: "Menjodohkan • Kewajiban di Sekolah",
+                statement: "Menjaga kebersihan kelas dengan melaksanakan piket bersama sesuai jadwal.",
+                correct: "D",
+                verifyRight: "Benar sekali! Melaksanakan piket kebersihan kelas sesuai jadwal merupakan sesuatu yang harus dilakukan oleh setiap murid dengan penuh kesadaran, sehingga termasuk Kewajiban Siswa (Pilihan D).",
+                explainWrong: "Kurang tepat. Melaksanakan piket kelas adalah tugas/keharusan yang wajib dikerjakan oleh murid sebelum menuntut hak ruang kelas yang bersih, sehingga pasangan yang benar adalah Kewajiban Siswa (Pilihan D)."
+            },
+            {
+                id: 13,
+                part: 'B',
+                points: 4,
+                badge: "Menjodohkan • Hak di Sekolah",
+                statement: "Sesuatu yang layak diterima siswa, seperti mendapatkan bimbingan dan nilai dari guru.",
+                correct: "A",
+                verifyRight: "Sangat tepat! Segala sesuatu yang mutlak/layak diterima oleh peserta didik setelah melaksanakan kewajibannya—seperti memperoleh pengajaran, bimbingan, dan penilaian dari guru—merupakan Hak Anak di Sekolah (Pilihan A).",
+                explainWrong: "Kurang tepat. Kata kunci 'sesuatu yang layak diterima siswa' seperti bimbingan dan nilai dari guru merujuk pada pengertian Hak Anak di Sekolah (Pilihan A)."
+            },
+            {
+                id: 14,
+                part: 'B',
+                points: 4,
+                badge: "Menjodohkan • Penerapan Norma",
+                statement: "Mengucapkan kata \"permisi\" dan membungkukkan badan saat berjalan di depan guru.",
+                correct: "C",
+                verifyRight: "Tepat sekali! Mengucapkan 'permisi' dan membungkukkan badan saat melewati orang yang lebih tua atau guru adalah wujud tata krama dan adab pergaulan yang santun, sehingga merupakan contoh penerapan Norma Kesopanan (Pilihan C).",
+                explainWrong: "Kurang tepat. Perilaku mengucapkan 'permisi' dan membungkukkan badan berkaitan dengan tata krama dan sopan santun dalam pergaulan sehari-hari, yaitu Norma Kesopanan (Pilihan C)."
+            },
+            {
+                id: 15,
+                part: 'B',
+                points: 4,
+                badge: "Menjodohkan • Sikap Musyawarah",
+                statement: "Hasil keputusan bersama dalam musyawarah wajib dilaksanakan oleh semua peserta dengan rasa ....",
+                correct: "E",
+                verifyRight: "Luar biasa! Sesuai bunyi dan nilai Sila ke-4 serta ke-5 Pancasila, setiap keputusan hasil musyawarah mufakat wajib diterima dan dilaksanakan oleh seluruh peserta dengan ikhlas dan penuh rasa Tanggung Jawab (Pilihan E).",
+                explainWrong: "Kurang tepat. Kalimat rumpang ini membutuhkan sikap utama dalam melaksanakan hasil keputusan musyawarah, yaitu dengan penuh rasa Tanggung Jawab (Pilihan E)."
+            }
+        ];
 
-            renderQuestion();
+        // BAGIAN C: 5 SOAL BENAR / SALAH (6 Poin per soal = 30 Poin)
+        const tfQuestions = [
+            {
+                id: 16,
+                part: 'C',
+                points: 6,
+                badge: "Benar / Salah • Fakta Sejarah BPUPKI & PPKI",
+                statement: "Sidang pertama BPUPKI dipimpin oleh Ir. Soekarno untuk mengesahkan UUD NRI Tahun 1945.",
+                correct: "S", // SALAH
+                verifyRight: "Analisis yang sangat jeli! Pernyataan tersebut memang SALAH karena mengandung dua kekeliruan sejarah: (1) Ketua yang memimpin sidang BPUPKI adalah Dr. K.R.T. Radjiman Wedyodiningrat (bukan Ir. Soekarno), dan (2) Pengesahan UUD NRI Tahun 1945 dilakukan oleh PPKI pada 18 Agustus 1945 (sedangkan sidang pertama BPUPKI membahas rumusan dasar negara).",
+                explainWrong: "Jawabanmu kurang tepat. Pernyataan ini seharusnya SALAH (S). Mengapa? Karena Ketua BPUPKI yang memimpin sidang adalah Dr. K.R.T. Radjiman Wedyodiningrat, sedangkan Ir. Soekarno adalah Ketua Panitia Sembilan dan Ketua PPKI. Selain itu, pengesahan UUD 1945 dilakukan pada sidang PPKI (18 Agustus 1945), bukan pada sidang pertama BPUPKI."
+            },
+            {
+                id: 17,
+                part: 'C',
+                points: 6,
+                badge: "Benar / Salah • Pengamalan Sila Ke-4",
+                statement: "Melaksanakan hasil keputusan musyawarah dengan ikhlas meskipun pendapat pribadi kita tidak terpilih merupakan cerminan pengamalan sila ke-4 Pancasila.",
+                correct: "B", // BENAR
+                verifyRight: "Benar sekali! Pernyataan ini BENAR (B). Salah satu butir utama pengamalan Sila ke-4 (Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan) adalah tidak memaksakan kehendak serta menerima dan melaksanakan hasil keputusan musyawarah dengan ikhlas dan bertanggung jawab.",
+                explainWrong: "Jawabanmu kurang tepat. Pernyataan ini adalah BENAR (B). Dalam demokrasi Pancasila (Sila ke-4), menghormati keputusan bersama dengan lapang dada walaupun usulan pribadi kita tidak terpilih adalah sikap terpuji yang wajib diamalkan."
+            },
+            {
+                id: 18,
+                part: 'C',
+                points: 6,
+                badge: "Benar / Salah • Sanksi Pelanggaran Norma",
+                statement: "Sanksi bagi seseorang yang melanggar norma kesusilaan adalah hukuman penjara atau denda uang dari pengadilan negara.",
+                correct: "S", // SALAH
+                verifyRight: "Tepat sekali! Kamu berhasil membedakan sanksi norma dengan benar. Pernyataan ini SALAH (S) karena sanksi bagi pelanggar Norma Kesusilaan berasal dari dalam diri sendiri, yaitu perasaan menyesal, malu, gelisah, dan rasa bersalah di hati nurani. Adapun hukuman penjara atau denda uang dari pengadilan negara adalah sanksi dari Norma Hukum.",
+                explainWrong: "Jawabanmu kurang tepat. Pernyataan ini seharusnya SALAH (S). Hukuman penjara atau denda dari pengadilan adalah sanksi tegas dari Norma Hukum. Sedangkan sanksi pelanggaran Norma Kesusilaan bersifat batiniah, yaitu rasa penyesalan dan rasa bersalah pada hati nurani."
+            },
+            {
+                id: 19,
+                part: 'C',
+                points: 6,
+                badge: "Benar / Salah • Kewajiban Anak di Rumah",
+                statement: "Membantu orang tua membersihkan tempat tidur dan merapikan kamar setelah bangun adalah bentuk kewajiban anak di lingkungan rumah.",
+                correct: "B", // BENAR
+                verifyRight: "Sangat tepat! Pernyataan ini BENAR (B). Merapikan tempat tidur sendiri dan membantu meringankan pekerjaan orang tua merupakan contoh nyata pelaksanaan kewajiban dan kemandirian seorang anak di lingkungan keluarga/rumah.",
+                explainWrong: "Jawabanmu kurang tepat. Pernyataan ini adalah BENAR (B). Setiap anak memiliki kewajiban di rumah, salah satunya adalah menjaga kebersihan kamar tidur dan membantu orang tua."
+            },
+            {
+                id: 20,
+                part: 'C',
+                points: 6,
+                badge: "Benar / Salah • Keseimbangan Hak & Kewajiban",
+                statement: "Apabila hak dan kewajiban dijalankan secara seimbang, maka kehidupan bermasyarakat akan menjadi harmonis, adil, dan tertib.",
+                correct: "B", // BENAR
+                verifyRight: "Luar biasa! Pernyataan ini BENAR (B). Hak dan kewajiban ibarat dua sisi mata uang yang tidak dapat dipisahkan. Jika setiap warga melaksanakan kewajibannya terlebih dahulu dan menghormati hak orang lain secara seimbang, maka kerukunan, keadilan, dan ketertiban sosial akan terwujud.",
+                explainWrong: "Jawabanmu kurang tepat. Pernyataan ini adalah BENAR (B). Keseimbangan antara pelaksanaan kewajiban dan pemenuhan hak adalah kunci utama terciptanya kehidupan masyarakat yang rukun, tertib, dan harmonis."
+            }
+        ];
+
+        // =========================================================================
+        // 3. APPLICATION STATE MANAGEMENT
+        // =========================================================================
+        const appState = {
+            selectedAnswers: {},   // { questionId: 'A' | 'B' | ... }
+            verifiedStatus: {},    // { questionId: true | false }
+            isCorrectMap: {},      // { questionId: true | false }
+            pointsEarnedMap: {},   // { questionId: number }
+            soundEnabled: true,
+            timerSeconds: 60 * 60, // 60 minutes
+            timerInterval: null
+        };
+
+        // =========================================================================
+        // 4. WEB AUDIO API SOUND EFFECTS (NO EXTERNAL MP3 NEEDED)
+        // =========================================================================
+        let audioCtx = null;
+        function playFeedbackSound(isSuccess) {
+            if (!appState.soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (isSuccess) {
+                    // Pleasant two-note major chime
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.11); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.22); // G5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                } else {
+                    // Gentle low double tone for wrong answer
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(240, now + 0.15);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                }
+            } catch (e) {
+                // Ignore audio errors if blocked by browser
+            }
         }
 
-        function renderQuestion() {
-            const qData = quizData[currentIdx];
-            
-            // Header Info
-            document.getElementById('current-question-num').innerText = currentIdx + 1;
-            document.getElementById('question-type-badge').innerText = qData.category;
-            
-            // Progress Bar (animate width)
-            const progress = ((currentIdx) / quizData.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-
-            // Question Text
-            const qText = document.getElementById('question-text');
-            // Ganti baris baru (\n) menjadi <br>
-            qText.innerHTML = qData.question.replace(/\n/g, '<br>');
-            qText.classList.remove('animate-pop');
-            void qText.offsetWidth; 
-            qText.classList.add('animate-pop');
-
-            // Options Grid Adjustments
-            const optsContainer = document.getElementById('options-container');
-            optsContainer.innerHTML = ''; 
-            
-            // Adjust grid layout based on type
-            if (qData.type === 'match') {
-                optsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full';
-            } else if (qData.type === 'tf') {
-                optsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg mx-auto mt-4';
+        function toggleSound() {
+            appState.soundEnabled = !appState.soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (appState.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-sm';
             } else {
-                optsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 w-full';
+                icon.className = 'fa-solid fa-volume-xmark text-sm text-red-300';
+            }
+        }
+
+        // =========================================================================
+        // 5. RENDER FUNCTIONS FOR ALL SECTIONS
+        // =========================================================================
+
+        function renderAllQuestions() {
+            renderPGQuestions();
+            renderMatchingQuestions();
+            renderTFQuestions();
+            renderQuestionNumberGrid();
+            renderKisiKisiTable();
+            updateGlobalScoreUI();
+        }
+
+        // Render Bagian A (Pilihan Ganda 1-10)
+        function renderPGQuestions() {
+            const container = document.getElementById('pgQuestionsContainer');
+            container.innerHTML = pgQuestions.map(q => {
+                const selected = appState.selectedAnswers[q.id];
+                const isVerified = appState.verifiedStatus[q.id];
+                const isCorrect = appState.isCorrectMap[q.id];
+
+                return `
+                <article id="qCard-${q.id}" class="bg-white rounded-2xl shadow-sm border ${isVerified ? (isCorrect ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-rose-400 ring-1 ring-rose-200') : 'border-slate-200'} overflow-hidden transition-all">
+                    <!-- Question Card Header -->
+                    <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-extrabold text-sm flex items-center justify-center shadow-sm">
+                                ${q.id}
+                            </span>
+                            <div>
+                                <span class="text-xs font-bold text-slate-800">${q.badge}</span>
+                                <span class="hidden sm:inline-block text-[11px] text-slate-500 ml-1">• ${q.level}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${isVerified ? (isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800') : 'bg-blue-50 text-blue-700'}">
+                                ${isVerified ? (isCorrect ? '<i class="fa-solid fa-check mr-1"></i>+5 Poin' : '<i class="fa-solid fa-xmark mr-1"></i>0 / 5 Poin') : 'Bobot: 5 Poin'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <!-- Stimulus Box if present -->
+                        ${q.stimulusHtml ? `
+                            <div class="bg-slate-50/90 rounded-xl p-4 border-l-4 border-blue-600 border border-slate-200/80 space-y-2">
+                                <div class="text-xs font-extrabold uppercase tracking-wider text-blue-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-book-open-reader"></i> ${q.stimulusTitle}
+                                </div>
+                                <div class="text-xs sm:text-sm">${q.stimulusHtml}</div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Question Stem -->
+                        <p class="text-sm sm:text-base font-semibold text-slate-900 leading-relaxed">
+                            ${q.question}
+                        </p>
+
+                        <!-- Options List (A, B, C, D) -->
+                        <div class="grid grid-cols-1 gap-2.5 pt-1">
+                            ${Object.entries(q.options).map(([optKey, optVal]) => {
+                                const isThisSelected = selected === optKey;
+                                const isThisCorrectKey = q.correct === optKey;
+
+                                let btnStyle = "border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 bg-white text-slate-800";
+                                let badgeStyle = "bg-slate-100 text-slate-700 border border-slate-300";
+
+                                if (!isVerified && isThisSelected) {
+                                    btnStyle = "border-blue-600 bg-blue-50/80 text-blue-950 ring-2 ring-blue-100";
+                                    badgeStyle = "bg-blue-600 text-white border-blue-600";
+                                } else if (isVerified) {
+                                    if (isThisCorrectKey) {
+                                        btnStyle = "border-emerald-500 bg-emerald-50/90 text-emerald-950 font-semibold";
+                                        badgeStyle = "bg-emerald-600 text-white border-emerald-600";
+                                    } else if (isThisSelected && !isThisCorrectKey) {
+                                        btnStyle = "border-rose-500 bg-rose-50/90 text-rose-950";
+                                        badgeStyle = "bg-rose-600 text-white border-rose-600";
+                                    } else {
+                                        btnStyle = "border-slate-200 bg-slate-50/50 text-slate-500 opacity-75";
+                                    }
+                                }
+
+                                return `
+                                <button type="button"
+                                    onclick="selectOption(${q.id}, '${optKey}')"
+                                    ${isVerified ? 'disabled' : ''}
+                                    class="w-full text-left p-3.5 rounded-xl border-2 transition flex items-start gap-3.5 ${btnStyle}">
+                                    <span class="w-7 h-7 rounded-lg font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 transition ${badgeStyle}">
+                                        ${optKey}
+                                    </span>
+                                    <span class="text-xs sm:text-sm leading-relaxed flex-grow">${optVal}</span>
+                                    ${isVerified && isThisCorrectKey ? '<i class="fa-solid fa-circle-check text-emerald-600 text-lg shrink-0 mt-0.5"></i>' : ''}
+                                    ${isVerified && isThisSelected && !isThisCorrectKey ? '<i class="fa-solid fa-circle-xmark text-rose-600 text-lg shrink-0 mt-0.5"></i>' : ''}
+                                </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- Action Bar: Verify or Retry -->
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-2">
+                            ${!isVerified ? `
+                                <span class="text-xs text-slate-500">
+                                    ${selected ? `<i class="fa-solid fa-check text-blue-600 mr-1"></i>Pilihanmu: <strong>Opsi ${selected}</strong>. Klik tombol di samping untuk cek alasan!` : '<i class="fa-regular fa-hand-pointer mr-1"></i>Pilih salah satu opsi (A/B/C/D) terlebih dahulu.'}
+                                </span>
+                                <button type="button"
+                                    onclick="verifyQuestion(${q.id})"
+                                    ${!selected ? 'disabled' : ''}
+                                    class="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 ${selected ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                                    <i class="fa-solid fa-shield-check"></i> Verifikasi Jawaban
+                                </button>
+                            ` : `
+                                <span class="text-xs font-semibold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                                    <i class="fa-solid ${isCorrect ? 'fa-circle-check' : 'fa-circle-info'} mr-1"></i>
+                                    Status: Terverifikasi (${isCorrect ? 'Jawaban Benar' : 'Jawaban Kurang Tepat'})
+                                </span>
+                                <button type="button" onclick="retryQuestion(${q.id})" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate-right"></i> Coba Ulang Soal Ini
+                                </button>
+                            `}
+                        </div>
+
+                        <!-- FEEDBACK VERIFICATION BOX -->
+                        ${isVerified ? renderFeedbackBoxPG(q, selected, isCorrect) : ''}
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        function renderFeedbackBoxPG(q, selected, isCorrect) {
+            if (isCorrect) {
+                return `
+                <div class="mt-3 rounded-2xl bg-emerald-50 border-2 border-emerald-300 p-4 animate-fade-in space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 text-emerald-900 font-extrabold text-xs sm:text-sm">
+                            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+                            VERIFIKASI ALASAN JAWABAN BENAR (Opsi ${q.correct})
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-xs">+${q.points} Poin</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-emerald-950 leading-relaxed pl-8">
+                        ${q.verifyRight}
+                    </p>
+                </div>
+                `;
+            } else {
+                const specificWrongReason = q.explainWrong[selected] || "Pilihan yang kamu pilih belum sesuai dengan konsep/perhitungan yang tepat.";
+                return `
+                <div class="mt-3 rounded-2xl bg-rose-50 border-2 border-rose-300 p-4 animate-fade-in space-y-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 text-rose-900 font-extrabold text-xs sm:text-sm">
+                            <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </span>
+                            PENJELASAN MENGAPA JAWABANMU KURANG TEPAT (Kamu memilih Opsi ${selected})
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-rose-200 text-rose-900 font-bold text-xs">+0 Poin</span>
+                    </div>
+                    <div class="pl-8 space-y-2.5 text-xs sm:text-sm">
+                        <div class="p-3 rounded-xl bg-white/90 border border-rose-200 text-rose-950 leading-relaxed">
+                            <strong class="text-rose-700 block mb-0.5"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Evaluasi Pilihanmu (Opsi ${selected}):</strong>
+                            ${specificWrongReason}
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 leading-relaxed">
+                            <strong class="text-emerald-800 block mb-0.5"><i class="fa-solid fa-lightbulb mr-1"></i>Kunci Jawaban & Pembahasan yang Benar (Opsi ${q.correct} - ${q.options[q.correct]}):</strong>
+                            ${q.verifyRight}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+        }
+
+        // Render Bagian B (Menjodohkan 11-15)
+        function renderMatchingQuestions() {
+            const container = document.getElementById('matchingQuestionsContainer');
+            container.innerHTML = matchingQuestions.map(q => {
+                const selected = appState.selectedAnswers[q.id];
+                const isVerified = appState.verifiedStatus[q.id];
+                const isCorrect = appState.isCorrectMap[q.id];
+
+                return `
+                <article id="qCard-${q.id}" class="bg-white rounded-2xl shadow-sm border ${isVerified ? (isCorrect ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-rose-400 ring-1 ring-rose-200') : 'border-slate-200'} overflow-hidden transition-all">
+                    <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-purple-600 text-white font-extrabold text-sm flex items-center justify-center shadow-sm">
+                                ${q.id}
+                            </span>
+                            <span class="text-xs font-bold text-slate-800">${q.badge}</span>
+                        </div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${isVerified ? (isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800') : 'bg-purple-50 text-purple-700'}">
+                            ${isVerified ? (isCorrect ? '<i class="fa-solid fa-check mr-1"></i>+4 Poin' : '<i class="fa-solid fa-xmark mr-1"></i>0 / 4 Poin') : 'Bobot: 4 Poin'}
+                        </span>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                            <!-- Kolom A Statement -->
+                            <div class="md:col-span-7 bg-purple-50/50 p-4 rounded-xl border border-purple-200/80">
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-purple-700 mb-1">Pernyataan Kolom A</div>
+                                <p class="text-sm sm:text-base font-semibold text-slate-900 leading-relaxed">${q.statement}</p>
+                            </div>
+
+                            <!-- Arrow icon on desktop -->
+                            <div class="hidden md:flex md:col-span-1 justify-center text-purple-500">
+                                <i class="fa-solid fa-link text-xl"></i>
+                            </div>
+
+                            <!-- Kolom B Selector -->
+                            <div class="md:col-span-4 space-y-1.5">
+                                <label class="block text-xs font-bold text-slate-700">Pasangkan dengan Kolom B:</label>
+                                <div class="grid grid-cols-1 gap-1.5">
+                                    ${Object.entries(matchingOptionsBank).map(([key, label]) => {
+                                        const isThisSelected = selected === key;
+                                        const isThisCorrectKey = q.correct === key;
+
+                                        let itemClass = "border-slate-200 bg-white hover:border-purple-400 text-slate-700";
+                                        if (!isVerified && isThisSelected) {
+                                            itemClass = "border-purple-600 bg-purple-50 text-purple-950 font-bold ring-2 ring-purple-100";
+                                        } else if (isVerified) {
+                                            if (isThisCorrectKey) {
+                                                itemClass = "border-emerald-500 bg-emerald-50 text-emerald-950 font-bold";
+                                            } else if (isThisSelected && !isThisCorrectKey) {
+                                                itemClass = "border-rose-500 bg-rose-50 text-rose-950";
+                                            } else {
+                                                itemClass = "border-slate-200 bg-slate-50 text-slate-400 opacity-70";
+                                            }
+                                        }
+
+                                        return `
+                                        <button type="button"
+                                            onclick="selectOption(${q.id}, '${key}')"
+                                            ${isVerified ? 'disabled' : ''}
+                                            class="w-full text-left px-3 py-2 rounded-xl border text-xs flex items-center justify-between gap-2 transition ${itemClass}">
+                                            <span class="flex items-center gap-2">
+                                                <span class="w-5 h-5 rounded-md ${isThisSelected ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-700'} font-bold flex items-center justify-center text-[11px]">${key}</span>
+                                                <span>${label}</span>
+                                            </span>
+                                            ${isVerified && isThisCorrectKey ? '<i class="fa-solid fa-check text-emerald-600"></i>' : ''}
+                                            ${isVerified && isThisSelected && !isThisCorrectKey ? '<i class="fa-solid fa-xmark text-rose-600"></i>' : ''}
+                                        </button>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verify Action Bar -->
+                        <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                            ${!isVerified ? `
+                                <span class="text-xs text-slate-500">
+                                    ${selected ? `Pasangan dipilih: <strong>${selected}. ${matchingOptionsBank[selected]}</strong>` : 'Pilih pasangan yang sesuai di Kolom B.'}
+                                </span>
+                                <button type="button"
+                                    onclick="verifyQuestion(${q.id})"
+                                    ${!selected ? 'disabled' : ''}
+                                    class="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 ${selected ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-sm' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                                    <i class="fa-solid fa-shield-check"></i> Verifikasi Pasangan
+                                </button>
+                            ` : `
+                                <span class="text-xs font-semibold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                                    Status: Terverifikasi (${isCorrect ? 'Pasangan Tepat' : 'Pasangan Kurang Tepat'})
+                                </span>
+                                <button type="button" onclick="retryQuestion(${q.id})" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate-right"></i> Coba Ulang
+                                </button>
+                            `}
+                        </div>
+
+                        <!-- Feedback Box Matching -->
+                        ${isVerified ? `
+                            <div class="mt-2 rounded-2xl ${isCorrect ? 'bg-emerald-50 border-2 border-emerald-300' : 'bg-rose-50 border-2 border-rose-300'} p-4 animate-fade-in space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="font-extrabold text-xs sm:text-sm ${isCorrect ? 'text-emerald-900' : 'text-rose-900'} flex items-center gap-2">
+                                        <i class="fa-solid ${isCorrect ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-rose-600'} text-base"></i>
+                                        ${isCorrect ? `VERIFIKASI ALASAN BENAR (${q.correct}. ${matchingOptionsBank[q.correct]})` : `PENJELASAN JAWABAN SALAH (Pilihanmu: ${selected}. ${matchingOptionsBank[selected]})`}
+                                    </div>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold ${isCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-200 text-rose-900'}">
+                                        ${isCorrect ? `+${q.points} Poin` : '+0 Poin'}
+                                    </span>
+                                </div>
+                                <p class="text-xs sm:text-sm ${isCorrect ? 'text-emerald-950' : 'text-rose-950'} leading-relaxed pl-6">
+                                    ${isCorrect ? q.verifyRight : `${q.explainWrong} <br><strong class="text-emerald-800 mt-1 inline-block">Alasan Kunci (${q.correct}. ${matchingOptionsBank[q.correct]}):</strong> ${q.verifyRight}`}
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        // Render Bagian C (Benar / Salah 16-20)
+        function renderTFQuestions() {
+            const container = document.getElementById('tfQuestionsContainer');
+            container.innerHTML = tfQuestions.map(q => {
+                const selected = appState.selectedAnswers[q.id];
+                const isVerified = appState.verifiedStatus[q.id];
+                const isCorrect = appState.isCorrectMap[q.id];
+
+                return `
+                <article id="qCard-${q.id}" class="bg-white rounded-2xl shadow-sm border ${isVerified ? (isCorrect ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-rose-400 ring-1 ring-rose-200') : 'border-slate-200'} overflow-hidden transition-all">
+                    <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white font-extrabold text-sm flex items-center justify-center shadow-sm">
+                                ${q.id}
+                            </span>
+                            <span class="text-xs font-bold text-slate-800">${q.badge}</span>
+                        </div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${isVerified ? (isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800') : 'bg-emerald-50 text-emerald-700'}">
+                            ${isVerified ? (isCorrect ? '<i class="fa-solid fa-check mr-1"></i>+6 Poin' : '<i class="fa-solid fa-xmark mr-1"></i>0 / 6 Poin') : 'Bobot: 6 Poin'}
+                        </span>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <p class="text-sm sm:text-base font-semibold text-slate-900 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                            "${q.statement}"
+                        </p>
+
+                        <!-- BENAR / SALAH Buttons -->
+                        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                            ${[
+                                { key: 'B', label: 'BENAR (B)', icon: 'fa-check-circle' },
+                                { key: 'S', label: 'SALAH (S)', icon: 'fa-times-circle' }
+                            ].map(item => {
+                                const isThisSelected = selected === item.key;
+                                const isThisCorrectKey = q.correct === item.key;
+
+                                let btnClass = "border-slate-200 bg-white hover:border-emerald-500 text-slate-700";
+                                if (!isVerified && isThisSelected) {
+                                    btnClass = item.key === 'B'
+                                        ? "border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-100 font-extrabold"
+                                        : "border-rose-600 bg-rose-50 text-rose-900 ring-2 ring-rose-100 font-extrabold";
+                                } else if (isVerified) {
+                                    if (isThisCorrectKey) {
+                                        btnClass = "border-emerald-500 bg-emerald-100/80 text-emerald-950 font-extrabold";
+                                    } else if (isThisSelected && !isThisCorrectKey) {
+                                        btnClass = "border-rose-500 bg-rose-100/80 text-rose-950 font-bold";
+                                    } else {
+                                        btnClass = "border-slate-200 bg-slate-50 text-slate-400 opacity-65";
+                                    }
+                                }
+
+                                return `
+                                <button type="button"
+                                    onclick="selectOption(${q.id}, '${item.key}')"
+                                    ${isVerified ? 'disabled' : ''}
+                                    class="py-3.5 px-4 rounded-xl border-2 text-xs sm:text-sm flex items-center justify-center gap-2.5 transition ${btnClass}">
+                                    <i class="fa-solid ${item.icon} text-base"></i>
+                                    <span>${item.label}</span>
+                                </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- Verify Action Bar -->
+                        <div class="pt-2 flex flex-wrap items-center justify-between gap-2">
+                            ${!isVerified ? `
+                                <span class="text-xs text-slate-500">
+                                    ${selected ? `Pilihanmu: <strong>${selected === 'B' ? 'BENAR (B)' : 'SALAH (S)'}</strong>` : 'Pilih BENAR atau SALAH lalu klik Verifikasi.'}
+                                </span>
+                                <button type="button"
+                                    onclick="verifyQuestion(${q.id})"
+                                    ${!selected ? 'disabled' : ''}
+                                    class="px-4 py-2 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 ${selected ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
+                                    <i class="fa-solid fa-shield-check"></i> Verifikasi Analisis
+                                </button>
+                            ` : `
+                                <span class="text-xs font-semibold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                                    Status: Terverifikasi (Kunci: ${q.correct === 'B' ? 'BENAR' : 'SALAH'})
+                                </span>
+                                <button type="button" onclick="retryQuestion(${q.id})" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-rotate-right"></i> Coba Ulang
+                                </button>
+                            `}
+                        </div>
+
+                        <!-- Feedback Box TF -->
+                        ${isVerified ? `
+                            <div class="mt-2 rounded-2xl ${isCorrect ? 'bg-emerald-50 border-2 border-emerald-300' : 'bg-rose-50 border-2 border-rose-300'} p-4 animate-fade-in space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="font-extrabold text-xs sm:text-sm ${isCorrect ? 'text-emerald-900' : 'text-rose-900'} flex items-center gap-2">
+                                        <i class="fa-solid ${isCorrect ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-rose-600'} text-base"></i>
+                                        ${isCorrect ? `VERIFIKASI ALASAN BENAR (Pernyataan ${q.correct === 'B' ? 'BENAR' : 'SALAH'})` : `PENJELASAN MENGAPA JAWABANMU KURANG TEPAT`}
+                                    </div>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold ${isCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-200 text-rose-900'}">
+                                        ${isCorrect ? `+${q.points} Poin` : '+0 Poin'}
+                                    </span>
+                                </div>
+                                <p class="text-xs sm:text-sm ${isCorrect ? 'text-emerald-950' : 'text-rose-950'} leading-relaxed pl-6">
+                                    ${isCorrect ? q.verifyRight : q.explainWrong}
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </article>
+                `;
+            }).join('');
+        }
+
+        // =========================================================================
+        // 6. INTERACTION HANDLERS (SELECT, VERIFY, RETRY, RESET)
+        // =========================================================================
+        function getQuestionObject(id) {
+            return [...pgQuestions, ...matchingQuestions, ...tfQuestions].find(q => q.id === id);
+        }
+
+        function selectOption(questionId, optionKey) {
+            if (appState.verifiedStatus[questionId]) return;
+            appState.selectedAnswers[questionId] = optionKey;
+            renderAllQuestions();
+        }
+
+        function verifyQuestion(questionId) {
+            const selected = appState.selectedAnswers[questionId];
+            if (!selected) return;
+
+            const q = getQuestionObject(questionId);
+            const isCorrect = selected === q.correct;
+
+            appState.verifiedStatus[questionId] = true;
+            appState.isCorrectMap[questionId] = isCorrect;
+            appState.pointsEarnedMap[questionId] = isCorrect ? q.points : 0;
+
+            playFeedbackSound(isCorrect);
+            renderAllQuestions();
+        }
+
+        function retryQuestion(questionId) {
+            delete appState.selectedAnswers[questionId];
+            delete appState.verifiedStatus[questionId];
+            delete appState.isCorrectMap[questionId];
+            delete appState.pointsEarnedMap[questionId];
+            renderAllQuestions();
+        }
+
+        function verifyAllUnverified() {
+            const allQuestions = [...pgQuestions, ...matchingQuestions, ...tfQuestions];
+            let anyVerified = false;
+            allQuestions.forEach(q => {
+                if (appState.selectedAnswers[q.id] && !appState.verifiedStatus[q.id]) {
+                    const isCorrect = appState.selectedAnswers[q.id] === q.correct;
+                    appState.verifiedStatus[q.id] = true;
+                    appState.isCorrectMap[q.id] = isCorrect;
+                    appState.pointsEarnedMap[q.id] = isCorrect ? q.points : 0;
+                    anyVerified = true;
+                }
+            });
+            if (anyVerified) {
+                playFeedbackSound(true);
+            }
+            renderAllQuestions();
+        }
+
+        function resetAllQuiz() {
+            appState.selectedAnswers = {};
+            appState.verifiedStatus = {};
+            appState.isCorrectMap = {};
+            appState.pointsEarnedMap = {};
+            appState.timerSeconds = 60 * 60;
+            renderAllQuestions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // =========================================================================
+        // 7. SCORE CALCULATION & QUESTION GRID MAP
+        // =========================================================================
+        function updateGlobalScoreUI() {
+            let scoreA = 0, scoreB = 0, scoreC = 0;
+            let verifiedCount = 0;
+
+            pgQuestions.forEach(q => {
+                if (appState.verifiedStatus[q.id]) {
+                    verifiedCount++;
+                    scoreA += (appState.pointsEarnedMap[q.id] || 0);
+                }
+            });
+            matchingQuestions.forEach(q => {
+                if (appState.verifiedStatus[q.id]) {
+                    verifiedCount++;
+                    scoreB += (appState.pointsEarnedMap[q.id] || 0);
+                }
+            });
+            tfQuestions.forEach(q => {
+                if (appState.verifiedStatus[q.id]) {
+                    verifiedCount++;
+                    scoreC += (appState.pointsEarnedMap[q.id] || 0);
+                }
+            });
+
+            const totalScore = scoreA + scoreB + scoreC;
+
+            // Header & Sidebar counters
+            document.getElementById('answeredCount').textContent = verifiedCount;
+            document.getElementById('liveScoreDisplay').textContent = totalScore;
+
+            document.getElementById('scorePartA').textContent = scoreA;
+            document.getElementById('scorePartB').textContent = scoreB;
+            document.getElementById('scorePartC').textContent = scoreC;
+
+            document.getElementById('barPartA').style.width = `${(scoreA / 50) * 100}%`;
+            document.getElementById('barPartB').style.width = `${(scoreB / 20) * 100}%`;
+            document.getElementById('barPartC').style.width = `${(scoreC / 30) * 100}%`;
+
+            // Update Rapor View as well
+            document.getElementById('raporFinalScore').textContent = totalScore;
+            document.getElementById('raporScoreA').textContent = scoreA;
+            document.getElementById('raporScoreB').textContent = scoreB;
+            document.getElementById('raporScoreC').textContent = scoreC;
+
+            const badge = document.getElementById('raporPredikatBadge');
+            if (verifiedCount === 0) {
+                badge.textContent = "Belum Mengerjakan";
+                badge.className = "px-3 py-1 rounded-full bg-slate-600 text-white font-bold text-center";
+            } else if (totalScore >= 85) {
+                badge.textContent = "Sangat Baik (A)";
+                badge.className = "px-3 py-1 rounded-full bg-emerald-400 text-slate-950 font-extrabold text-center";
+            } else if (totalScore >= 70) {
+                badge.textContent = "Baik / Tuntas (B)";
+                badge.className = "px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-extrabold text-center";
+            } else {
+                badge.textContent = "Perlu Bimbingan (C)";
+                badge.className = "px-3 py-1 rounded-full bg-rose-400 text-slate-950 font-extrabold text-center";
             }
 
-            // Create Buttons
-            qData.options.forEach((optText, index) => {
-                const btn = document.createElement('button');
-                
-                if (qData.type === 'tf') {
-                    // True/False special styling
-                    btn.className = `btn-3d w-full p-6 rounded-2xl text-2xl font-black flex items-center justify-center gap-3 shadow-md animate-pop ${index === 0 ? 'btn-green' : 'btn-purple'}`;
-                    btn.innerHTML = index === 0 ? `<i class="fa-solid fa-check"></i> ${optText}` : `<i class="fa-solid fa-xmark"></i> ${optText}`;
-                } else {
-                    // Normal / Match styling
-                    btn.className = 'btn-3d btn-option w-full p-4 rounded-2xl text-lg font-bold flex items-center gap-4 shadow-sm animate-pop';
-                    
-                    // Pisahkan huruf A/B/C dengan teks
-                    const splitIndex = optText.indexOf('.');
-                    if (splitIndex !== -1 && splitIndex < 3) {
-                        const letter = optText.substring(0, splitIndex);
-                        const text = optText.substring(splitIndex + 1).trim();
-                        btn.innerHTML = `<span class="bg-blue-100 text-blue-600 w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 text-xl border-2 border-blue-200">${letter}</span> <span class="text-left">${text}</span>`;
-                    } else {
-                        btn.innerHTML = `<span class="text-left w-full">${optText}</span>`;
-                    }
+            renderRaporReviewList();
+        }
+
+        function renderQuestionNumberGrid() {
+            const grid = document.getElementById('questionNumberGrid');
+            let html = '';
+            for (let i = 1; i <= 20; i++) {
+                const isVerified = appState.verifiedStatus[i];
+                const isCorrect = appState.isCorrectMap[i];
+                const hasSelection = !!appState.selectedAnswers[i];
+
+                let colorClass = "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300";
+                if (isVerified) {
+                    colorClass = isCorrect
+                        ? "bg-emerald-600 text-white font-extrabold border-emerald-700 shadow-sm"
+                        : "bg-rose-600 text-white font-extrabold border-rose-700 shadow-sm";
+                } else if (hasSelection) {
+                    colorClass = "bg-amber-100 text-amber-900 border-amber-400 font-bold";
                 }
-                
-                btn.style.animationDelay = `${index * 0.1}s`;
-                btn.onclick = () => handleAnswer(index, btn);
-                optsContainer.appendChild(btn);
+
+                html += `
+                    <button type="button" onclick="scrollToQuestion(${i})" class="h-8 rounded-lg text-xs font-semibold transition flex items-center justify-center ${colorClass}">
+                        ${i}
+                    </button>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+
+        function scrollToQuestion(id) {
+            filterSection('all');
+            const el = document.getElementById(`qCard-${id}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function filterSection(sec) {
+            const sections = ['A', 'B', 'C'];
+            sections.forEach(s => {
+                const container = document.getElementById(`sectionContainer-${s}`);
+                if (sec === 'all' || sec === s) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
+            });
+
+            // Update filter button styles
+            ['all', 'A', 'B', 'C'].forEach(btnKey => {
+                const btn = document.getElementById(`secBtn-${btnKey}`);
+                if (btnKey === sec) {
+                    btn.className = "sec-filter-btn w-full text-left px-3 py-2 rounded-xl text-xs font-bold bg-red-600 text-white flex items-center justify-between transition shadow-sm";
+                } else {
+                    btn.className = "sec-filter-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-between transition";
+                }
             });
         }
 
-        function handleAnswer(selectedIndex, clickedBtn) {
-            const qData = quizData[currentIdx];
-            const isCorrect = selectedIndex === qData.correct;
-
-            // Disable all buttons
-            const buttons = document.querySelectorAll('#options-container button');
-            buttons.forEach(btn => btn.disabled = true);
-
-            // Add visual cue to clicked button temporarily
-            if (isCorrect) {
-                clickedBtn.classList.add('bg-green-100', 'border-green-400');
-                score += ptsPerQuestion;
-                updateUI();
-            } else {
-                clickedBtn.classList.add('bg-rose-100', 'border-rose-400');
-            }
-
-            // Small delay before showing modal to let button animation finish
-            setTimeout(() => {
-                showFeedback(isCorrect, qData);
-            }, 300);
+        // =========================================================================
+        // 8. RENDER KISI-KISI & RAPOR REVIEW LIST
+        // =========================================================================
+        function renderKisiKisiTable() {
+            const tbody = document.getElementById('kisiKisiTableBody');
+            tbody.innerHTML = kisiKisiData.map(row => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold text-slate-700">${row.no}</td>
+                    <td class="p-3 font-medium text-slate-900">${row.elemen}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 rounded-lg bg-red-50 text-red-800 font-semibold text-xs">${row.materi}</span></td>
+                    <td class="p-3 text-slate-600 leading-relaxed">${row.indikator}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-bold text-xs">${row.level}</span></td>
+                    <td class="p-3"><span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 font-semibold text-xs">${row.aspek}</span></td>
+                    <td class="p-3 font-semibold text-slate-700">${row.bentuk}</td>
+                    <td class="p-3 text-center font-extrabold text-slate-900">${row.nomorSoal}</td>
+                </tr>
+            `).join('');
         }
 
-        function showFeedback(isCorrect, qData) {
-            const header = document.getElementById('fb-header');
-            const icon = document.getElementById('fb-icon');
-            const title = document.getElementById('fb-title');
-            
-            const correctContainer = document.getElementById('fb-correct-container');
-            const correctText = document.getElementById('fb-correct-text');
-            const explanation = document.getElementById('fb-explanation');
-            const btnNext = document.getElementById('btn-next');
+        function renderRaporReviewList() {
+            const container = document.getElementById('raporReviewList');
+            const allQuestions = [...pgQuestions, ...matchingQuestions, ...tfQuestions];
 
-            // Reset Classes
-            header.className = 'p-8 text-center text-white relative overflow-hidden transition-colors duration-300';
-            btnNext.className = 'btn-3d w-full text-xl font-black py-4 rounded-xl flex items-center justify-center gap-3 shadow-md transition-colors';
+            container.innerHTML = allQuestions.map(q => {
+                const userAns = appState.selectedAnswers[q.id];
+                const isVerified = appState.verifiedStatus[q.id];
+                const isCorrect = appState.isCorrectMap[q.id];
+                const pts = appState.pointsEarnedMap[q.id] || 0;
 
-            if (isCorrect) {
-                header.classList.add('bg-green-500');
-                icon.className = 'fa-solid fa-face-laugh-beam text-6xl drop-shadow-md text-white';
-                title.innerText = 'Benar! Luar Biasa!';
-                
-                btnNext.classList.add('btn-green');
-                correctContainer.classList.add('hidden');
-            } else {
-                header.classList.add('bg-rose-500');
-                icon.className = 'fa-solid fa-face-frown-open text-6xl drop-shadow-md text-white';
-                title.innerText = 'Kurang Tepat, Yuk Belajar Lagi!';
-                
-                btnNext.classList.add('btn-purple');
-                correctContainer.classList.remove('hidden');
-                // Format the correct text display
-                correctText.innerHTML = qData.options[qData.correct];
-            }
+                let questionTitle = q.question || q.statement;
+                let correctDisplay = q.correct;
+                let userDisplay = userAns || "Belum Dijawab";
 
-            explanation.innerHTML = qData.explanation;
-
-            // Show Modal
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            // Trigger animation
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.classList.add('opacity-100');
-                fbCard.classList.remove('scale-90');
-                fbCard.classList.add('scale-100');
-            }, 10);
-        }
-
-        function nextQuestion() {
-            // Hide Modal animation
-            modal.classList.remove('opacity-100');
-            modal.classList.add('opacity-0');
-            fbCard.classList.remove('scale-100');
-            fbCard.classList.add('scale-90');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                
-                currentIdx++;
-                if (currentIdx < quizData.length) {
-                    renderQuestion();
-                } else {
-                    endQuiz();
+                if (q.part === 'A') {
+                    correctDisplay = `${q.correct}. ${q.options[q.correct]}`;
+                    if (userAns) userDisplay = `${userAns}. ${q.options[userAns]}`;
+                } else if (q.part === 'B') {
+                    correctDisplay = `${q.correct}. ${matchingOptionsBank[q.correct]}`;
+                    if (userAns) userDisplay = `${userAns}. ${matchingOptionsBank[userAns]}`;
+                } else if (q.part === 'C') {
+                    correctDisplay = q.correct === 'B' ? 'BENAR (B)' : 'SALAH (S)';
+                    if (userAns) userDisplay = userAns === 'B' ? 'BENAR (B)' : 'SALAH (S)';
                 }
-            }, 250); // match duration
+
+                return `
+                <div class="p-4 rounded-xl border ${isVerified ? (isCorrect ? 'border-emerald-300 bg-emerald-50/40' : 'border-rose-300 bg-rose-50/40') : 'border-slate-200 bg-slate-50'} space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-slate-800 text-white">
+                            Soal No. ${q.id} (Bagian ${q.part})
+                        </span>
+                        <span class="text-xs font-extrabold px-3 py-1 rounded-full ${isVerified ? (isCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white') : 'bg-slate-200 text-slate-700'}">
+                            Skor: ${pts} / ${q.points} Poin
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-900">${questionTitle}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                        <div class="p-2.5 rounded-lg bg-white border border-slate-200">
+                            <span class="text-slate-500 block">Jawaban Siswa:</span>
+                            <strong class="${isVerified ? (isCorrect ? 'text-emerald-700' : 'text-rose-700') : 'text-slate-700'}">${userDisplay}</strong>
+                        </div>
+                        <div class="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200">
+                            <span class="text-emerald-700 block">Kunci Jawaban Resmi:</span>
+                            <strong class="text-emerald-950">${correctDisplay}</strong>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-700 bg-white p-3 rounded-lg border border-slate-200/80 leading-relaxed">
+                        <strong class="text-slate-900"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Verifikasi & Pembahasan:</strong>
+                        ${q.verifyRight}
+                    </div>
+                </div>
+                `;
+            }).join('');
         }
 
-        function endQuiz() {
-            screens.quiz.classList.add('hidden');
-            screens.quiz.classList.remove('flex');
-            screens.end.classList.remove('hidden');
-            
-            // Complete Progress Bar
-            document.getElementById('progress-bar').style.width = `100%`;
-
-            // Update Card
-            document.getElementById('card-score-display').innerText = score;
-            
-            // Score Color on Card
-            const scoreDisp = document.getElementById('card-score-display');
-            if(score >= 80) scoreDisp.className = 'text-6xl font-black text-green-500 drop-shadow-md';
-            else if(score >= 50) scoreDisp.className = 'text-6xl font-black text-blue-500 drop-shadow-md';
-            else scoreDisp.className = 'text-6xl font-black text-rose-500 drop-shadow-md';
-
-            updateCardPreview();
-        }
-
-        function updateUI() {
-            document.getElementById('current-score').innerText = score;
-        }
-
-        function updateCardPreview() {
-            const inputVal = document.getElementById('student-name').value.trim();
-            const displayName = inputVal === '' ? 'Siswa Hebat' : inputVal;
-            document.getElementById('card-name-display').innerText = displayName;
-        }
-
-        function downloadCard() {
-            const card = document.getElementById('trading-card');
-            const name = document.getElementById('student-name').value.trim() || 'Siswa';
-            
-            // Add a brief scale up effect to the button
-            const btn = event.currentTarget;
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-xl"></i> Memproses...`;
-            btn.disabled = true;
-
-            // Gunakan html2canvas
-            html2canvas(card, {
-                scale: 2, // High resolution
-                backgroundColor: null,
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                // Buat link download
-                const link = document.createElement('a');
-                link.download = `Sertifikat-KKA-${name}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                // Restore button
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
-            }).catch(err => {
-                alert("Terjadi kesalahan saat membuat gambar.");
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
+        // =========================================================================
+        // 9. TAB NAVIGATION, STUDENT PROFILE & COUNTDOWN TIMER
+        // =========================================================================
+        function switchMainTab(tabName) {
+            ['quiz', 'kisikisi', 'rapor'].forEach(t => {
+                const content = document.getElementById(`tabContent-${t}`);
+                const btn = document.getElementById(`tabBtn-${t}`);
+                if (t === tabName) {
+                    content.classList.remove('hidden');
+                    btn.className = "tab-nav-btn bg-white text-red-700 font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-sm transition shrink-0";
+                } else {
+                    content.classList.add('hidden');
+                    btn.className = "tab-nav-btn bg-white/10 hover:bg-white/20 text-white font-medium px-3.5 py-1.5 rounded-xl text-xs sm:text-sm flex items-center gap-2 transition shrink-0";
+                }
             });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        function updateStudentProfile() {
+            const name = document.getElementById('studentName').value.trim();
+            const absen = document.getElementById('studentAbsen').value.trim();
+            document.getElementById('raporStudentName').textContent = name || "Siswa Kelas V";
+            document.getElementById('raporStudentAbsen').textContent = absen || "-";
+        }
+
+        function startCountdownTimer() {
+            const display = document.getElementById('timerDisplay');
+            appState.timerInterval = setInterval(() => {
+                if (appState.timerSeconds > 0) {
+                    appState.timerSeconds--;
+                    const mins = Math.floor(appState.timerSeconds / 60);
+                    const secs = appState.timerSeconds % 60;
+                    display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        // Initialize on window load
+        window.onload = function () {
+            renderAllQuestions();
+            startCountdownTimer();
+        };
     </script>
 </body>
 </html>
