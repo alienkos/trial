@@ -1,1939 +1,876 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ZipGrade Kelas 5 - SDN 4 Rambutan</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #cbd5e1;
-      color: #0f172a;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-    .app-shell-mobile {
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-      background-color: #f1f5f9;
-      min-height: 100vh;
-      box-shadow: 0 0 30px rgba(15, 23, 42, 0.18);
-    }
-    .app-shell-wide {
-      max-width: 100%;
-      margin-left: auto;
-      margin-right: auto;
-      background-color: #f1f5f9;
-      min-height: 100vh;
-    }
-    .bubble-btn {
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      min-height: 44px;
-      border-radius: 9999px;
-      border: 2px solid #94a3b8;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.95rem;
-      transition: transform 0.1s ease, background-color 0.15s ease, border-color 0.15s ease;
-      cursor: pointer;
-      user-select: none;
-      background: #ffffff;
-      color: #334155;
-      touch-action: manipulation;
-    }
-    .bubble-btn:active {
-      transform: scale(0.9);
-    }
-    .bubble-btn:hover {
-      border-color: #2563eb;
-      background: #eff6ff;
-    }
-    .bubble-btn.selected-key {
-      background-color: #1e293b;
-      border-color: #0f172a;
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
-    }
-    .bubble-btn.student-correct {
-      background-color: #16a34a;
-      border-color: #15803d;
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
-    }
-    .bubble-btn.student-wrong {
-      background-color: #dc2626;
-      border-color: #b91c1c;
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
-    }
-    .bubble-btn.missed-key {
-      border: 2.5px dashed #16a34a;
-      background-color: #dcfce7;
-      color: #15803d;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    @media print {
-      body {
-        background: white !important;
-      }
-      body * {
-        visibility: hidden;
-      }
-      #printableArea, #printableArea * {
-        visibility: visible;
-      }
-      #printableArea {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: white !important;
-        box-shadow: none !important;
-      }
-      .no-print {
-        display: none !important;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STS 1 Bahasa Indonesia - SDN 4 Rambutan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom Animations */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-slide-in { animation: slideInRight 0.3s ease-out forwards; }
+        .animate-pop { animation: popIn 0.3s ease-out forwards; }
+        
+        /* Timer Bar Transition */
+        #timer-bar { transition: width 1s linear, background-color 0.3s ease; }
+
+        /* Print Styles */
+        @media print {
+            body { background-color: white !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .page-break { page-break-before: always; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; box-shadow: none !important; border: none !important; }
+            .print-header { text-align: center; border-bottom: 2px solid black; margin-bottom: 20px; padding-bottom: 10px; }
+            .print-item { margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; break-inside: avoid; }
+        }
+    </style>
 </head>
-<body class="min-h-screen">
+<body class="text-slate-800 min-h-screen flex flex-col relative overflow-x-hidden">
 
-  <!-- App Container (Default: Mobile Touchscreen Friendly max-w-[480px], toggleable to Full Screen) -->
-  <div id="appShell" class="app-shell-mobile flex flex-col pb-24">
-
-    <!-- Top Navigation Header -->
-    <header class="bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-900 text-white shadow-md no-print sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-3.5 py-3 flex flex-col gap-2.5">
-        <div class="flex items-start justify-between gap-2">
-          <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center border border-white/25 shadow-inner shrink-0">
-              <svg class="w-6 h-6 text-amber-300" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
+    <!-- ========================================== -->
+    <!-- SCREEN 1: WELCOME & STUDENT DATA           -->
+    <!-- ========================================== -->
+    <section id="screen-welcome" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden animate-pop border border-slate-100">
+            <div class="bg-gradient-to-br from-blue-700 to-indigo-800 p-8 text-center text-white">
+                <div class="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-4xl text-amber-300"></i>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">STS 1 Bahasa Indonesia</h1>
+                <p class="text-blue-100 font-medium text-sm sm:text-base">SDN 4 Rambutan • Kelas V • Literasi & Bernalar Kritis</p>
             </div>
-            <div>
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-400 text-slate-900">Kelas 5</span>
-                <h1 class="text-base sm:text-lg font-extrabold tracking-tight leading-tight">SmartGrade SDN 4 Rambutan</h1>
-              </div>
-              <p id="headerTeacherLabel" class="text-[11px] text-emerald-100 font-medium mt-0.5">Tri Sulistiono, S.Pd. • NIP. 199307242019021004</p>
-            </div>
-          </div>
-
-          <!-- Toggle Mobile / Wide View Button -->
-          <button id="btnToggleViewport" type="button" class="shrink-0 px-2.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 active:scale-95 border border-white/20 text-[11px] font-bold text-white flex items-center gap-1 transition">
-            <span id="viewportIcon">📱</span>
-            <span id="viewportLabel">Mode HP</span>
-          </button>
-        </div>
-
-        <!-- Quick Stats Pill Bar -->
-        <div class="grid grid-cols-3 gap-1.5 text-[11px]">
-          <div class="bg-white/10 border border-white/15 rounded-lg px-2.5 py-1.5 truncate">
-            <span class="text-emerald-200 block text-[10px]">Mapel:</span>
-            <span id="headerMapelLabel" class="font-bold text-white truncate block">IPAS - Bab Ekosistem</span>
-          </div>
-          <div class="bg-white/10 border border-white/15 rounded-lg px-2.5 py-1.5">
-            <span class="text-emerald-200 block text-[10px]">Kunci LJK:</span>
-            <span id="headerKeyCount" class="font-bold text-amber-300">20/20 Soal</span>
-          </div>
-          <div class="bg-white/10 border border-white/15 rounded-lg px-2.5 py-1.5">
-            <span class="text-emerald-200 block text-[10px]">Progres Kelas 5:</span>
-            <span id="headerGradedCount" class="font-bold text-emerald-300">0/30 Siswa</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Top Scrollable Navigation Tabs -->
-      <div class="bg-emerald-950/60 border-t border-white/10">
-        <div class="max-w-7xl mx-auto px-2.5 flex overflow-x-auto no-scrollbar gap-1 py-1.5">
-          <button data-tab="tab-scan" class="nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 bg-white text-emerald-900 shadow-sm">
-            <span>📷</span> 1. Koreksi & Scan LJK
-          </button>
-          <button data-tab="tab-key" class="nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 text-emerald-100 hover:bg-white/10">
-            <span>🔑</span> 2. Kunci Jawaban & Bobot
-          </button>
-          <button data-tab="tab-students" class="nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 text-emerald-100 hover:bg-white/10">
-            <span>👩‍🎓</span> 3. Data Siswa (No. Absen)
-          </button>
-          <button data-tab="tab-sheet" class="nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 text-emerald-100 hover:bg-white/10">
-            <span>🖨️</span> 4. Unduh Lembar Jawaban (LJK)
-          </button>
-          <button data-tab="tab-results" class="nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 text-emerald-100 hover:bg-white/10">
-            <span>📊</span> 5. Rekap Nilai & Analisis
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Toast Notification -->
-    <div id="toastBox" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden w-[90%] max-w-sm bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 text-xs sm:text-sm no-print">
-      <span id="toastIcon" class="text-lg shrink-0">✅</span>
-      <span id="toastMsg" class="font-semibold leading-snug">Berhasil disimpan!</span>
-    </div>
-
-    <!-- Main Content Container -->
-    <main class="flex-1 w-full mx-auto px-3 py-3.5">
-
-      <!-- ==================== TAB 1: KOREKSI & SCAN LJK ==================== -->
-      <section id="tab-scan" class="tab-panel space-y-3.5">
-        <div id="scanLayoutGrid" class="grid grid-cols-1 gap-4">
-
-          <!-- Top Mobile Card: Student Selector + Live Score Dashboard -->
-          <div class="space-y-3.5">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 space-y-3">
-              <div class="flex items-center justify-between">
-                <h2 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                  Pilih Siswa Kelas 5
-                </h2>
-                <span id="studentStatusBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">Belum Dinilai</span>
-              </div>
-
-              <div>
-                <label for="scanStudentSelect" class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Sentuh untuk Pilih No. Absen / Nama</label>
-                <select id="scanStudentSelect" class="w-full min-h-[46px] rounded-xl border-2 border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-600 bg-slate-50">
-                </select>
-              </div>
-
-              <!-- Thumb-Friendly Prev / Next Buttons -->
-              <div class="grid grid-cols-2 gap-2">
-                <button id="btnPrevStudent" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl border-2 border-slate-200 bg-slate-50 active:bg-slate-200 text-xs font-extrabold text-slate-700 transition flex items-center justify-center gap-1">
-                  ⬅️ Absen Sebelumnya
-                </button>
-                <button id="btnNextStudent" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl border-2 border-slate-200 bg-slate-50 active:bg-slate-200 text-xs font-extrabold text-slate-700 transition flex items-center justify-center gap-1">
-                  Absen Berikutnya ➡️
-                </button>
-              </div>
-
-              <!-- Live Score Summary Box -->
-              <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-3.5 space-y-2.5 shadow-inner">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-[11px] text-slate-400 font-medium">Nilai Akhir Siswa</p>
-                    <div class="flex items-baseline gap-1.5">
-                      <span id="liveFinalScore" class="text-4xl font-extrabold text-amber-400">0</span>
-                      <span class="text-xs text-slate-300 font-semibold">/ 100</span>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <span id="livePassBadge" class="inline-block px-3 py-1 rounded-xl text-xs font-extrabold bg-slate-700 text-slate-300">Belum Diisi</span>
-                    <p class="text-[11px] text-slate-400 mt-1">KKM Kelas 5: <span id="liveKkmText" class="font-bold text-white">75</span></p>
-                  </div>
+            
+            <div class="p-8 space-y-6">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-900">
+                    <h3 class="font-bold flex items-center gap-2 mb-2"><i class="fa-solid fa-circle-exclamation text-amber-600"></i> Petunjuk Ujian:</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Soal akan ditampilkan <strong>satu per satu</strong>.</li>
+                        <li>Terdapat batas waktu <strong>90 Detik</strong> untuk setiap soal.</li>
+                        <li>Klik pada opsi jawaban, maka sistem akan <strong>langsung menyimpan dan otomatis beralih</strong> ke soal berikutnya.</li>
+                        <li>Gunakan tombol <strong>Kembali/Lanjut</strong> jika ingin memeriksa ulang jawaban Anda.</li>
+                    </ul>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-700/80 text-center text-xs">
-                  <div class="bg-white/5 rounded-xl p-2">
-                    <p class="text-slate-400 text-[10px] font-semibold">Pil. Ganda</p>
-                    <p id="livePgCorrect" class="font-extrabold text-emerald-400 text-sm mt-0.5">0 / 10</p>
-                  </div>
-                  <div class="bg-white/5 rounded-xl p-2">
-                    <p class="text-slate-400 text-[10px] font-semibold">Menjodohkan</p>
-                    <p id="liveMatchCorrect" class="font-extrabold text-sky-400 text-sm mt-0.5">0 / 5</p>
-                  </div>
-                  <div class="bg-white/5 rounded-xl p-2">
-                    <p class="text-slate-400 text-[10px] font-semibold">Benar/Salah</p>
-                    <p id="liveTfCorrect" class="font-extrabold text-purple-400 text-sm mt-0.5">0 / 5</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Quick Action Buttons -->
-              <div class="space-y-2 pt-0.5">
-                <button id="btnSaveAndNext" type="button" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm shadow-md transition flex items-center justify-center gap-2">
-                  <span>💾</span> Simpan Nilai & Lanjut Absen Berikutnya
-                </button>
-                <div class="grid grid-cols-2 gap-2">
-                  <button id="btnClearStudentAns" type="button" class="min-h-[42px] py-2 px-3 rounded-xl border border-rose-200 bg-rose-50 active:bg-rose-100 text-rose-700 font-bold text-xs transition">
-                    🗑️ Kosongkan LJK Ini
-                  </button>
-                  <button id="btnSimulatePerfect" type="button" class="min-h-[42px] py-2 px-3 rounded-xl border border-indigo-200 bg-indigo-50 active:bg-indigo-100 text-indigo-700 font-bold text-xs transition">
-                    ✨ Simulasi Isi LJK
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Camera / Photo Scanner Box (ZipGrade OMR Mode) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 space-y-2.5">
-              <div class="flex items-center justify-between">
-                <h3 class="font-extrabold text-slate-800 text-xs sm:text-sm flex items-center gap-1.5">
-                  <span>📸</span> Scan Kamera HP / Foto LJK
-                </h3>
-                <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">OMR Otomatis</span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2">
-                <button id="btnToggleCamera" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-800 active:bg-slate-950 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                  <span>🎥</span> Buka Kamera
-                </button>
-                <label for="uploadOmrInput" class="min-h-[44px] py-2.5 px-3 rounded-xl border-2 border-slate-300 bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition">
-                  <span>🖼️</span> Foto LJK Galeri
-                  <input id="uploadOmrInput" type="file" accept="image/*" class="hidden" />
-                </label>
-              </div>
-
-              <!-- Camera / Image Preview Viewport -->
-              <div id="omrViewportContainer" class="hidden space-y-2 pt-2">
-                <div class="relative rounded-xl overflow-hidden bg-slate-950 border-2 border-emerald-500 aspect-[3/4] max-h-72 mx-auto flex items-center justify-center">
-                  <video id="omrVideo" autoplay playsinline class="w-full h-full object-cover hidden"></video>
-                  <canvas id="omrCanvas" class="w-full h-full object-contain"></canvas>
-                  <!-- ZipGrade Green Fiducial Alignment Overlay -->
-                  <div class="absolute inset-3 pointer-events-none border border-emerald-400/50 rounded-lg">
-                    <div class="w-5 h-5 border-t-4 border-l-4 border-emerald-400 absolute -top-0.5 -left-0.5"></div>
-                    <div class="w-5 h-5 border-t-4 border-r-4 border-emerald-400 absolute -top-0.5 -right-0.5"></div>
-                    <div class="w-5 h-5 border-b-4 border-l-4 border-emerald-400 absolute -bottom-0.5 -left-0.5"></div>
-                    <div class="w-5 h-5 border-b-4 border-r-4 border-emerald-400 absolute -bottom-0.5 -right-0.5"></div>
-                  </div>
-                </div>
-                <div class="flex gap-2">
-                  <button id="btnCaptureOmr" type="button" class="flex-1 min-h-[44px] py-2.5 px-3 rounded-xl bg-emerald-600 text-white text-xs font-extrabold transition">
-                    ⚡ Baca & Deteksi Jawaban LJK
-                  </button>
-                  <button id="btnCloseCamera" type="button" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold transition">
-                    Tutup
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Interactive Touchscreen Bubble Sheet Grader -->
-          <div>
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-5 space-y-4">
-              <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
-                <div>
-                  <h2 class="text-sm sm:text-base font-extrabold text-slate-800">Lembar Tap Jawaban Siswa (Touchscreen)</h2>
-                  <p class="text-[11px] text-slate-500 mt-0.5">Sentuh bulatan sesuai LJK siswa: <span class="text-emerald-600 font-bold">Hijau = Benar</span>, <span class="text-rose-600 font-bold">Merah = Salah</span>.</p>
-                </div>
-                <span class="px-2.5 py-1 rounded-lg bg-emerald-50 font-extrabold text-emerald-800 text-xs shrink-0">20 Soal</span>
-              </div>
-
-              <div id="bubbleGraderColumns" class="grid grid-cols-1 gap-4">
-                <!-- Bagian I: 10 Pilihan Ganda -->
-                <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/90">
-                  <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-200">
-                    <div>
-                      <h3 class="font-extrabold text-xs sm:text-sm text-slate-800">I. Pilihan Ganda (No. 1–10)</h3>
-                      <p class="text-[11px] text-slate-500">Sentuh opsi A, B, C, atau D</p>
-                    </div>
-                    <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">10 Soal</span>
-                  </div>
-                  <div id="studentPgGrid" class="space-y-2"></div>
-                </div>
-
-                <!-- Bagian II & III: 5 Menjodohkan & 5 Benar/Salah -->
                 <div class="space-y-4">
-                  <!-- Bagian II: 5 Menjodohkan -->
-                  <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/90">
-                    <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-200">
-                      <div>
-                        <h3 class="font-extrabold text-xs sm:text-sm text-slate-800">II. Menjodohkan (No. 11–15)</h3>
-                        <p class="text-[11px] text-slate-500">Sentuh pasangan A, B, C, D, atau E</p>
-                      </div>
-                      <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-sky-100 text-sky-800">5 Soal</span>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">Nama Lengkap</label>
+                        <div class="relative">
+                            <i class="fa-regular fa-user absolute left-4 top-3.5 text-slate-400"></i>
+                            <input type="text" id="inputName" placeholder="Ketik namamu di sini..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition font-medium bg-slate-50">
+                        </div>
                     </div>
-                    <div id="studentMatchGrid" class="space-y-2"></div>
-                  </div>
-
-                  <!-- Bagian III: 5 Benar / Salah -->
-                  <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200/90">
-                    <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-200">
-                      <div>
-                        <h3 class="font-extrabold text-xs sm:text-sm text-slate-800">III. Benar / Salah (No. 16–20)</h3>
-                        <p class="text-[11px] text-slate-500">Sentuh B (Benar) atau S (Salah)</p>
-                      </div>
-                      <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-purple-100 text-purple-800">5 Soal</span>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">No. Absen</label>
+                            <input type="number" id="inputAbsen" placeholder="Contoh: 12" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition font-medium bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Kelas</label>
+                            <input type="text" value="V (Lima)" disabled class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-100 text-slate-500 font-bold cursor-not-allowed">
+                        </div>
                     </div>
-                    <div id="studentTfGrid" class="space-y-2"></div>
-                  </div>
                 </div>
-              </div>
 
-              <!-- Bottom Quick Save Bar inside Card for Mobile Convenience -->
-              <div class="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
-                <button id="btnBottomPrevStu" type="button" class="min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-extrabold text-slate-700">
-                  ⬅️ Sebelumnya
+                <button onclick="startQuiz()" class="w-full bg-slate-900 hover:bg-indigo-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                    Mulai Ujian Sekarang <i class="fa-solid fa-arrow-right"></i>
                 </button>
-                <button id="btnBottomSaveNext" type="button" class="flex-1 min-h-[44px] px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold shadow-sm">
-                  💾 Simpan & Absen Berikutnya ➡️
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: ACTIVE QUIZ AREA                 -->
+    <!-- ========================================== -->
+    <section id="screen-quiz" class="hidden min-h-screen flex flex-col bg-slate-100 max-w-5xl mx-auto w-full shadow-2xl relative">
+        
+        <!-- Header Info -->
+        <header class="bg-white px-4 sm:px-8 py-4 flex items-center justify-between shadow-sm z-10 sticky top-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-extrabold text-sm border border-blue-200">
+                    <span id="header-q-num">1</span>
+                </div>
+                <div>
+                    <div class="text-[10px] sm:text-xs font-bold uppercase text-slate-400">Progres Ujian</div>
+                    <div class="font-extrabold text-slate-800 text-sm sm:text-base">Soal <span id="text-q-num">1</span> dari 20</div>
+                </div>
+            </div>
+            
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
+                <i class="fa-solid fa-user-graduate text-slate-400"></i>
+                <span id="header-student-name" class="text-xs font-bold text-slate-600">Siswa</span>
+            </div>
+        </header>
+
+        <!-- Timer Bar -->
+        <div class="w-full h-2.5 bg-slate-200">
+            <div id="timer-bar" class="h-full bg-emerald-500 w-full rounded-r-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+        </div>
+        <div class="bg-slate-900 text-white text-center py-1.5 text-xs font-mono font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+            <i class="fa-regular fa-clock text-slate-400"></i> Sisa Waktu: <span id="timer-text" class="text-amber-400">01:30</span>
+        </div>
+
+        <!-- Main Content (Question & Options) -->
+        <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-y-auto no-scrollbar pb-32">
+            <div id="question-container" class="animate-slide-in space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </main>
+
+        <!-- Fixed Bottom Navigation -->
+        <div class="fixed bottom-0 left-0 right-0 max-w-5xl mx-auto bg-white border-t border-slate-200 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] z-50">
+            <div class="p-4 sm:p-5 flex items-center justify-between gap-3">
+                <button id="btn-prev" onclick="prevQuestion()" class="w-1/3 sm:w-auto px-4 sm:px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold shadow-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Kembali</span>
                 </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- ==================== TAB 2: KUNCI JAWABAN & BOBOT ==================== -->
-      <section id="tab-key" class="tab-panel hidden space-y-4">
-        <div class="grid grid-cols-1 gap-4">
-
-          <!-- Exam Metadata & Scoring Weights -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">
-            <h2 class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-2">
-              <span>⚙️</span> Identitas Guru, Ulangan & Bobot Nilai
-            </h2>
-
-            <div class="space-y-3 text-sm">
-              <div>
-                <label for="inputNamaSekolah" class="block text-xs font-bold text-slate-500 mb-1">Nama Sekolah & Kelas</label>
-                <input id="inputNamaSekolah" type="text" value="SDN 4 Rambutan - Kelas V (Lima)" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div>
-                <label for="inputNamaGuru" class="block text-xs font-bold text-slate-500 mb-1">Wali Kelas 5 & NIP</label>
-                <input id="inputNamaGuru" type="text" value="Tri Sulistiono, S.Pd. (NIP. 199307242019021004)" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div>
-                <label for="inputMapel" class="block text-xs font-bold text-slate-500 mb-1">Mata Pelajaran / Topik Ulangan</label>
-                <input id="inputMapel" type="text" value="IPAS - Bab Ekosistem" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label for="inputTanggal" class="block text-xs font-bold text-slate-500 mb-1">Tanggal Ulangan</label>
-                  <input id="inputTanggal" type="date" value="2026-10-27" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                
+                <div class="text-xs sm:text-sm font-bold text-slate-400 whitespace-nowrap">
+                    Navigasi Soal
                 </div>
-                <div>
-                  <label for="inputKkm" class="block text-xs font-bold text-slate-500 mb-1">KKM / KKTP (0-100)</label>
-                  <input id="inputKkm" type="number" min="1" max="100" value="75" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-extrabold text-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                
+                <button id="btn-next" onclick="nextQuestion()" class="w-1/3 sm:w-auto px-4 sm:px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md transition flex items-center justify-center gap-2">
+                    <span id="btn-next-text" class="hidden sm:inline">Lanjut</span> <i id="btn-next-icon" class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: RESULT / RAPOR                   -->
+    <!-- ========================================== -->
+    <section id="screen-result" class="hidden min-h-screen p-4 sm:p-8 print-container max-w-4xl mx-auto w-full">
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200 print-container">
+            <!-- Header Rapor -->
+            <div class="bg-slate-900 text-white p-8 sm:p-10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-50 translate-x-1/2 -translate-y-1/2"></div>
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="text-center md:text-left space-y-2">
+                        <span class="px-3 py-1 rounded-full bg-blue-500/30 border border-blue-400/50 text-blue-200 text-xs font-bold uppercase tracking-wider">Hasil Evaluasi STS 1</span>
+                        <h2 class="text-3xl font-extrabold">Rapor Nilai Siswa</h2>
+                        <p class="text-slate-300 text-sm">Pendidikan Bahasa Indonesia • Kelas V</p>
+                        <div class="pt-4 flex flex-wrap gap-4 text-sm justify-center md:justify-start">
+                            <div class="bg-white/10 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10">
+                                <span class="text-slate-400 text-xs block uppercase">Nama</span>
+                                <strong id="res-name" class="text-white">Siswa</strong>
+                            </div>
+                            <div class="bg-white/10 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10">
+                                <span class="text-slate-400 text-xs block uppercase">Absen</span>
+                                <strong id="res-absen" class="text-white">-</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-6 text-center text-slate-900 shadow-2xl min-w-[180px]">
+                        <div class="text-xs font-black uppercase text-slate-400 mb-1">Skor Akhir</div>
+                        <div id="res-score" class="text-6xl font-black text-amber-500">0</div>
+                        <div id="res-predikat" class="mt-2 text-sm font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-600">Predikat</div>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            <div class="pt-3 border-t border-slate-200 space-y-3">
-              <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Bobot Skor Tiap Jawaban Benar</h3>
-              <div class="grid grid-cols-3 gap-2">
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                  <label for="weightPg" class="block text-[11px] font-bold text-slate-500">Pil. Ganda (x10)</label>
-                  <input id="weightPg" type="number" min="1" max="20" value="1" class="w-full min-h-[40px] mt-1 rounded-lg border border-slate-300 px-2 py-1 text-sm font-extrabold text-center" />
+            <!-- Breakdown -->
+            <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-100 no-print">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
+                    <div class="text-blue-500 mb-1"><i class="fa-solid fa-list-ul text-2xl"></i></div>
+                    <div class="text-sm font-bold text-blue-900">Pilihan Ganda</div>
+                    <div class="text-2xl font-black text-blue-600" id="res-pg">0 <span class="text-sm font-medium text-blue-400">/ 50</span></div>
                 </div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                  <label for="weightMatch" class="block text-[11px] font-bold text-slate-500">Jodohkan (x5)</label>
-                  <input id="weightMatch" type="number" min="1" max="20" value="1" class="w-full min-h-[40px] mt-1 rounded-lg border border-slate-300 px-2 py-1 text-sm font-extrabold text-center" />
+                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100 text-center">
+                    <div class="text-purple-500 mb-1"><i class="fa-solid fa-link text-2xl"></i></div>
+                    <div class="text-sm font-bold text-purple-900">Menjodohkan</div>
+                    <div class="text-2xl font-black text-purple-600" id="res-match">0 <span class="text-sm font-medium text-purple-400">/ 20</span></div>
                 </div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                  <label for="weightTf" class="block text-[11px] font-bold text-slate-500">Benar/Salah (x5)</label>
-                  <input id="weightTf" type="number" min="1" max="20" value="1" class="w-full min-h-[40px] mt-1 rounded-lg border border-slate-300 px-2 py-1 text-sm font-extrabold text-center" />
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                    <div class="text-emerald-500 mb-1"><i class="fa-solid fa-check-double text-2xl"></i></div>
+                    <div class="text-sm font-bold text-emerald-900">Benar / Salah</div>
+                    <div class="text-2xl font-black text-emerald-600" id="res-tf">0 <span class="text-sm font-medium text-emerald-400">/ 30</span></div>
                 </div>
-              </div>
-              <p class="text-xs text-slate-600 bg-emerald-50 text-emerald-900 p-2.5 rounded-xl border border-emerald-200">
-                💡 <strong>Rumus Nilai Akhir:</strong> (Total Skor Siswa ÷ <span id="maxRawScoreLabel" class="font-extrabold">20</span>) × 100.
-              </p>
             </div>
 
-            <button id="btnSaveExamConfig" type="button" class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm transition">
-              💾 Simpan Pengaturan & Kunci Jawaban
-            </button>
-          </div>
-
-          <!-- Answer Key Bubble Selector -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-4">
-            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
-              <div>
-                <h2 class="text-sm sm:text-base font-extrabold text-slate-800">Master Kunci Jawaban (20 Soal)</h2>
-                <p class="text-[11px] text-slate-500">Sentuh huruf untuk mengubah kunci jawaban ulangan.</p>
-              </div>
-              <button id="btnFillDefaultKey" type="button" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-bold transition shrink-0">
-                🎲 Contoh Kunci Otomatis
-              </button>
+            <!-- Actions -->
+            <div class="p-8 bg-slate-50 flex flex-col sm:flex-row justify-center gap-4 no-print">
+                <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak Rapor Ini
+                </button>
+                <button onclick="showAnswerKey()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-key"></i> Buka Kunci Jawaban
+                </button>
             </div>
+        </div>
+    </section>
 
-            <div class="space-y-4">
-              <!-- Kunci Bagian I: Pilihan Ganda 1-10 -->
-              <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
-                <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 mb-2.5 pb-2 border-b border-slate-200">I. Kunci Pilihan Ganda (No. 1–10)</h3>
-                <div id="keyPgGrid" class="space-y-2"></div>
-              </div>
-
-              <!-- Kunci Bagian II: Menjodohkan 11-15 -->
-              <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
-                <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 mb-2.5 pb-2 border-b border-slate-200">II. Kunci Menjodohkan (No. 11–15)</h3>
-                <div id="keyMatchGrid" class="space-y-2"></div>
-              </div>
-
-              <!-- Kunci Bagian III: Benar / Salah 16-20 -->
-              <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200">
-                <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 mb-2.5 pb-2 border-b border-slate-200">III. Kunci Benar / Salah (No. 16–20)</h3>
-                <div id="keyTfGrid" class="space-y-2"></div>
-              </div>
+    <!-- ========================================== -->
+    <!-- SCREEN 4: ANSWER KEY (PRINTABLE)           -->
+    <!-- ========================================== -->
+    <section id="screen-key" class="hidden bg-white min-h-screen p-8 max-w-4xl mx-auto print-only print-container">
+        <div class="no-print mb-6 flex justify-between items-center bg-slate-100 p-4 rounded-xl">
+            <h2 class="font-bold text-lg"><i class="fa-solid fa-file-lines text-blue-600 mr-2"></i> Mode Cetak Kunci Jawaban</h2>
+            <div class="flex gap-3">
+                <button onclick="window.print()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-bold text-sm transition"><i class="fa-solid fa-print mr-1"></i> Cetak Dokumen</button>
+                <button onclick="backToResult()" class="px-4 py-2 bg-slate-300 hover:bg-slate-400 text-slate-800 rounded-lg font-bold text-sm transition"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali</button>
             </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- ==================== TAB 3: DATA SISWA (NO ABSEN & NAMA) ==================== -->
-      <section id="tab-students" class="tab-panel hidden space-y-4">
-        <!-- Student Roster Table -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3.5">
-          <div class="flex flex-col gap-2.5 pb-3 border-b border-slate-200">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <h2 class="text-sm sm:text-base font-extrabold text-slate-800">Daftar Siswa Kelas 5 SDN 4 Rambutan</h2>
-                <p class="text-[11px] text-slate-500">Wali Kelas: <strong>Tri Sulistiono, S.Pd.</strong> (NIP. 199307242019021004)</p>
-              </div>
-              <button id="btnResetDefaultRoster" type="button" class="px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold shrink-0">
-                🔄 Reset 30 Siswa Default
-              </button>
-            </div>
-            <input id="searchStudentInput" type="text" placeholder="🔍 Cari nama atau nomor absen siswa..." class="w-full min-h-[42px] rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50" />
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs sm:text-sm">
-              <thead>
-                <tr class="bg-slate-100 text-slate-600 text-[11px] uppercase">
-                  <th class="py-2.5 px-2.5 rounded-l-lg">Absen</th>
-                  <th class="py-2.5 px-2.5">Nama Siswa</th>
-                  <th class="py-2.5 px-2 text-center">Status</th>
-                  <th class="py-2.5 px-2 text-center">Nilai</th>
-                  <th class="py-2.5 px-2.5 text-right rounded-r-lg">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="studentTableBody" class="divide-y divide-slate-200 text-xs"></tbody>
-            </table>
-          </div>
         </div>
 
-        <!-- Add Single Student / Bulk Import -->
-        <div class="grid grid-cols-1 gap-4">
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3">
-            <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-              <span>➕</span> Tambah Siswa Baru
-            </h3>
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label for="addStudentAbsen" class="block text-[11px] font-bold text-slate-500 mb-1">No. Absen</label>
-                <input id="addStudentAbsen" type="number" min="1" max="99" placeholder="31" class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-              </div>
-              <div class="col-span-2">
-                <label for="addStudentName" class="block text-[11px] font-bold text-slate-500 mb-1">Nama Lengkap Siswa</label>
-                <input id="addStudentName" type="text" placeholder="Ketik nama siswa..." class="w-full min-h-[44px] rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-              </div>
-            </div>
-            <button id="btnAddStudent" type="button" class="w-full min-h-[46px] py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-sm transition">
-              + Tambah ke Daftar Absen
-            </button>
-          </div>
-
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3">
-            <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-              <span>📋</span> Impor Cepat Daftar Nama Siswa
-            </h3>
-            <p class="text-[11px] text-slate-500">Tempel (paste) daftar nama siswa (satu nama per baris).</p>
-            <textarea id="bulkStudentTextarea" rows="4" placeholder="31. Nama Siswa Baru&#10;32. Nama Siswa Berikutnya" class="w-full rounded-xl border border-slate-300 p-3 text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
-            <button id="btnBulkImportStudents" type="button" class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs transition">
-              📥 Tambahkan Daftar Nama
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== TAB 4: UNDUH LEMBAR JAWABAN (LJK) ==================== -->
-      <section id="tab-sheet" class="tab-panel hidden space-y-4">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 no-print space-y-3">
-          <div>
-            <h2 class="text-sm sm:text-base font-extrabold text-slate-800">Unduh & Cetak Lembar Jawaban (LJK)</h2>
-            <p class="text-[11px] text-slate-500 mt-0.5">Struktur: 10 Pilihan Ganda, 5 Menjodohkan, 5 Benar/Salah • Kelas 5 SDN 4 Rambutan.</p>
-          </div>
-
-          <div class="space-y-2">
-            <label for="ljkPrintMode" class="block text-[11px] font-bold text-slate-500 uppercase">Pilih Mode Lembar Jawaban:</label>
-            <select id="ljkPrintMode" class="w-full min-h-[44px] rounded-xl border-2 border-slate-300 px-3 py-2 text-xs font-bold text-slate-800 bg-slate-50">
-              <option value="prefilled">Cetak LJK Terisi Otomatis 30 Nama & No. Absen Kelas 5</option>
-              <option value="blank2">Mode Hemat: 2 LJK Kosong per Halaman A4</option>
-              <option value="single">1 LJK Kosong Ukuran Besar</option>
-            </select>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-              <button id="btnDownloadLjkPng" type="button" class="min-h-[44px] px-3 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition">
-                <span>🖼️</span> Unduh Gambar LJK (.PNG)
-              </button>
-              <button id="btnDownloadLjkHtml" type="button" class="min-h-[44px] px-3 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition">
-                <span>📄</span> Unduh File LJK Siap Cetak (.HTML)
-              </button>
-              <button id="btnPrintLjk" type="button" class="min-h-[44px] px-3 py-2.5 rounded-xl bg-slate-800 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-sm transition">
-                <span>🖨️</span> Cetak Langsung / PDF
-              </button>
-            </div>
-          </div>
+        <div class="print-header font-heading">
+            <h1 class="text-2xl font-bold uppercase">Kunci Jawaban & Pembahasan</h1>
+            <h2 class="text-lg">Sumatif Tengah Semester 1 - Bahasa Indonesia Kelas V</h2>
+            <p class="text-sm mt-1">SDN 4 Rambutan</p>
         </div>
 
-        <!-- Hidden High-Res Canvas for PNG Download -->
-        <canvas id="ljkExportCanvas" width="1200" height="880" class="hidden"></canvas>
-
-        <!-- Printable LJK Preview Area -->
-        <div id="printableArea" class="grid grid-cols-1 gap-4">
+        <div id="key-content" class="space-y-4 text-sm font-serif">
+            <!-- Injected via JS -->
         </div>
-      </section>
+    </section>
 
-      <!-- ==================== TAB 5: REKAP NILAI & ANALISIS ==================== -->
-      <section id="tab-results" class="tab-panel hidden space-y-4">
-        <!-- KPI Summary Cards -->
-        <div class="grid grid-cols-2 gap-2.5">
-          <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm">
-            <p class="text-[10px] font-bold text-slate-500 uppercase">Rata-Rata Kelas 5</p>
-            <p id="statAvgScore" class="text-2xl font-extrabold text-slate-800 mt-0.5">0.0</p>
-            <p id="statGradedSub" class="text-[11px] text-slate-400 mt-0.5">Dari 0/30 siswa</p>
-          </div>
-          <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm">
-            <p class="text-[10px] font-bold text-slate-500 uppercase">Ketuntasan (≥ KKM)</p>
-            <p id="statPassRate" class="text-2xl font-extrabold text-emerald-600 mt-0.5">0%</p>
-            <p id="statPassSub" class="text-[11px] text-slate-400 mt-0.5">0 Tuntas • 0 Remedial</p>
-          </div>
-          <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm">
-            <p class="text-[10px] font-bold text-slate-500 uppercase">Nilai Tertinggi</p>
-            <p id="statMaxScore" class="text-2xl font-extrabold text-sky-600 mt-0.5">0</p>
-            <p id="statMaxStudent" class="text-[11px] text-slate-500 font-semibold mt-0.5 truncate">-</p>
-          </div>
-          <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm">
-            <p class="text-[10px] font-bold text-slate-500 uppercase">Nilai Terendah</p>
-            <p id="statMinScore" class="text-2xl font-extrabold text-rose-600 mt-0.5">0</p>
-            <p id="statMinStudent" class="text-[11px] text-slate-500 font-semibold mt-0.5 truncate">-</p>
-          </div>
-        </div>
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC                           -->
+    <!-- ========================================== -->
+    <script>
+        // 1. DATA SOAL (RESTRUCTURED FOR SHUFFLING & PAGINATION)
+        const rawQuizData = [
+            // --- Pilihan Ganda (1-10) - 5 Poin ---
+            {
+                id: 1, type: 'PG', points: 5, category: 'Teks Narasi / Sifat Tokoh',
+                stimulusTitle: "Mengenal Taha",
+                stimulus: "Taha adalah anak kelas V SD yang sangat teratur. Setiap kali pulang sekolah, ia tidak pernah membiarkan tas dan sepatu berserakan. Ia langsung mengganti seragamnya, lalu menyusun buku-buku pelajaran di meja belajarnya dengan apik. Selain disiplin, Taha juga dikenal sebagai anak yang periang. Ia suka menyapa teman-temannya dengan senyuman hangat. Namun, ketika ada temannya yang kesulitan memahami pelajaran, Taha dengan tekun dan telaten membantunya hingga paham.",
+                question: "Berdasarkan tindakan Taha dalam cerita di atas, sifat utama yang menggambarkan sosok Taha adalah ...",
+                options: [
+                    { text: "Rapi, disiplin, dan telaten", isCorrect: true, feedback: "Tepat sekali! Taha menjaga kebersihan (rapi/disiplin), serta tekun membantu teman (telaten)." },
+                    { text: "Penakut dan pendiam", isCorrect: false, feedback: "Taha adalah anak yang periang dan suka menyapa, bukan penakut." },
+                    { text: "Pemarah dan acuh tak acuh", isCorrect: false, feedback: "Taha peduli pada teman, bukan pemarah atau acuh." },
+                    { text: "Suka mengabaikan tugas sekolah", isCorrect: false, feedback: "Taha sangat rajin menyusun buku, tidak mengabaikan tugas." }
+                ]
+            },
+            {
+                id: 2, type: 'PG', points: 5, category: 'Kosakata / Antonim',
+                stimulusTitle: "Merujuk teks 'Mengenal Taha'",
+                stimulus: "Perhatikan kalimat berikut: \"Taha menyusun buku-buku pelajaran di meja belajarnya dengan apik.\"",
+                question: "Antonim (lawan kata) dari kata <em>apik</em> pada kalimat tersebut adalah ...",
+                options: [
+                    { text: "Berantakan", isCorrect: true, feedback: "Benar! 'Apik' berarti rapi/bagus. Lawan katanya adalah berantakan." },
+                    { text: "Rapi", isCorrect: false, feedback: "Rapi adalah SINONIM (persamaan kata) dari apik, bukan lawan kata." },
+                    { text: "Indah", isCorrect: false, feedback: "Indah memiliki makna yang mirip dengan apik." },
+                    { text: "Bersih", isCorrect: false, feedback: "Bersih sejalan maknanya dengan apik." }
+                ]
+            },
+            {
+                id: 3, type: 'PG', points: 5, category: 'Pesan Tersirat',
+                stimulusTitle: "Keteguhan Heo",
+                stimulus: "Abu vulkanik dari letusan gunung membumbung tinggi menutup langit. Suasana menjadi gelap gulita. Orang-orang berlarian menyelamatkan diri sambil berteriak ketakutan. Di tengah kepanikan itu, Heo tidak memikirkan dirinya sendiri. Ia teringat pada adik dan kedua orang tuanya yang berada di desa sebelah. Tanpa ragu, Heo memacu kudanya sekuat tenaga menembus hujan abu yang makin pekat. Meski matanya perih dan napasnya sesak, ia menolak untuk menyerah demi bertemu kembali dengan keluarganya.",
+                question: "Amanat tersirat yang dapat diambil dari kisah keteguhan Heo di atas adalah ...",
+                options: [
+                    { text: "Keberanian dan kasih sayang kepada keluarga memberi kekuatan dalam menghadapi cobaan.", isCorrect: true, feedback: "Hebat! Kasih sayang kepada keluarga memberi Heo keberanian luar biasa." },
+                    { text: "Kita harus selalu panik saat terjadi bencana alam.", isCorrect: false, feedback: "Panik justru membuat keadaan memburuk." },
+                    { text: "Menyerah adalah pilihan terbaik jika menghadapi jalan yang sangat sulit.", isCorrect: false, feedback: "Heo justru 'menolak untuk menyerah'." },
+                    { text: "Kita tidak perlu memikirkan keselamatan orang lain saat terjadi bahaya.", isCorrect: false, feedback: "Heo justru sangat memikirkan keselamatan keluarganya." }
+                ]
+            },
+            {
+                id: 4, type: 'PG', points: 5, category: 'Kata Berimbuhan',
+                stimulusTitle: "Merujuk teks 'Keteguhan Heo'",
+                stimulus: "",
+                question: "Kata \"penyayang\" memiliki kata dasar sayang yang mendapat awalan pe-. Kata berimbuhan pe- yang menyatakan <strong>sifat seseorang</strong> dalam cerita Heo (sesuai karakternya) adalah ...",
+                options: [
+                    { text: "Pemberani", isCorrect: true, feedback: "Sangat tepat! 'Pemberani' adalah kata sifat untuk orang yang memiliki keberanian." },
+                    { text: "Pelari", isCorrect: false, feedback: "Pelari menunjukkan profesi/orang, bukan sifat batin." },
+                    { text: "Pemukulan", isCorrect: false, feedback: "Pemukulan adalah kata benda abstrak yang menyatakan proses." },
+                    { text: "Pelabuhan", isCorrect: false, feedback: "Pelabuhan menyatakan tempat." }
+                ]
+            },
+            {
+                id: 5, type: 'PG', points: 5, category: 'Membandingkan Karakter',
+                stimulusTitle: "Perbandingan Sifat Tokoh",
+                stimulus: "Rana dan Rani adalah saudara kembar identik. Meskipun rupa mereka sangat mirip, sifat mereka berbeda. Rana adalah anak yang pendiam dan tenang, sedangkan Rani sangat aktif dan suka berbicara.",
+                question: "Manakah pernyataan berikut yang menunjukkan perbandingan sifat yang benar antara Rana dan Rani?",
+                options: [
+                    { text: "Rana lebih banyak berdiam diri, sedangkan Rani lebih komunikatif.", isCorrect: true, feedback: "Benar sekali! Sesuai dengan deskripsi Rana pendiam dan Rani suka berbicara (komunikatif)." },
+                    { text: "Rana lebih suka tampil di depan umum dibanding Rani.", isCorrect: false, feedback: "Rana pendiam, tidak masuk akal jika ia suka tampil." },
+                    { text: "Rani cenderung tenang saat menghadapi masalah daripada Rana.", isCorrect: false, feedback: "Rana yang dideskripsikan tenang, bukan Rani." },
+                    { text: "Kedua saudara kembar tersebut memiliki sifat yang persis sama.", isCorrect: false, feedback: "Teks jelas menyatakan sifat mereka berbeda." }
+                ]
+            },
+            {
+                id: 6, type: 'PG', points: 5, category: 'Majas Metafora',
+                stimulusTitle: "Gaya Bahasa",
+                stimulus: "Para pelaut tradisional mengarungi samudra luas dengan <em>keras hati</em> demi menghidupi keluarga mereka. Bagi mereka, laut bukanlah ancaman, melainkan jendela ke dunia lain yang penuh dengan pengetahuan dan kehidupan.",
+                question: "Makna tersirat dari majas metafora <em>keras hati</em> pada teks di atas adalah ...",
+                options: [
+                    { text: "Teguh pendirian dan pantang menyerah", isCorrect: true, feedback: "Tepat! Dalam konteks ini, keras hati bermakna semangat pantang menyerah dan tekad yang kuat." },
+                    { text: "Suka marah dan kasar", isCorrect: false, feedback: "Dalam konteks perjuangan pelaut, bukan berarti marah-marah." },
+                    { text: "Hatinya membatu karena sedih", isCorrect: false, feedback: "Konteksnya bukan tentang kesedihan." },
+                    { text: "Tidak mau mendengar nasehat orang lain", isCorrect: false, feedback: "Di sini maknanya positif, bukan keras kepala/bandel." }
+                ]
+            },
+            {
+                id: 7, type: 'PG', points: 5, category: 'Teks Fiksi vs Nonfiksi',
+                stimulusTitle: "Jenis Teks",
+                stimulus: "Kisah perjuangan para pelaut dicatat secara nyata dalam buku sejarah pelayaran Indonesia.",
+                question: "Teks yang memuat kisah sejarah pelayaran berdasarkan <strong>fakta dan kejadian nyata</strong> dinamakan teks ...",
+                options: [
+                    { text: "Nonfiksi", isCorrect: true, feedback: "Benar! Teks berdasarkan kejadian nyata dan fakta disebut teks nonfiksi." },
+                    { text: "Fiksi", isCorrect: false, feedback: "Fiksi adalah cerita rekaan atau imajinasi." },
+                    { text: "Dongeng", isCorrect: false, feedback: "Dongeng adalah cerita khayalan." },
+                    { text: "Mitos", isCorrect: false, feedback: "Mitos adalah cerita dewa-dewi yang tidak berdasar fakta." }
+                ]
+            },
+            {
+                id: 8, type: 'PG', points: 5, category: 'Proses Pembuatan Buku',
+                stimulusTitle: "Profesi Pembuat Buku",
+                stimulus: "",
+                question: "Dalam proses penerbitan buku, seorang <strong>ilustrator</strong> bertugas untuk ...",
+                options: [
+                    { text: "Membuat gambar visual yang memperjelas dan memperindah cerita", isCorrect: true, feedback: "Sangat tepat! Ilustrator adalah orang yang menggambar ilustrasi buku." },
+                    { text: "Memeriksa kesalahan ejaan dan tata bahasa pada naskah", isCorrect: false, feedback: "Itu adalah tugas seorang Editor." },
+                    { text: "Menuliskan isi seluruh cerita dari awal sampai akhir", isCorrect: false, feedback: "Itu adalah tugas Penulis." },
+                    { text: "Menjual dan mendistribusikan buku ke toko-toko buku", isCorrect: false, feedback: "Itu tugas Penerbit/Distributor." }
+                ]
+            },
+            {
+                id: 9, type: 'PG', points: 5, category: 'Sebab-Akibat',
+                stimulusTitle: "Hubungan Antarklausa",
+                stimulus: "Bacalah kalimat berikut!\n\"Karena penebangan hutan secara liar terus terjadi di hulu sungai, saat hujan deras turun pemukiman warga dilanda banjir bandang.\"",
+                question: "<strong>Akibat utama</strong> dari peristiwa dalam kalimat di atas adalah ...",
+                options: [
+                    { text: "Pemukiman warga dilanda banjir bandang", isCorrect: true, feedback: "Benar! Banjir bandang adalah dampak akhir (akibat)." },
+                    { text: "Penebangan hutan secara liar", isCorrect: false, feedback: "Ini adalah 'sebab' (akar masalah)." },
+                    { text: "Hujan deras turun di hulu sungai", isCorrect: false, feedback: "Hujan deras adalah pemicu, bukan akibat akhir." },
+                    { text: "Warga menebang pohon di hutan", isCorrect: false, feedback: "Ini adalah bentuk aksi (sebab)." }
+                ]
+            },
+            {
+                id: 10, type: 'PG', points: 5, category: 'Ide Pokok Paragraf',
+                stimulusTitle: "Mencari Inti Paragraf",
+                stimulus: "Membaca buku secara rutin dapat membuka wawasan kita tentang berbagai hal di dunia. Dengan membaca, otak terbiasa mengolah informasi dan bernalar secara kritis. Oleh karena itu, buku sering disebut sebagai jendela dunia.",
+                question: "Ide pokok dari paragraf di atas adalah ...",
+                options: [
+                    { text: "Manfaat penting membaca buku bagi peningkatan wawasan", isCorrect: true, feedback: "Tepat sekali! Seluruh kalimat berpusat pada gagasan utama ini." },
+                    { text: "Cara membeli buku di perpustakaan", isCorrect: false, feedback: "Teks tidak membahas pembelian buku." },
+                    { text: "Otak manusia tidak membutuhkan bacaan", isCorrect: false, feedback: "Teks justru menyatakan sebaliknya." },
+                    { text: "Buku hanya berguna untuk anak sekolah", isCorrect: false, feedback: "Tidak ada batasan hanya untuk anak sekolah di dalam teks." }
+                ]
+            },
 
-        <!-- Gradebook Table & Export -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3.5">
-          <div class="space-y-2.5 pb-3 border-b border-slate-200">
-            <div>
-              <h2 class="text-sm sm:text-base font-extrabold text-slate-800">Rekap Nilai Kelas 5 SDN 4 Rambutan</h2>
-              <p class="text-[11px] text-slate-500">Wali Kelas: Tri Sulistiono, S.Pd. (NIP. 199307242019021004)</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button id="btnExportCsv" type="button" class="min-h-[42px] px-3 py-2 rounded-xl bg-emerald-600 text-white text-xs font-extrabold shadow-sm transition">
-                📥 Unduh Rekap Excel (.CSV)
-              </button>
-              <button id="btnCopyGradeTable" type="button" class="min-h-[42px] px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-700 text-xs font-bold transition">
-                📋 Salin Rekap (Copy)
-              </button>
-              <button id="btnDemoGradeAll" type="button" class="min-h-[42px] px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-bold transition">
-                ⚡ Contoh Isi Nilai Semua Siswa
-              </button>
-            </div>
-          </div>
+            // --- Menjodohkan (11-15) - 4 Poin (Diubah ke format Multiple Choice untuk pagination) ---
+            {
+                id: 11, type: 'Jodoh', points: 4, category: 'Unsur Kebahasaan',
+                stimulusTitle: "Soal Menjodohkan (Bagian B)",
+                stimulus: "Pilihlah istilah yang paling tepat untuk melengkapi pernyataan berikut!",
+                question: "Kata yang memiliki persamaan arti dengan kata lain disebut ...",
+                options: [
+                    { text: "Sinonim", isCorrect: true, feedback: "Benar! Sinonim adalah persamaan makna kata." },
+                    { text: "Editor", isCorrect: false, feedback: "Editor adalah orang yang menyunting naskah." },
+                    { text: "Antonim", isCorrect: false, feedback: "Antonim adalah lawan kata." },
+                    { text: "Majas Metafora", isCorrect: false, feedback: "Majas metafora adalah gaya bahasa kiasan." },
+                    { text: "Puisi Akrostik", isCorrect: false, feedback: "Ini adalah jenis puisi." }
+                ]
+            },
+            {
+                id: 12, type: 'Jodoh', points: 4, category: 'Unsur Kebahasaan',
+                stimulusTitle: "Soal Menjodohkan",
+                stimulus: "",
+                question: "Kata atau kelompok kata yang artinya tidak sebenarnya (kiasan) disebut ...",
+                options: [
+                    { text: "Majas Metafora", isCorrect: true, feedback: "Tepat! Kata kiasan disebut majas metafora." },
+                    { text: "Sinonim", isCorrect: false, feedback: "Sinonim adalah persamaan kata." },
+                    { text: "Antonim", isCorrect: false, feedback: "Antonim adalah lawan kata." },
+                    { text: "Editor", isCorrect: false, feedback: "Editor adalah sebuah profesi." },
+                    { text: "Puisi Akrostik", isCorrect: false, feedback: "Ini adalah jenis karya sastra." }
+                ]
+            },
+            {
+                id: 13, type: 'Jodoh', points: 4, category: 'Profesi Buku',
+                stimulusTitle: "Soal Menjodohkan",
+                stimulus: "",
+                question: "Profesi yang bertugas menyunting naskah dan memperbaiki kesalahan tata bahasa sebelum diterbitkan adalah ...",
+                options: [
+                    { text: "Editor", isCorrect: true, feedback: "Sangat tepat! Menyunting (mengedit) adalah tugas Editor." },
+                    { text: "Sinonim", isCorrect: false, feedback: "Ini adalah istilah kebahasaan." },
+                    { text: "Antonim", isCorrect: false, feedback: "Ini adalah istilah kebahasaan." },
+                    { text: "Majas Metafora", isCorrect: false, feedback: "Ini gaya bahasa." },
+                    { text: "Puisi Akrostik", isCorrect: false, feedback: "Ini jenis puisi." }
+                ]
+            },
+            {
+                id: 14, type: 'Jodoh', points: 4, category: 'Karya Sastra',
+                stimulusTitle: "Soal Menjodohkan",
+                stimulus: "",
+                question: "Puisi yang setiap huruf awal lariknya membentuk sebuah kata bermakna disebut ...",
+                options: [
+                    { text: "Puisi Akrostik", isCorrect: true, feedback: "Benar! Puisi yang dibaca vertikal awalannya membentuk kata adalah Akrostik." },
+                    { text: "Editor", isCorrect: false, feedback: "Ini profesi." },
+                    { text: "Sinonim", isCorrect: false, feedback: "Ini persamaan kata." },
+                    { text: "Antonim", isCorrect: false, feedback: "Lawan kata." },
+                    { text: "Majas Metafora", isCorrect: false, feedback: "Gaya bahasa kiasan." }
+                ]
+            },
+            {
+                id: 15, type: 'Jodoh', points: 4, category: 'Unsur Kebahasaan',
+                stimulusTitle: "Soal Menjodohkan",
+                stimulus: "",
+                question: "Lawan kata dari suatu kata sifat disebut ...",
+                options: [
+                    { text: "Antonim", isCorrect: true, feedback: "Tepat! Lawan makna disebut Antonim." },
+                    { text: "Sinonim", isCorrect: false, feedback: "Sinonim justru persamaan kata." },
+                    { text: "Editor", isCorrect: false, feedback: "Ini profesi." },
+                    { text: "Majas Metafora", isCorrect: false, feedback: "Ini gaya bahasa." },
+                    { text: "Puisi Akrostik", isCorrect: false, feedback: "Ini karya sastra." }
+                ]
+            },
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="bg-slate-100 text-slate-600 text-[10px] uppercase">
-                  <th class="py-2 px-2 rounded-l-lg">No</th>
-                  <th class="py-2 px-2">Nama Siswa</th>
-                  <th class="py-2 px-1.5 text-center">PG</th>
-                  <th class="py-2 px-1.5 text-center">Jdh</th>
-                  <th class="py-2 px-1.5 text-center">B/S</th>
-                  <th class="py-2 px-2 text-center">Nilai</th>
-                  <th class="py-2 px-2 text-center">Status</th>
-                  <th class="py-2 px-2 text-right rounded-r-lg">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="resultsTableBody" class="divide-y divide-slate-200"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Item Analysis (Analisis Butir Soal 1-20) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3">
-          <div>
-            <h3 class="text-sm font-extrabold text-slate-800">Analisis Butir Soal (Nomor 1 s.d. 20)</h3>
-            <p class="text-[11px] text-slate-500">Persentase ketuntasan per butir soal.</p>
-          </div>
-          <div id="itemAnalysisGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Sticky Bottom Navigation Bar for Mobile Touchscreen -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-lg no-print">
-      <div class="max-w-[480px] mx-auto grid grid-cols-5">
-        <button data-tab="tab-scan" class="bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-emerald-700 font-extrabold text-[10px]">
-          <span class="text-base">📷</span>
-          <span>Koreksi</span>
-        </button>
-        <button data-tab="tab-key" class="bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[10px]">
-          <span class="text-base">🔑</span>
-          <span>Kunci</span>
-        </button>
-        <button data-tab="tab-students" class="bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[10px]">
-          <span class="text-base">👩‍🎓</span>
-          <span>30 Siswa</span>
-        </button>
-        <button data-tab="tab-sheet" class="bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[10px]">
-          <span class="text-base">🖨️</span>
-          <span>Unduh LJK</span>
-        </button>
-        <button data-tab="tab-results" class="bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[10px]">
-          <span class="text-base">📊</span>
-          <span>Rekap</span>
-        </button>
-      </div>
-    </nav>
-
-  </div>
-
-  <script>
-    // ==================== DEFAULT ROSTER KELAS 5 SDN 4 RAMBUTAN ====================
-    const STORAGE_KEY = 'smartgrade_sdn4_rambutan_v2_trisulistiono';
-
-    const DEFAULT_CLASS5_STUDENTS = [
-      { id: 's1', absen: 1, name: "AHMAD ZA'IM AKBAR", answers: {} },
-      { id: 's2', absen: 2, name: "ALBARO", answers: {} },
-      { id: 's3', absen: 3, name: "ALIF ARDIANSYAH", answers: {} },
-      { id: 's4', absen: 4, name: "AMIRAH", answers: {} },
-      { id: 's5', absen: 5, name: "ANGGARA", answers: {} },
-      { id: 's6', absen: 6, name: "ANISA ALMAHYRA SHAZFA", answers: {} },
-      { id: 's7', absen: 7, name: "ARTANABIL RAHMAN JALIL", answers: {} },
-      { id: 's8', absen: 8, name: "BELVANIA FIDELA IRAWAN", answers: {} },
-      { id: 's9', absen: 9, name: "CHOIRUNNISA SALSABILA", answers: {} },
-      { id: 's10', absen: 10, name: "DESYABEL LATISYAH PUTRI", answers: {} },
-      { id: 's11', absen: 11, name: "FATHIYAH NADIRA", answers: {} },
-      { id: 's12', absen: 12, name: "FELICIA ANGELA", answers: {} },
-      { id: 's13', absen: 13, name: "KANAYA ZAFIRAH", answers: {} },
-      { id: 's14', absen: 14, name: "KEVIN ALFARRIJ", answers: {} },
-      { id: 's15', absen: 15, name: "LEEITS AHMED JULIO", answers: {} },
-      { id: 's16', absen: 16, name: "LIANA SYAKIRAH", answers: {} },
-      { id: 's17', absen: 17, name: "M. HASBI ALFAJRI", answers: {} },
-      { id: 's18', absen: 18, name: "M. RAFFA AL-FIQRI", answers: {} },
-      { id: 's19', absen: 19, name: "MGS DEDI SARMADI", answers: {} },
-      { id: 's20', absen: 20, name: "MUHAMMAD ALLQIBRAN", answers: {} },
-      { id: 's21', absen: 21, name: "MUHAMMAD IBRAHIM AL HAQQI", answers: {} },
-      { id: 's22', absen: 22, name: "MUHAMMAD NIZAM ALFANDI", answers: {} },
-      { id: 's23', absen: 23, name: "MUHAMMAD RAJA ISAD", answers: {} },
-      { id: 's24', absen: 24, name: "MUHAMMAD TEGUH", answers: {} },
-      { id: 's25', absen: 25, name: "MUTIARA KASIH", answers: {} },
-      { id: 's26', absen: 26, name: "RAFIF TAMIM NAJAMUDDIN", answers: {} },
-      { id: 's27', absen: 27, name: "RAHEL ANGGELIA", answers: {} },
-      { id: 's28', absen: 28, name: "RAIHAN AL FAIZ", answers: {} },
-      { id: 's29', absen: 29, name: "ROBY DWI ANGGARA", answers: {} },
-      { id: 's30', absen: 30, name: "WIRDA SALAMAH ULYA", answers: {} }
-    ];
-
-    const defaultState = {
-      schoolName: 'SDN 4 Rambutan - Kelas V (Lima)',
-      teacherName: 'Tri Sulistiono, S.Pd. (NIP. 199307242019021004)',
-      subject: 'IPAS - Bab Ekosistem',
-      examDate: '2026-10-27',
-      kkm: 75,
-      isMobileView: true,
-      weights: {
-        pg: 1,
-        match: 1,
-        tf: 1
-      },
-      // 1..10: A/B/C/D, 11..15: A/B/C/D/E, 16..20: B/S
-      answerKey: {
-        1: 'A', 2: 'C', 3: 'B', 4: 'D', 5: 'A',
-        6: 'B', 7: 'C', 8: 'D', 9: 'A', 10: 'C',
-        11: 'B', 12: 'D', 13: 'A', 14: 'E', 15: 'C',
-        16: 'B', 17: 'S', 18: 'B', 19: 'B', 20: 'S'
-      },
-      students: JSON.parse(JSON.stringify(DEFAULT_CLASS5_STUDENTS)),
-      selectedStudentId: 's1'
-    };
-
-    let appState = loadState();
-    let activeCameraStream = null;
-
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          return Object.assign({}, defaultState, parsed);
-        }
-      } catch (err) {
-        // Fallback to defaultState
-      }
-      return JSON.parse(JSON.stringify(defaultState));
-    }
-
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      } catch (err) {
-        // Ignore storage errors in sandboxed iframe
-      }
-    }
-
-    function showToast(msg, icon = '✅') {
-      const box = document.getElementById('toastBox');
-      document.getElementById('toastIcon').textContent = icon;
-      document.getElementById('toastMsg').textContent = msg;
-      box.classList.remove('hidden');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => {
-        box.classList.add('hidden');
-      }, 2600);
-    }
-
-    function applyViewportMode() {
-      const shell = document.getElementById('appShell');
-      const icon = document.getElementById('viewportIcon');
-      const label = document.getElementById('viewportLabel');
-      const scanGrid = document.getElementById('scanLayoutGrid');
-      const bubbleCols = document.getElementById('bubbleGraderColumns');
-
-      if (appState.isMobileView !== false) {
-        shell.className = 'app-shell-mobile flex flex-col pb-24';
-        icon.textContent = '📱';
-        label.textContent = 'Mode HP';
-        scanGrid.className = 'grid grid-cols-1 gap-4';
-        bubbleCols.className = 'grid grid-cols-1 gap-4';
-      } else {
-        shell.className = 'app-shell-wide flex flex-col pb-24';
-        icon.textContent = '🖥️';
-        label.textContent = 'Layar Lebar';
-        scanGrid.className = 'grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-7xl mx-auto';
-        bubbleCols.className = 'grid grid-cols-1 md:grid-cols-2 gap-5';
-      }
-    }
-
-    // ==================== SCORING ENGINE ====================
-    function calculateStudentScore(student) {
-      const ans = (student && student.answers) ? student.answers : {};
-      const key = appState.answerKey;
-      const wPg = Number(appState.weights.pg) || 1;
-      const wMatch = Number(appState.weights.match) || 1;
-      const wTf = Number(appState.weights.tf) || 1;
-
-      let pgCorrect = 0;
-      for (let i = 1; i <= 10; i++) {
-        if (ans[i] && ans[i] === key[i]) pgCorrect++;
-      }
-
-      let matchCorrect = 0;
-      for (let i = 11; i <= 15; i++) {
-        if (ans[i] && ans[i] === key[i]) matchCorrect++;
-      }
-
-      let tfCorrect = 0;
-      for (let i = 16; i <= 20; i++) {
-        if (ans[i] && ans[i] === key[i]) tfCorrect++;
-      }
-
-      const answeredCount = Object.keys(ans).length;
-      const maxRaw = (10 * wPg) + (5 * wMatch) + (5 * wTf);
-      const rawEarned = (pgCorrect * wPg) + (matchCorrect * wMatch) + (tfCorrect * wTf);
-      const finalScore = maxRaw > 0 ? Math.round((rawEarned / maxRaw) * 100) : 0;
-
-      return {
-        pgCorrect,
-        matchCorrect,
-        tfCorrect,
-        totalCorrect: pgCorrect + matchCorrect + tfCorrect,
-        answeredCount,
-        finalScore,
-        isGraded: answeredCount > 0,
-        passed: finalScore >= (Number(appState.kkm) || 75)
-      };
-    }
-
-    // ==================== HEADER & NAVIGATION ====================
-    function updateHeaderSummary() {
-      document.getElementById('headerMapelLabel').textContent = appState.subject || 'Ulangan Harian';
-      document.getElementById('headerTeacherLabel').textContent = appState.teacherName || 'Tri Sulistiono, S.Pd. • NIP. 199307242019021004';
-      const keyCount = Object.keys(appState.answerKey).filter(k => appState.answerKey[k]).length;
-      document.getElementById('headerKeyCount').textContent = `${keyCount}/20 Soal`;
-
-      const gradedStudents = appState.students.filter(s => Object.keys(s.answers || {}).length > 0).length;
-      document.getElementById('headerGradedCount').textContent = `${gradedStudents}/${appState.students.length} Siswa`;
-
-      const maxRaw = (10 * (Number(appState.weights.pg) || 1)) +
-                     (5 * (Number(appState.weights.match) || 1)) +
-                     (5 * (Number(appState.weights.tf) || 1));
-      document.getElementById('maxRawScoreLabel').textContent = maxRaw;
-      document.getElementById('liveKkmText').textContent = appState.kkm;
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel.classList.add('hidden');
-      });
-      const target = document.getElementById(tabId);
-      if (target) target.classList.remove('hidden');
-
-      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-        if (btn.dataset.tab === tabId) {
-          btn.className = 'nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 bg-white text-emerald-900 shadow-sm';
-        } else {
-          btn.className = 'nav-tab-btn px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 text-emerald-100 hover:bg-white/10';
-        }
-      });
-
-      document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
-        if (btn.dataset.tab === tabId) {
-          btn.className = 'bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-emerald-700 font-extrabold text-[10px] bg-emerald-50/70';
-        } else {
-          btn.className = 'bottom-nav-btn py-2 flex flex-col items-center justify-center gap-0.5 text-slate-500 font-semibold text-[10px]';
-        }
-      });
-
-      if (tabId === 'tab-scan') renderScanTab();
-      if (tabId === 'tab-key') renderKeyTab();
-      if (tabId === 'tab-students') renderStudentsTab();
-      if (tabId === 'tab-sheet') renderLjkPreview();
-      if (tabId === 'tab-results') renderResultsTab();
-    }
-
-    // ==================== TAB 1: KOREKSI & SCAN LJK ====================
-    function getSelectedStudent() {
-      let stu = appState.students.find(s => s.id === appState.selectedStudentId);
-      if (!stu && appState.students.length > 0) {
-        stu = appState.students[0];
-        appState.selectedStudentId = stu.id;
-      }
-      return stu;
-    }
-
-    function renderScanStudentDropdown() {
-      const sel = document.getElementById('scanStudentSelect');
-      sel.innerHTML = '';
-      const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-      sorted.forEach(s => {
-        const sc = calculateStudentScore(s);
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = `${String(s.absen).padStart(2, '0')}. ${s.name} ${sc.isGraded ? `[Nilai: ${sc.finalScore}]` : ''}`;
-        if (s.id === appState.selectedStudentId) opt.selected = true;
-        sel.appendChild(opt);
-      });
-    }
-
-    function renderBubbleRowForStudent(qNum, label, options, currentStudent) {
-      const row = document.createElement('div');
-      row.className = 'flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-sm';
-
-      const left = document.createElement('div');
-      left.className = 'flex items-center gap-1.5';
-      const numBadge = document.createElement('span');
-      numBadge.className = 'w-6 text-sm font-extrabold text-slate-800';
-      numBadge.textContent = `${label}.`;
-      left.appendChild(numBadge);
-
-      const keyChoice = appState.answerKey[qNum];
-      const stuChoice = currentStudent && currentStudent.answers ? currentStudent.answers[qNum] : null;
-
-      const statusIcon = document.createElement('span');
-      statusIcon.className = 'text-xs font-bold';
-      if (stuChoice) {
-        statusIcon.textContent = stuChoice === keyChoice ? '✅' : '❌';
-      } else {
-        statusIcon.textContent = '⚪';
-      }
-      left.appendChild(statusIcon);
-
-      const right = document.createElement('div');
-      right.className = 'flex items-center gap-1.5 sm:gap-2';
-
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = opt;
-        let cls = 'bubble-btn';
-        if (stuChoice === opt) {
-          cls += (stuChoice === keyChoice) ? ' student-correct' : ' student-wrong';
-        } else if (stuChoice && keyChoice === opt) {
-          cls += ' missed-key';
-        }
-        btn.className = cls;
-        btn.addEventListener('click', () => {
-          if (!currentStudent) return;
-          if (!currentStudent.answers) currentStudent.answers = {};
-          if (currentStudent.answers[qNum] === opt) {
-            delete currentStudent.answers[qNum];
-          } else {
-            currentStudent.answers[qNum] = opt;
-          }
-          saveState();
-          renderScanTab();
-          updateHeaderSummary();
-        });
-        right.appendChild(btn);
-      });
-
-      row.appendChild(left);
-      row.appendChild(right);
-      return row;
-    }
-
-    function renderScanTab() {
-      renderScanStudentDropdown();
-      const stu = getSelectedStudent();
-
-      const pgContainer = document.getElementById('studentPgGrid');
-      const matchContainer = document.getElementById('studentMatchGrid');
-      const tfContainer = document.getElementById('studentTfGrid');
-      pgContainer.innerHTML = '';
-      matchContainer.innerHTML = '';
-      tfContainer.innerHTML = '';
-
-      for (let i = 1; i <= 10; i++) {
-        pgContainer.appendChild(renderBubbleRowForStudent(i, String(i), ['A', 'B', 'C', 'D'], stu));
-      }
-      for (let i = 11; i <= 15; i++) {
-        matchContainer.appendChild(renderBubbleRowForStudent(i, String(i), ['A', 'B', 'C', 'D', 'E'], stu));
-      }
-      for (let i = 16; i <= 20; i++) {
-        tfContainer.appendChild(renderBubbleRowForStudent(i, String(i), ['B', 'S'], stu));
-      }
-
-      if (stu) {
-        const sc = calculateStudentScore(stu);
-        document.getElementById('liveFinalScore').textContent = sc.finalScore;
-        document.getElementById('livePgCorrect').textContent = `${sc.pgCorrect} / 10`;
-        document.getElementById('liveMatchCorrect').textContent = `${sc.matchCorrect} / 5`;
-        document.getElementById('liveTfCorrect').textContent = `${sc.tfCorrect} / 5`;
-
-        const statusBadge = document.getElementById('studentStatusBadge');
-        const passBadge = document.getElementById('livePassBadge');
-
-        if (!sc.isGraded) {
-          statusBadge.textContent = 'Belum Dinilai';
-          statusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600';
-          passBadge.textContent = 'Belum Diisi';
-          passBadge.className = 'inline-block px-3 py-1 rounded-xl text-xs font-extrabold bg-slate-700 text-slate-300';
-        } else {
-          statusBadge.textContent = `Terisi ${sc.answeredCount}/20 Soal`;
-          statusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
-          if (sc.passed) {
-            passBadge.textContent = 'TUNTAS ✓';
-            passBadge.className = 'inline-block px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-500 text-slate-950';
-          } else {
-            passBadge.textContent = 'REMEDIAL';
-            passBadge.className = 'inline-block px-3 py-1 rounded-xl text-xs font-extrabold bg-rose-500 text-white';
-          }
-        }
-      }
-    }
-
-    // ==================== TAB 2: KUNCI JAWABAN ====================
-    function renderKeyBubbleRow(qNum, options) {
-      const row = document.createElement('div');
-      row.className = 'flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-slate-200';
-
-      const label = document.createElement('span');
-      label.className = 'text-xs font-extrabold text-slate-700';
-      label.textContent = `No. ${qNum}`;
-
-      const btnGroup = document.createElement('div');
-      btnGroup.className = 'flex items-center gap-1.5';
-
-      const currentKey = appState.answerKey[qNum];
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = opt;
-        btn.className = 'bubble-btn' + (currentKey === opt ? ' selected-key' : '');
-        btn.addEventListener('click', () => {
-          appState.answerKey[qNum] = opt;
-          saveState();
-          renderKeyTab();
-          updateHeaderSummary();
-        });
-        btnGroup.appendChild(btn);
-      });
-
-      row.appendChild(label);
-      row.appendChild(btnGroup);
-      return row;
-    }
-
-    function renderKeyTab() {
-      document.getElementById('inputNamaSekolah').value = appState.schoolName;
-      document.getElementById('inputNamaGuru').value = appState.teacherName;
-      document.getElementById('inputMapel').value = appState.subject;
-      document.getElementById('inputTanggal').value = appState.examDate;
-      document.getElementById('inputKkm').value = appState.kkm;
-      document.getElementById('weightPg').value = appState.weights.pg;
-      document.getElementById('weightMatch').value = appState.weights.match;
-      document.getElementById('weightTf').value = appState.weights.tf;
-
-      const pgGrid = document.getElementById('keyPgGrid');
-      const matchGrid = document.getElementById('keyMatchGrid');
-      const tfGrid = document.getElementById('keyTfGrid');
-      pgGrid.innerHTML = '';
-      matchGrid.innerHTML = '';
-      tfGrid.innerHTML = '';
-
-      for (let i = 1; i <= 10; i++) {
-        pgGrid.appendChild(renderKeyBubbleRow(i, ['A', 'B', 'C', 'D']));
-      }
-      for (let i = 11; i <= 15; i++) {
-        matchGrid.appendChild(renderKeyBubbleRow(i, ['A', 'B', 'C', 'D', 'E']));
-      }
-      for (let i = 16; i <= 20; i++) {
-        tfGrid.appendChild(renderKeyBubbleRow(i, ['B', 'S']));
-      }
-    }
-
-    // ==================== TAB 3: DATA SISWA ====================
-    function renderStudentsTab() {
-      const tbody = document.getElementById('studentTableBody');
-      const query = (document.getElementById('searchStudentInput').value || '').toLowerCase().trim();
-      tbody.innerHTML = '';
-
-      const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-      const nextAbsen = sorted.length > 0 ? sorted[sorted.length - 1].absen + 1 : 1;
-      const absenInput = document.getElementById('addStudentAbsen');
-      if (!absenInput.value) absenInput.value = nextAbsen;
-
-      sorted.forEach(stu => {
-        if (query && !stu.name.toLowerCase().includes(query) && !String(stu.absen).includes(query)) {
-          return;
-        }
-        const sc = calculateStudentScore(stu);
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition';
-
-        tr.innerHTML = `
-          <td class="py-2.5 px-2.5 font-extrabold text-slate-700">${String(stu.absen).padStart(2, '0')}</td>
-          <td class="py-2.5 px-2.5 font-bold text-slate-800">${stu.name}</td>
-          <td class="py-2.5 px-2 text-center">
-            ${sc.isGraded
-              ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${sc.answeredCount}/20</span>`
-              : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-500">Belum</span>`
+            // --- Benar/Salah (16-20) - 6 Poin ---
+            {
+                id: 16, type: 'TF', points: 6, category: 'Pemahaman Teks',
+                stimulusTitle: "Perpustakaan Mini Dira",
+                stimulus: "Dira sangat hobi membaca buku cerita rakyat. Di rumahnya, ia memiliki rak buku kecil yang tertata sangat apik. Setiap kali selesai membaca, Dira selalu menuliskan ringkasan cerita dan pesan moral dalam Jurnal Membaca miliknya. Dira bercita-cita ingin menjadi seorang penulis hebat agar bisa menginspirasi anak-anak lain.",
+                question: "Dira memiliki kebiasaan menyusun buku-bukunya dengan berantakan. (Benar/Salah?)",
+                options: [
+                    { text: "SALAH (S)", isCorrect: true, feedback: "Tepat! Pernyataan ini SALAH karena di teks jelas tertulis buku Dira 'tertata sangat apik' (rapi)." },
+                    { text: "BENAR (B)", isCorrect: false, feedback: "Pernyataan ini SALAH. Buku Dira tertata dengan sangat 'apik', bukan berantakan." }
+                ]
+            },
+            {
+                id: 17, type: 'TF', points: 6, category: 'Pemahaman Teks',
+                stimulusTitle: "Merujuk teks 'Perpustakaan Mini Dira'",
+                stimulus: "",
+                question: "Buku yang sering dibaca oleh Dira adalah jenis teks cerita rakyat. (Benar/Salah?)",
+                options: [
+                    { text: "BENAR (B)", isCorrect: true, feedback: "Benar! Kalimat pertama teks menyebutkan: 'Dira sangat hobi membaca buku cerita rakyat.'" },
+                    { text: "SALAH (S)", isCorrect: false, feedback: "Pernyataan ini BENAR, tertulis jelas di kalimat pertama teks stimulus." }
+                ]
+            },
+            {
+                id: 18, type: 'TF', points: 6, category: 'Pemahaman Teks',
+                stimulusTitle: "Merujuk teks 'Perpustakaan Mini Dira'",
+                stimulus: "",
+                question: "Menuliskan hasil bacaan ke dalam Jurnal Membaca membantu Dira memahami isi cerita dengan lebih baik. (Benar/Salah?)",
+                options: [
+                    { text: "BENAR (B)", isCorrect: true, feedback: "Sangat tepat. Kegiatan menulis ringkasan melatih pemahaman bacaan." },
+                    { text: "SALAH (S)", isCorrect: false, feedback: "Pernyataan ini BENAR dan logis sesuai dengan tujuan Jurnal Membaca." }
+                ]
+            },
+            {
+                id: 19, type: 'TF', points: 6, category: 'Pemahaman Teks',
+                stimulusTitle: "Merujuk teks 'Perpustakaan Mini Dira'",
+                stimulus: "",
+                question: "Cita-cita Dira adalah menjadi seorang ilustrator buku anak-anak. (Benar/Salah?)",
+                options: [
+                    { text: "SALAH (S)", isCorrect: true, feedback: "Tepat, pernyataan ini SALAH. Teks menyebutkan Dira bercita-cita menjadi 'penulis hebat', bukan ilustrator." },
+                    { text: "BENAR (B)", isCorrect: false, feedback: "Pernyataan ini SALAH karena cita-cita Dira adalah menjadi penulis." }
+                ]
+            },
+            {
+                id: 20, type: 'TF', points: 6, category: 'Pemahaman Teks',
+                stimulusTitle: "Teori Sastra",
+                stimulus: "",
+                question: "Cerita rakyat tergolong sebagai teks nonfiksi karena ditulis berdasarkan data ilmiah. (Benar/Salah?)",
+                options: [
+                    { text: "SALAH (S)", isCorrect: true, feedback: "Benar, pernyataan ini SALAH. Cerita rakyat adalah karangan imajinasi/dongeng sehingga masuk kategori Teks Fiksi." },
+                    { text: "BENAR (B)", isCorrect: false, feedback: "Pernyataan ini SALAH. Cerita rakyat adalah fiksi (imajinasi), bukan data ilmiah/nonfiksi." }
+                ]
             }
-          </td>
-          <td class="py-2.5 px-2 text-center font-extrabold ${sc.isGraded ? (sc.passed ? 'text-emerald-600' : 'text-rose-600') : 'text-slate-400'}">
-            ${sc.isGraded ? sc.finalScore : '-'}
-          </td>
-          <td class="py-2.5 px-2.5 text-right whitespace-nowrap space-x-1">
-            <button data-grade-id="${stu.id}" class="btn-goto-grade px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] transition">
-              Nilai
-            </button>
-            <button data-del-id="${stu.id}" class="btn-del-stu px-2 py-1.5 rounded-lg bg-rose-50 text-rose-600 font-bold text-[11px] transition">
-              🗑️
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+        ];
 
-      tbody.querySelectorAll('.btn-goto-grade').forEach(btn => {
-        btn.addEventListener('click', () => {
-          appState.selectedStudentId = btn.dataset.gradeId;
-          saveState();
-          switchTab('tab-scan');
-        });
-      });
+        // 2. APP STATE
+        const TIME_PER_QUESTION = 90; // seconds
+        let quizData = [];
+        let state = {
+            currentIndex: 0,
+            scorePG: 0, scoreMatch: 0, scoreTF: 0, totalScore: 0,
+            answers: [], // store index of selected option per question
+            timeRemainingMap: [], // time left for each question
+            timerInterval: null,
+            student: { name: "", absen: "" }
+        };
 
-      tbody.querySelectorAll('.btn-del-stu').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.delId;
-          appState.students = appState.students.filter(s => s.id !== id);
-          saveState();
-          renderStudentsTab();
-          updateHeaderSummary();
-          showToast('Data siswa dihapus dari daftar absen.', '🗑️');
-        });
-      });
-    }
-
-    // ==================== TAB 4: LJK GENERATOR & DOWNLOAD ====================
-    function createLjkCardHtml(studentObj) {
-      const stuName = studentObj ? studentObj.name : '....................................................';
-      const stuAbsen = studentObj ? String(studentObj.absen).padStart(2, '0') : '......';
-
-      let pgRowsHtml = '';
-      for (let i = 1; i <= 10; i++) {
-        pgRowsHtml += `
-          <div class="flex items-center justify-between py-1 border-b border-slate-200 text-xs">
-            <span class="font-bold w-6">${i}.</span>
-            <div class="flex items-center gap-1.5">
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">A</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">B</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">C</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">D</span>
-            </div>
-          </div>
-        `;
-      }
-
-      let matchRowsHtml = '';
-      for (let i = 11; i <= 15; i++) {
-        matchRowsHtml += `
-          <div class="flex items-center justify-between py-1 border-b border-slate-200 text-xs">
-            <span class="font-bold w-6">${i}.</span>
-            <div class="flex items-center gap-1">
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">A</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">B</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">C</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">D</span>
-              <span class="w-6 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">E</span>
-            </div>
-          </div>
-        `;
-      }
-
-      let tfRowsHtml = '';
-      for (let i = 16; i <= 20; i++) {
-        tfRowsHtml += `
-          <div class="flex items-center justify-between py-1 border-b border-slate-200 text-xs">
-            <span class="font-bold w-6">${i}.</span>
-            <div class="flex items-center gap-2">
-              <span class="px-2 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">B (Benar)</span>
-              <span class="px-2 h-6 rounded-full border-2 border-slate-800 inline-flex items-center justify-center font-bold text-[10px]">S (Salah)</span>
-            </div>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="bg-white p-5 rounded-xl border-2 border-slate-900 relative shadow-sm text-slate-900 break-inside-avoid">
-          <!-- 4 Fiducial Black Corner Markers ala ZipGrade -->
-          <div class="w-4 h-4 bg-slate-950 absolute top-2.5 left-2.5"></div>
-          <div class="w-4 h-4 bg-slate-950 absolute top-2.5 right-2.5"></div>
-          <div class="w-4 h-4 bg-slate-950 absolute bottom-2.5 left-2.5"></div>
-          <div class="w-4 h-4 bg-slate-950 absolute bottom-2.5 right-2.5"></div>
-
-          <div class="px-2 py-1">
-            <!-- Header LJK -->
-            <div class="text-center border-b-2 border-slate-900 pb-2 mb-2.5">
-              <h3 class="font-extrabold text-xs sm:text-sm uppercase tracking-wide">LEMBAR JAWABAN SISWA (LJK)</h3>
-              <p class="font-bold text-xs">${appState.schoolName}</p>
-              <p class="text-[10px] text-slate-600">${appState.subject} • Tanggal: ${appState.examDate}</p>
-            </div>
-
-            <!-- Identitas Siswa & Kotak Nilai -->
-            <div class="grid grid-cols-3 gap-2 mb-3 text-[11px] border border-slate-800 rounded-lg p-2">
-              <div class="col-span-2 space-y-1">
-                <div class="truncate"><span class="font-bold">Nama:</span> <strong>${stuName}</strong></div>
-                <div><span class="font-bold">No. Absen:</span> <strong>${stuAbsen}</strong> &nbsp;|&nbsp; <span class="font-bold">Kelas:</span> V</div>
-                <div class="text-[10px] text-slate-600">Wali Kelas: ${appState.teacherName}</div>
-              </div>
-              <div class="border-l border-slate-800 pl-2 flex flex-col items-center justify-center text-center">
-                <span class="text-[9px] font-bold uppercase">NILAI AKHIR</span>
-                <div class="w-12 h-9 border border-slate-400 rounded mt-0.5"></div>
-              </div>
-            </div>
-
-            <!-- 3 Bagian Soal -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <div class="bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded mb-1">
-                  I. PILIHAN GANDA (1 - 10)
-                </div>
-                ${pgRowsHtml}
-              </div>
-
-              <div class="space-y-2.5">
-                <div>
-                  <div class="bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded mb-1">
-                    II. MENJODOHKAN (11 - 15)
-                  </div>
-                  ${matchRowsHtml}
-                </div>
-
-                <div>
-                  <div class="bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded mb-1">
-                    III. BENAR / SALAH (16 - 20)
-                  </div>
-                  ${tfRowsHtml}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderLjkPreview() {
-      const mode = document.getElementById('ljkPrintMode').value;
-      const container = document.getElementById('printableArea');
-      container.innerHTML = '';
-
-      if (mode === 'single') {
-        container.className = 'grid grid-cols-1 gap-4';
-        container.innerHTML = createLjkCardHtml(null);
-      } else if (mode === 'blank2') {
-        container.className = 'grid grid-cols-1 gap-4';
-        container.innerHTML = createLjkCardHtml(null) + createLjkCardHtml(null);
-      } else if (mode === 'prefilled') {
-        container.className = 'grid grid-cols-1 gap-4';
-        const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-        container.innerHTML = sorted.map(s => createLjkCardHtml(s)).join('');
-      }
-    }
-
-    function drawLjkToCanvasAndDownloadPng() {
-      const canvas = document.getElementById('ljkExportCanvas');
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw outer border & 4 ZipGrade fiducial corner squares
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(20, 20, 1160, 840);
-
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(36, 36, 34, 34);
-      ctx.fillRect(1130, 36, 34, 34);
-      ctx.fillRect(36, 810, 34, 34);
-      ctx.fillRect(1130, 810, 34, 34);
-
-      // Header text
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 25px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('LEMBAR JAWABAN KOMPUTER (LJK) - ULANGAN HARIAN', 600, 64);
-      ctx.font = 'bold 19px Inter, sans-serif';
-      ctx.fillText(`${appState.schoolName} | Mata Pelajaran: ${appState.subject}`, 600, 92);
-      ctx.font = '15px Inter, sans-serif';
-      ctx.fillText(`Guru Kelas V: ${appState.teacherName}`, 600, 116);
-
-      // Student info box
-      ctx.textAlign = 'left';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(90, 130, 1020, 90);
-      ctx.font = 'bold 17px Inter, sans-serif';
-      ctx.fillText('Nama Siswa : ........................................................................', 110, 162);
-      ctx.fillText('No. Absen   : .............     Kelas : V (Lima)     Tanggal : ' + appState.examDate, 110, 198);
-
-      // Score box inside student info
-      ctx.strokeRect(920, 140, 170, 70);
-      ctx.font = 'bold 13px Inter, sans-serif';
-      ctx.fillText('NILAI & PARAF', 955, 160);
-
-      // Column 1: Pilihan Ganda 1-10
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(90, 245, 480, 36);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Inter, sans-serif';
-      ctx.fillText('I. PILIHAN GANDA (NOMOR 1 - 10)', 110, 269);
-
-      const pgOpts = ['A', 'B', 'C', 'D'];
-      for (let i = 1; i <= 10; i++) {
-        const y = 285 + (i * 46);
-        ctx.fillStyle = '#0f172a';
-        ctx.font = 'bold 16px Inter, sans-serif';
-        ctx.fillText(`${i}.`, 105, y + 6);
-
-        pgOpts.forEach((opt, idx) => {
-          const cx = 200 + (idx * 75);
-          ctx.beginPath();
-          ctx.arc(cx, y, 16, 0, Math.PI * 2);
-          ctx.strokeStyle = '#0f172a';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.font = 'bold 14px Inter, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(opt, cx, y + 5);
-          ctx.textAlign = 'left';
-        });
-      }
-
-      // Column 2 Top: Menjodohkan 11-15
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(620, 245, 490, 36);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Inter, sans-serif';
-      ctx.fillText('II. MENJODOHKAN (NOMOR 11 - 15)', 640, 269);
-
-      const matchOpts = ['A', 'B', 'C', 'D', 'E'];
-      for (let i = 1; i <= 5; i++) {
-        const qNum = 10 + i;
-        const y = 285 + (i * 46);
-        ctx.fillStyle = '#0f172a';
-        ctx.font = 'bold 16px Inter, sans-serif';
-        ctx.fillText(`${qNum}.`, 635, y + 6);
-
-        matchOpts.forEach((opt, idx) => {
-          const cx = 720 + (idx * 68);
-          ctx.beginPath();
-          ctx.arc(cx, y, 16, 0, Math.PI * 2);
-          ctx.strokeStyle = '#0f172a';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.font = 'bold 14px Inter, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(opt, cx, y + 5);
-          ctx.textAlign = 'left';
-        });
-      }
-
-      // Column 2 Bottom: Benar / Salah 16-20
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(620, 545, 490, 36);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 16px Inter, sans-serif';
-      ctx.fillText('III. BENAR / SALAH (NOMOR 16 - 20)', 640, 569);
-
-      const tfOpts = ['B (Benar)', 'S (Salah)'];
-      for (let i = 1; i <= 5; i++) {
-        const qNum = 15 + i;
-        const y = 585 + (i * 44);
-        ctx.fillStyle = '#0f172a';
-        ctx.font = 'bold 16px Inter, sans-serif';
-        ctx.fillText(`${qNum}.`, 635, y + 6);
-
-        tfOpts.forEach((opt, idx) => {
-          const rx = 710 + (idx * 160);
-          ctx.strokeStyle = '#0f172a';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(rx, y - 14, 120, 28);
-          ctx.font = 'bold 14px Inter, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(opt, rx + 60, y + 5);
-          ctx.textAlign = 'left';
-        });
-      }
-
-      const dataUrl = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `LJK_Kelas5_SDN4_Rambutan.png`;
-      link.href = dataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast('Gambar Lembar Jawaban (LJK .PNG) berhasil diunduh!', '🖼️');
-    }
-
-    function downloadPrintableHtmlLjk() {
-      const content = document.getElementById('printableArea').innerHTML;
-      const fullHtml = `<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<title>Cetak LJK Kelas 5 - SDN 4 Rambutan</title>
-<script src="https://cdn.tailwindcss.com/3.4.17"><\/script>
-</head>
-<body class="p-6 bg-white">
-  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-    ${content}
-  </div>
-  <script>window.onload = () => setTimeout(() => window.print(), 500);<\/script>
-</body>
-</html>`;
-      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'Cetak_LJK_Kelas5_SDN4_Rambutan.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('File LJK Siap Cetak (.HTML) berhasil diunduh!', '📄');
-    }
-
-    // ==================== TAB 5: REKAP NILAI & ANALISIS ====================
-    function renderResultsTab() {
-      const tbody = document.getElementById('resultsTableBody');
-      tbody.innerHTML = '';
-
-      const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-      let gradedList = [];
-
-      sorted.forEach(stu => {
-        const sc = calculateStudentScore(stu);
-        if (sc.isGraded) gradedList.push({ stu, sc });
-
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition';
-        tr.innerHTML = `
-          <td class="py-2.5 px-2 font-extrabold text-slate-700">${String(stu.absen).padStart(2, '0')}</td>
-          <td class="py-2.5 px-2 font-bold text-slate-800">${stu.name}</td>
-          <td class="py-2.5 px-1.5 text-center">${sc.isGraded ? `${sc.pgCorrect}` : '-'}</td>
-          <td class="py-2.5 px-1.5 text-center">${sc.isGraded ? `${sc.matchCorrect}` : '-'}</td>
-          <td class="py-2.5 px-1.5 text-center">${sc.isGraded ? `${sc.tfCorrect}` : '-'}</td>
-          <td class="py-2.5 px-2 text-center font-extrabold text-sm ${sc.isGraded ? (sc.passed ? 'text-emerald-600' : 'text-rose-600') : 'text-slate-400'}">
-            ${sc.isGraded ? sc.finalScore : '-'}
-          </td>
-          <td class="py-2.5 px-2 text-center">
-            ${!sc.isGraded
-              ? '<span class="px-2 py-0.5 rounded text-[10px] bg-slate-100 text-slate-500">Belum</span>'
-              : (sc.passed
-                  ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">TUNTAS</span>'
-                  : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">REMEDIAL</span>')
+        // 3. UTILITY: Shuffle Array (Fisher-Yates)
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
             }
-          </td>
-          <td class="py-2.5 px-2 text-right">
-            <button data-inspect-id="${stu.id}" class="btn-inspect-stu px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition">
-              LJK
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      tbody.querySelectorAll('.btn-inspect-stu').forEach(btn => {
-        btn.addEventListener('click', () => {
-          appState.selectedStudentId = btn.dataset.inspectId;
-          saveState();
-          switchTab('tab-scan');
-        });
-      });
-
-      // Update Summary KPIs
-      if (gradedList.length === 0) {
-        document.getElementById('statAvgScore').textContent = '0.0';
-        document.getElementById('statGradedSub').textContent = `Dari 0/${appState.students.length} siswa`;
-        document.getElementById('statPassRate').textContent = '0%';
-        document.getElementById('statPassSub').textContent = '0 Tuntas • 0 Remedial';
-        document.getElementById('statMaxScore').textContent = '0';
-        document.getElementById('statMaxStudent').textContent = '-';
-        document.getElementById('statMinScore').textContent = '0';
-        document.getElementById('statMinStudent').textContent = '-';
-      } else {
-        const sum = gradedList.reduce((acc, item) => acc + item.sc.finalScore, 0);
-        const avg = (sum / gradedList.length).toFixed(1);
-        const passCount = gradedList.filter(i => i.sc.passed).length;
-        const remCount = gradedList.length - passCount;
-        const passPct = Math.round((passCount / gradedList.length) * 100);
-
-        const maxItem = [...gradedList].sort((a, b) => b.sc.finalScore - a.sc.finalScore)[0];
-        const minItem = [...gradedList].sort((a, b) => a.sc.finalScore - b.sc.finalScore)[0];
-
-        document.getElementById('statAvgScore').textContent = avg;
-        document.getElementById('statGradedSub').textContent = `Dari ${gradedList.length}/${appState.students.length} siswa dinilai`;
-        document.getElementById('statPassRate').textContent = `${passPct}%`;
-        document.getElementById('statPassSub').textContent = `${passCount} Tuntas • ${remCount} Remedial`;
-        document.getElementById('statMaxScore').textContent = maxItem.sc.finalScore;
-        document.getElementById('statMaxStudent').textContent = maxItem.stu.name;
-        document.getElementById('statMinScore').textContent = minItem.sc.finalScore;
-        document.getElementById('statMinStudent').textContent = minItem.stu.name;
-      }
-
-      // Render Item Analysis (1-20)
-      const itemGrid = document.getElementById('itemAnalysisGrid');
-      itemGrid.innerHTML = '';
-      for (let q = 1; q <= 20; q++) {
-        let correctCount = 0;
-        gradedList.forEach(({ stu }) => {
-          if (stu.answers && stu.answers[q] === appState.answerKey[q]) correctCount++;
-        });
-        const pct = gradedList.length > 0 ? Math.round((correctCount / gradedList.length) * 100) : 0;
-        const qType = q <= 10 ? 'PG' : (q <= 15 ? 'Jodoh' : 'B/S');
-
-        const card = document.createElement('div');
-        card.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between';
-        card.innerHTML = `
-          <div class="flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-            <span>No. ${q} (${qType})</span>
-            <span class="font-bold text-slate-700">Kunci: ${appState.answerKey[q]}</span>
-          </div>
-          <div class="my-1">
-            <div class="text-xs font-extrabold ${pct >= 70 ? 'text-emerald-600' : (pct >= 45 ? 'text-amber-600' : 'text-rose-600')}">${pct}% Benar</div>
-            <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mt-1">
-              <div class="h-full ${pct >= 70 ? 'bg-emerald-500' : (pct >= 45 ? 'bg-amber-500' : 'bg-rose-500')}" style="width: ${pct}%"></div>
-            </div>
-          </div>
-          <div class="text-[10px] text-slate-400">${correctCount}/${gradedList.length} benar</div>
-        `;
-        itemGrid.appendChild(card);
-      }
-    }
-
-    // ==================== CAMERA & OMR SCANNER SIMULATION ====================
-    async function startCamera() {
-      const container = document.getElementById('omrViewportContainer');
-      const video = document.getElementById('omrVideo');
-      const canvas = document.getElementById('omrCanvas');
-      container.classList.remove('hidden');
-
-      try {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          activeCameraStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' }
-          });
-          video.srcObject = activeCameraStream;
-          video.classList.remove('hidden');
-          canvas.classList.add('hidden');
-          showToast('Kamera HP aktif! Arahkan ke Lembar Jawaban Siswa.', '📷');
-        } else {
-          drawSimulatedOmrSheetOnCanvas();
+            return array;
         }
-      } catch (err) {
-        drawSimulatedOmrSheetOnCanvas();
-        showToast('Mode Simulasi Pemindai OMR aktif.', '📸');
-      }
-    }
 
-    function stopCamera() {
-      if (activeCameraStream) {
-        activeCameraStream.getTracks().forEach(track => track.stop());
-        activeCameraStream = null;
-      }
-      document.getElementById('omrViewportContainer').classList.add('hidden');
-    }
-
-    function drawSimulatedOmrSheetOnCanvas() {
-      const video = document.getElementById('omrVideo');
-      const canvas = document.getElementById('omrCanvas');
-      video.classList.add('hidden');
-      canvas.classList.remove('hidden');
-      canvas.width = 360;
-      canvas.height = 480;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRect(0, 0, 360, 480);
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 13px Inter, sans-serif';
-      ctx.fillText('PRATINJAU PEMINDAIAN LJK SISWA', 65, 45);
-      ctx.font = '11px Inter, sans-serif';
-      ctx.fillText('10 Pilihan Ganda • 5 Menjodohkan • 5 B/S', 72, 65);
-
-      for (let row = 0; row < 10; row++) {
-        const y = 100 + row * 32;
-        ctx.fillStyle = '#334155';
-        ctx.fillText(`${row + 1}.`, 35, y + 4);
-        for (let col = 0; col < 4; col++) {
-          ctx.beginPath();
-          ctx.arc(75 + col * 30, y, 9, 0, Math.PI * 2);
-          ctx.strokeStyle = '#16a34a';
-          ctx.stroke();
-          if ((row + col) % 4 === 0) {
-            ctx.fillStyle = '#0f172a';
-            ctx.fill();
-          }
+        // 4. AUDIO SYSTEM
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(type) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if(type === 'timeout') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
         }
-      }
-    }
 
-    function performOmrDetectionForCurrentStudent() {
-      const stu = getSelectedStudent();
-      if (!stu) return;
-      if (!stu.answers) stu.answers = {};
+        // 5. CORE LOGIC
+        function initQuiz() {
+            // Deep copy and shuffle options (except for True/False which order is fixed B, S)
+            quizData = rawQuizData.map(q => {
+                let newQ = JSON.parse(JSON.stringify(q));
+                if (newQ.type !== 'TF') {
+                    newQ.options = shuffleArray(newQ.options);
+                }
+                return newQ;
+            });
 
-      const pgOpts = ['A', 'B', 'C', 'D'];
-      const matchOpts = ['A', 'B', 'C', 'D', 'E'];
-      const tfOpts = ['B', 'S'];
-
-      for (let i = 1; i <= 10; i++) {
-        stu.answers[i] = Math.random() < 0.8 ? appState.answerKey[i] : pgOpts[Math.floor(Math.random() * 4)];
-      }
-      for (let i = 11; i <= 15; i++) {
-        stu.answers[i] = Math.random() < 0.8 ? appState.answerKey[i] : matchOpts[Math.floor(Math.random() * 5)];
-      }
-      for (let i = 16; i <= 20; i++) {
-        stu.answers[i] = Math.random() < 0.85 ? appState.answerKey[i] : tfOpts[Math.floor(Math.random() * 2)];
-      }
-
-      saveState();
-      renderScanTab();
-      updateHeaderSummary();
-      const sc = calculateStudentScore(stu);
-      showToast(`LJK ${stu.name} terdeteksi! Nilai: ${sc.finalScore}`, '⚡');
-    }
-
-    function goPrevStudent() {
-      const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-      const idx = sorted.findIndex(s => s.id === appState.selectedStudentId);
-      if (idx > 0) {
-        appState.selectedStudentId = sorted[idx - 1].id;
-        saveState();
-        renderScanTab();
-      } else {
-        showToast('Ini adalah siswa absen pertama (01).', 'ℹ️');
-      }
-    }
-
-    function goNextStudent() {
-      const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-      const idx = sorted.findIndex(s => s.id === appState.selectedStudentId);
-      if (idx >= 0 && idx < sorted.length - 1) {
-        appState.selectedStudentId = sorted[idx + 1].id;
-        saveState();
-        renderScanTab();
-      } else {
-        showToast('Sudah sampai di siswa absen terakhir.', 'ℹ️');
-      }
-    }
-
-    function saveCurrentAndGoNext() {
-      const stu = getSelectedStudent();
-      if (stu) {
-        const sc = calculateStudentScore(stu);
-        showToast(`Nilai ${stu.name} (${sc.finalScore}) tersimpan!`, '💾');
-      }
-      const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-      const idx = sorted.findIndex(s => s.id === appState.selectedStudentId);
-      if (idx >= 0 && idx < sorted.length - 1) {
-        appState.selectedStudentId = sorted[idx + 1].id;
-        saveState();
-        renderScanTab();
-      }
-    }
-
-    // ==================== EVENT LISTENERS ====================
-    function initEvents() {
-      // Viewport toggle (Mobile Touchscreen vs Wide)
-      document.getElementById('btnToggleViewport').addEventListener('click', () => {
-        appState.isMobileView = !appState.isMobileView;
-        saveState();
-        applyViewportMode();
-      });
-
-      // Top & Bottom Tab switching
-      document.querySelectorAll('.nav-tab-btn, .bottom-nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-      });
-
-      // Student selector in Scan Tab
-      document.getElementById('scanStudentSelect').addEventListener('change', (e) => {
-        appState.selectedStudentId = e.target.value;
-        saveState();
-        renderScanTab();
-      });
-
-      // Prev / Next / Save & Next Student buttons
-      document.getElementById('btnPrevStudent').addEventListener('click', goPrevStudent);
-      document.getElementById('btnBottomPrevStu').addEventListener('click', goPrevStudent);
-      document.getElementById('btnNextStudent').addEventListener('click', goNextStudent);
-      document.getElementById('btnSaveAndNext').addEventListener('click', saveCurrentAndGoNext);
-      document.getElementById('btnBottomSaveNext').addEventListener('click', saveCurrentAndGoNext);
-
-      // Clear student answers
-      document.getElementById('btnClearStudentAns').addEventListener('click', () => {
-        const stu = getSelectedStudent();
-        if (!stu) return;
-        stu.answers = {};
-        saveState();
-        renderScanTab();
-        updateHeaderSummary();
-        showToast(`Lembar jawaban ${stu.name} dikosongkan.`, '🗑️');
-      });
-
-      // Simulate fill student LJK
-      document.getElementById('btnSimulatePerfect').addEventListener('click', () => {
-        performOmrDetectionForCurrentStudent();
-      });
-
-      // Camera & OMR upload
-      document.getElementById('btnToggleCamera').addEventListener('click', startCamera);
-      document.getElementById('btnCloseCamera').addEventListener('click', stopCamera);
-      document.getElementById('btnCaptureOmr').addEventListener('click', performOmrDetectionForCurrentStudent);
-
-      document.getElementById('uploadOmrInput').addEventListener('change', (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = new Image();
-          img.onload = () => {
-            const container = document.getElementById('omrViewportContainer');
-            const video = document.getElementById('omrVideo');
-            const canvas = document.getElementById('omrCanvas');
-            container.classList.remove('hidden');
-            video.classList.add('hidden');
-            canvas.classList.remove('hidden');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            performOmrDetectionForCurrentStudent();
-          };
-          img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
-
-      // Save Exam Config & Weights
-      document.getElementById('btnSaveExamConfig').addEventListener('click', () => {
-        appState.schoolName = document.getElementById('inputNamaSekolah').value.trim() || 'SDN 4 Rambutan - Kelas V';
-        appState.teacherName = document.getElementById('inputNamaGuru').value.trim() || 'Tri Sulistiono, S.Pd. (NIP. 199307242019021004)';
-        appState.subject = document.getElementById('inputMapel').value.trim() || 'Ulangan Harian';
-        appState.examDate = document.getElementById('inputTanggal').value || '2026-10-27';
-        appState.kkm = Number(document.getElementById('inputKkm').value) || 75;
-        appState.weights = {
-          pg: Math.max(1, Number(document.getElementById('weightPg').value) || 1),
-          match: Math.max(1, Number(document.getElementById('weightMatch').value) || 1),
-          tf: Math.max(1, Number(document.getElementById('weightTf').value) || 1)
-        };
-        saveState();
-        updateHeaderSummary();
-        showToast('Pengaturan ulangan & kunci jawaban disimpan!', '🔑');
-      });
-
-      // Fill Default/Random Key
-      document.getElementById('btnFillDefaultKey').addEventListener('click', () => {
-        const pg = ['A', 'B', 'C', 'D'];
-        const mt = ['A', 'B', 'C', 'D', 'E'];
-        const tf = ['B', 'S'];
-        for (let i = 1; i <= 10; i++) appState.answerKey[i] = pg[(i - 1) % 4];
-        for (let i = 11; i <= 15; i++) appState.answerKey[i] = mt[(i - 11) % 5];
-        for (let i = 16; i <= 20; i++) appState.answerKey[i] = tf[i % 2];
-        saveState();
-        renderKeyTab();
-        updateHeaderSummary();
-        showToast('Kunci jawaban otomatis berhasil diisi!', '🎲');
-      });
-
-      // Reset to 30 Default Students of Pak Tri Sulistiono
-      document.getElementById('btnResetDefaultRoster').addEventListener('click', () => {
-        appState.students = JSON.parse(JSON.stringify(DEFAULT_CLASS5_STUDENTS));
-        appState.selectedStudentId = 's1';
-        saveState();
-        renderStudentsTab();
-        updateHeaderSummary();
-        showToast('Daftar 30 siswa Kelas 5 SDN 4 Rambutan berhasil dimuat ulang!', '🔄');
-      });
-
-      // Add Single Student
-      document.getElementById('btnAddStudent').addEventListener('click', () => {
-        const absenVal = Number(document.getElementById('addStudentAbsen').value);
-        const nameVal = document.getElementById('addStudentName').value.trim();
-        if (!nameVal) {
-          showToast('Mohon isi nama lengkap siswa terlebih dahulu.', '⚠️');
-          return;
+            state.answers = new Array(quizData.length).fill(null);
+            state.timeRemainingMap = new Array(quizData.length).fill(TIME_PER_QUESTION);
+            state.currentIndex = 0;
+            state.scorePG = 0; state.scoreMatch = 0; state.scoreTF = 0; state.totalScore = 0;
         }
-        const finalAbsen = absenVal > 0 ? absenVal : (appState.students.length + 1);
-        const newStu = {
-          id: 'stu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          absen: finalAbsen,
-          name: nameVal.toUpperCase(),
-          answers: {}
-        };
-        appState.students.push(newStu);
-        appState.selectedStudentId = newStu.id;
-        document.getElementById('addStudentName').value = '';
-        document.getElementById('addStudentAbsen').value = finalAbsen + 1;
-        saveState();
-        renderStudentsTab();
-        updateHeaderSummary();
-        showToast(`Siswa "${newStu.name}" (Absen ${finalAbsen}) ditambahkan!`, '👩‍🎓');
-      });
 
-      // Bulk Import Students
-      document.getElementById('btnBulkImportStudents').addEventListener('click', () => {
-        const raw = document.getElementById('bulkStudentTextarea').value;
-        const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-        if (lines.length === 0) {
-          showToast('Tempelkan minimal 1 nama siswa pada kotak teks.', '⚠️');
-          return;
+        function startQuiz() {
+            const name = document.getElementById('inputName').value.trim();
+            const absen = document.getElementById('inputAbsen').value.trim();
+            
+            if(!name || !absen) {
+                document.getElementById('inputName').classList.add('border-red-500');
+                document.getElementById('inputAbsen').classList.add('border-red-500');
+                setTimeout(() => {
+                    document.getElementById('inputName').classList.remove('border-red-500');
+                    document.getElementById('inputAbsen').classList.remove('border-red-500');
+                }, 1000);
+                return;
+            }
+            
+            state.student.name = name;
+            state.student.absen = absen;
+            document.getElementById('header-student-name').innerText = name;
+            initQuiz();
+            
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            renderQuestion();
         }
-        let maxAbsen = appState.students.reduce((m, s) => Math.max(m, s.absen), 0);
-        lines.forEach(line => {
-          maxAbsen++;
-          const cleanName = line.replace(/^\d+[\.\)\-\s]+/, '').trim();
-          appState.students.push({
-            id: 'stu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
-            absen: maxAbsen,
-            name: (cleanName || line).toUpperCase(),
-            answers: {}
-          });
-        });
-        document.getElementById('bulkStudentTextarea').value = '';
-        saveState();
-        renderStudentsTab();
-        updateHeaderSummary();
-        showToast(`${lines.length} siswa baru berhasil ditambahkan!`, '📥');
-      });
 
-      document.getElementById('searchStudentInput').addEventListener('input', renderStudentsTab);
+        function renderQuestion() {
+            const q = quizData[state.currentIndex];
+            
+            // Update Headers & Nav Info
+            document.getElementById('header-q-num').innerText = state.currentIndex + 1;
+            document.getElementById('text-q-num').innerText = state.currentIndex + 1;
+            document.getElementById('nav-q-num').innerText = state.currentIndex + 1;
+            
+            // Manage Prev Button Visibility
+            if (state.currentIndex === 0) {
+                document.getElementById('btn-prev').classList.add('hidden');
+            } else {
+                document.getElementById('btn-prev').classList.remove('hidden');
+            }
+            
+            // Manage Next Button Label
+            const btnNextText = document.getElementById('btn-next-text');
+            const btnNextIcon = document.getElementById('btn-next-icon');
+            if (state.currentIndex === quizData.length - 1) {
+                btnNextText.innerText = "Selesai";
+                btnNextText.classList.remove('hidden');
+                btnNextIcon.className = "fa-solid fa-flag-checkered";
+                document.getElementById('btn-next').classList.replace('bg-blue-600', 'bg-emerald-600');
+                document.getElementById('btn-next').classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+            } else {
+                btnNextText.innerText = "Lanjut";
+                btnNextText.className = "hidden sm:inline";
+                btnNextIcon.className = "fa-solid fa-arrow-right";
+                document.getElementById('btn-next').classList.replace('bg-emerald-600', 'bg-blue-600');
+                document.getElementById('btn-next').classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+            }
 
-      // LJK Print & Download Controls
-      document.getElementById('ljkPrintMode').addEventListener('change', renderLjkPreview);
-      document.getElementById('btnDownloadLjkPng').addEventListener('click', drawLjkToCanvasAndDownloadPng);
-      document.getElementById('btnDownloadLjkHtml').addEventListener('click', downloadPrintableHtmlLjk);
-      document.getElementById('btnPrintLjk').addEventListener('click', () => window.print());
+            let badgeColor = q.type === 'PG' ? 'bg-blue-100 text-blue-700' : (q.type === 'Jodoh' ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700');
+            
+            let html = `
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${badgeColor}">${q.category}</span>
+                    <span class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider">Bobot ${q.points} Poin</span>
+                </div>
+            `;
 
-      // Demo Grade All Students in Results Tab
-      document.getElementById('btnDemoGradeAll').addEventListener('click', () => {
-        const pg = ['A', 'B', 'C', 'D'];
-        const mt = ['A', 'B', 'C', 'D', 'E'];
-        const tf = ['B', 'S'];
-        appState.students.forEach(stu => {
-          if (Object.keys(stu.answers || {}).length === 0) {
-            stu.answers = {};
-            for (let i = 1; i <= 10; i++) stu.answers[i] = Math.random() < 0.8 ? appState.answerKey[i] : pg[Math.floor(Math.random() * 4)];
-            for (let i = 11; i <= 15; i++) stu.answers[i] = Math.random() < 0.78 ? appState.answerKey[i] : mt[Math.floor(Math.random() * 5)];
-            for (let i = 16; i <= 20; i++) stu.answers[i] = Math.random() < 0.85 ? appState.answerKey[i] : tf[Math.floor(Math.random() * 2)];
-          }
-        });
-        saveState();
-        renderResultsTab();
-        updateHeaderSummary();
-        showToast('Seluruh 30 siswa Kelas 5 telah terisi simulasi nilai LJK!', '⚡');
-      });
+            if(q.stimulus) {
+                html += `
+                <div class="bg-white p-5 rounded-2xl border-l-4 border-indigo-500 shadow-sm mb-6 text-sm leading-relaxed font-serif text-slate-700">
+                    <strong class="block text-indigo-900 mb-2 font-sans">${q.stimulusTitle}</strong>
+                    ${q.stimulus.replace(/\n/g, '<br>')}
+                </div>`;
+            }
 
-      // Copy Grade Table to Clipboard
-      document.getElementById('btnCopyGradeTable').addEventListener('click', () => {
-        const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-        const rows = [
-          [`Rekap Nilai ${appState.schoolName} - ${appState.subject} (${appState.examDate})`],
-          [`Wali Kelas: ${appState.teacherName}`],
-          ['No Absen', 'Nama Siswa', 'Benar PG (10)', 'Benar Menjodohkan (5)', 'Benar B/S (5)', 'Total Benar (20)', 'Nilai Akhir', 'Ketuntasan'].join('\t')
-        ];
-        sorted.forEach(s => {
-          const sc = calculateStudentScore(s);
-          rows.push([
-            String(s.absen).padStart(2, '0'),
-            s.name,
-            sc.isGraded ? sc.pgCorrect : 0,
-            sc.isGraded ? sc.matchCorrect : 0,
-            sc.isGraded ? sc.tfCorrect : 0,
-            sc.isGraded ? sc.totalCorrect : 0,
-            sc.isGraded ? sc.finalScore : 0,
-            sc.isGraded ? (sc.passed ? 'TUNTAS' : 'REMEDIAL') : 'BELUM DINILAI'
-          ].join('\t'));
-        });
-        const text = rows.join('\n');
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('Rekap nilai 30 siswa disalin ke Clipboard!', '📋');
-      });
+            html += `
+                <h3 class="text-lg font-bold text-slate-900 mb-6 leading-snug">${q.question}</h3>
+                <div class="space-y-3" id="options-container">
+                    <!-- Populated by renderOptions -->
+                </div>
+            `;
+            
+            const qContainer = document.getElementById('question-container');
+            qContainer.innerHTML = html;
+            
+            // Trigger reflow for animation
+            qContainer.classList.remove('animate-slide-in');
+            void qContainer.offsetWidth; 
+            qContainer.classList.add('animate-slide-in');
 
-      // Export CSV
-      document.getElementById('btnExportCsv').addEventListener('click', () => {
-        const sorted = [...appState.students].sort((a, b) => a.absen - b.absen);
-        const csvLines = [
-          `"Rekap Nilai Ulangan ${appState.schoolName} - ${appState.subject} (${appState.examDate})"`,
-          `"Wali Kelas: ${appState.teacherName}"`,
-          'No Absen,Nama Siswa,Benar Pilihan Ganda (10),Benar Menjodohkan (5),Benar B/S (5),Total Benar (20),Nilai Akhir,Status Ketuntasan'
-        ];
-        sorted.forEach(s => {
-          const sc = calculateStudentScore(s);
-          csvLines.push([
-            String(s.absen).padStart(2, '0'),
-            `"${s.name.replace(/"/g, '""')}"`,
-            sc.isGraded ? sc.pgCorrect : 0,
-            sc.isGraded ? sc.matchCorrect : 0,
-            sc.isGraded ? sc.tfCorrect : 0,
-            sc.isGraded ? sc.totalCorrect : 0,
-            sc.isGraded ? sc.finalScore : 0,
-            sc.isGraded ? (sc.passed ? 'TUNTAS' : 'REMEDIAL') : 'BELUM DINILAI'
-          ].join(','));
-        });
-        const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Rekap_Nilai_Kelas5_SDN4_Rambutan.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast('File Rekap Nilai Excel (.CSV) berhasil diunduh!', '📥');
-      });
-    }
+            renderOptions();
+            startTimer();
+        }
 
-    // Boot Application
-    window.addEventListener('DOMContentLoaded', () => {
-      initEvents();
-      applyViewportMode();
-      updateHeaderSummary();
-      renderScanTab();
-    });
-  </script>
+        function renderOptions() {
+            const q = quizData[state.currentIndex];
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            
+            let optionsHtml = q.options.map((opt, idx) => {
+                const isSelected = state.answers[state.currentIndex] === idx;
+                const isLocked = state.timeRemainingMap[state.currentIndex] <= 0;
+                
+                let btnClass = 'border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50 cursor-pointer';
+                let labelClass = 'bg-slate-100 text-slate-600';
+                
+                if (isSelected) {
+                    btnClass = 'border-blue-600 bg-blue-50 ring-2 ring-blue-200';
+                    labelClass = 'bg-blue-600 text-white';
+                }
+                
+                if (isLocked) {
+                    btnClass += ' opacity-60 cursor-not-allowed';
+                }
+                
+                return `
+                <button id="opt-${idx}" onclick="handleAnswer(${idx})" ${isLocked ? 'disabled' : ''} class="w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-4 group ${btnClass}">
+                    <span class="w-8 h-8 rounded-lg font-bold flex items-center justify-center shrink-0 transition-colors ${labelClass}">${labels[idx]}</span>
+                    <span class="text-sm font-medium text-slate-800">${opt.text}</span>
+                </button>
+                `;
+            }).join('');
+            
+            document.getElementById('options-container').innerHTML = optionsHtml;
+        }
+
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            updateTimerUI(); // Initial draw based on saved time
+            
+            if (state.timeRemainingMap[state.currentIndex] <= 0) return; // Time already up
+            
+            state.timerInterval = setInterval(() => {
+                state.timeRemainingMap[state.currentIndex]--;
+                updateTimerUI();
+                
+                if(state.timeRemainingMap[state.currentIndex] <= 0) {
+                    clearInterval(state.timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const currentLeft = state.timeRemainingMap[state.currentIndex];
+            const bar = document.getElementById('timer-bar');
+            const txt = document.getElementById('timer-text');
+            
+            let pct = (currentLeft / TIME_PER_QUESTION) * 100;
+            if (pct < 0) pct = 0;
+            bar.style.width = `${pct}%`;
+            
+            let m = Math.floor(currentLeft / 60).toString().padStart(2, '0');
+            let s = (currentLeft % 60).toString().padStart(2, '0');
+            txt.innerText = `${m}:${s}`;
+            
+            if(pct > 50) bar.className = "h-full w-full rounded-r-full shadow-[0_0_10px_rgba(16,185,129,0.5)] bg-emerald-500 transition-all duration-1000";
+            else if(pct > 20) bar.className = "h-full w-full rounded-r-full shadow-[0_0_10px_rgba(245,158,11,0.5)] bg-amber-500 transition-all duration-1000";
+            else bar.className = "h-full w-full rounded-r-full shadow-[0_0_10px_rgba(239,68,68,0.5)] bg-rose-500 transition-all duration-1000";
+            
+            if(pct <= 20) txt.classList.replace('text-amber-400', 'text-rose-400');
+            else txt.classList.replace('text-rose-400', 'text-amber-400');
+        }
+
+        function handleAnswer(idx) {
+            // Cek apakah waktu sudah habis untuk soal ini
+            if (state.timeRemainingMap[state.currentIndex] <= 0) return;
+            
+            // Simpan jawaban
+            state.answers[state.currentIndex] = idx;
+            renderOptions(); // Visual Update
+            playTone('click');
+            
+            // Auto advance (langsung pindah tanpa konfirmasi) setelah jeda pendek
+            setTimeout(() => {
+                nextQuestion();
+            }, 500); 
+        }
+
+        function handleTimeout() {
+            playTone('timeout');
+            renderOptions(); // Update visual to lock options
+            
+            // Otomatis pindah halaman jika waktu habis setelah jeda agar siswa menyadari
+            setTimeout(() => {
+                nextQuestion();
+            }, 1500);
+        }
+
+        function nextQuestion() {
+            if(state.currentIndex < quizData.length - 1) {
+                state.currentIndex++;
+                renderQuestion();
+            } else {
+                calculateAndShowResult();
+            }
+        }
+        
+        function prevQuestion() {
+            if(state.currentIndex > 0) {
+                state.currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        // 6. RESULT & REPORT
+        function calculateAndShowResult() {
+            clearInterval(state.timerInterval);
+            
+            // Hitung skor diam-diam di belakang layar
+            let totalPG = 0, totalMatch = 0, totalTF = 0;
+            quizData.forEach((q, i) => {
+                const ansIdx = state.answers[i];
+                if (ansIdx !== null && ansIdx !== undefined) {
+                    if (q.options[ansIdx].isCorrect) {
+                        if (q.type === 'PG') totalPG += q.points;
+                        else if (q.type === 'Jodoh') totalMatch += q.points;
+                        else if (q.type === 'TF') totalTF += q.points;
+                    }
+                }
+            });
+            state.scorePG = totalPG;
+            state.scoreMatch = totalMatch;
+            state.scoreTF = totalTF;
+            state.totalScore = totalPG + totalMatch + totalTF;
+
+            // Transisi Layar
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            
+            document.getElementById('res-name').innerText = state.student.name;
+            document.getElementById('res-absen').innerText = state.student.absen;
+            
+            // Animasi perhitungan skor akhir
+            const scoreEl = document.getElementById('res-score');
+            let currentDisplay = 0;
+            const target = state.totalScore;
+            
+            if (target === 0) {
+                scoreEl.innerText = 0;
+                setPredikat(0);
+            } else {
+                const inc = target / 30; // 30 frames
+                const timer = setInterval(() => {
+                    currentDisplay += inc;
+                    if(currentDisplay >= target) {
+                        currentDisplay = target;
+                        clearInterval(timer);
+                        setPredikat(target);
+                    }
+                    scoreEl.innerText = Math.floor(currentDisplay);
+                }, 30);
+            }
+
+            document.getElementById('res-pg').innerHTML = `${state.scorePG} <span class="text-sm font-medium text-blue-400">/ 50</span>`;
+            document.getElementById('res-match').innerHTML = `${state.scoreMatch} <span class="text-sm font-medium text-purple-400">/ 20</span>`;
+            document.getElementById('res-tf').innerHTML = `${state.scoreTF} <span class="text-sm font-medium text-emerald-400">/ 30</span>`;
+            
+            generatePrintableKey();
+        }
+
+        function setPredikat(score) {
+            const el = document.getElementById('res-predikat');
+            if(score >= 85) { el.innerText = "Sangat Baik (A)"; el.className = "mt-2 text-sm font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700"; }
+            else if(score >= 70) { el.innerText = "Baik / Tuntas (B)"; el.className = "mt-2 text-sm font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-700"; }
+            else { el.innerText = "Perlu Bimbingan (C)"; el.className = "mt-2 text-sm font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-700"; }
+        }
+
+        // 7. PRINTABLE ANSWER KEY
+        function generatePrintableKey() {
+            let html = '';
+            html += `<h3 class="font-bold text-lg border-b border-black mt-6 mb-2 pb-1">BAGIAN I: Pilihan Ganda (No 1-10)</h3>`;
+            quizData.filter(q => q.type === 'PG').forEach(q => {
+                let correctOpt = q.options.find(o => o.isCorrect);
+                html += `
+                <div class="print-item">
+                    <p><strong>${q.id}.</strong> ${q.question}</p>
+                    <p class="mt-1"><strong>Kunci:</strong> ${correctOpt.text}</p>
+                    <p class="text-gray-600 italic"><strong>Pembahasan:</strong> ${correctOpt.feedback}</p>
+                </div>`;
+            });
+
+            html += `<h3 class="font-bold text-lg border-b border-black mt-8 mb-2 pb-1">BAGIAN II: Menjodohkan (No 11-15)</h3>`;
+            quizData.filter(q => q.type === 'Jodoh').forEach(q => {
+                 let correctOpt = q.options.find(o => o.isCorrect);
+                 html += `
+                <div class="print-item">
+                    <p><strong>${q.id}.</strong> ${q.question}</p>
+                    <p class="mt-1"><strong>Kunci (Pasangan Tepat):</strong> ${correctOpt.text}</p>
+                </div>`;
+            });
+
+            html += `<h3 class="font-bold text-lg border-b border-black mt-8 mb-2 pb-1 page-break">BAGIAN III: Benar / Salah (No 16-20)</h3>`;
+            quizData.filter(q => q.type === 'TF').forEach(q => {
+                 let correctOpt = q.options.find(o => o.isCorrect);
+                 html += `
+                <div class="print-item">
+                    <p><strong>${q.id}.</strong> ${q.question}</p>
+                    <p class="mt-1"><strong>Kunci:</strong> ${correctOpt.text}</p>
+                    <p class="text-gray-600 italic"><strong>Alasan:</strong> ${correctOpt.feedback}</p>
+                </div>`;
+            });
+
+            document.getElementById('key-content').innerHTML = html;
+        }
+
+        function showAnswerKey() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-key').classList.remove('hidden');
+            setTimeout(() => window.print(), 500);
+        }
+
+        function backToResult() {
+            document.getElementById('screen-key').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+        }
+
+    </script>
 </body>
 </html>
+```eof
