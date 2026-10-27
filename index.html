@@ -3,599 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asesmen Bahasa Indonesia - Layar PID</title>
-    
-    <!-- Google Fonts: Nunito -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <title>Aplikasi Ujian Interaktif - SDN 4 Rambutan</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Custom CSS untuk efek Gamified & Tombol 3D -->
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f0f9ff; /* Light blue background */
-            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
-            background-size: 30px 30px;
-        }
-
-        /* 3D Button Base */
-        .btn-3d {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            border-radius: 1rem; /* rounded-2xl */
-            transition: all 0.1s ease;
-            top: 0;
-            user-select: none;
-            cursor: pointer;
-            border: 2px solid rgba(0,0,0,0.1);
-        }
-
-        /* Blue Button */
-        .btn-3d-blue {
-            background-color: #3b82f6;
-            color: white;
-            box-shadow: 0 6px 0 #1d4ed8;
-        }
-        .btn-3d-blue:active {
-            top: 6px;
-            box-shadow: 0 0px 0 #1d4ed8;
-        }
-
-        /* Green Button */
-        .btn-3d-green {
-            background-color: #22c55e;
-            color: white;
-            box-shadow: 0 6px 0 #15803d;
-        }
-        .btn-3d-green:active {
-            top: 6px;
-            box-shadow: 0 0px 0 #15803d;
-        }
-
-        /* Yellow Button */
-        .btn-3d-yellow {
-            background-color: #eab308;
-            color: #451a03;
-            box-shadow: 0 6px 0 #a16207;
-        }
-        .btn-3d-yellow:active {
-            top: 6px;
-            box-shadow: 0 0px 0 #a16207;
-        }
-
-        /* Option Button (Unselected) */
-        .btn-option {
-            background-color: white;
-            color: #334155;
-            box-shadow: 0 4px 0 #cbd5e1;
-            border: 2px solid #e2e8f0;
-            text-align: left;
-            justify-content: flex-start;
-        }
-        .btn-option:active {
-            top: 4px;
-            box-shadow: 0 0px 0 #cbd5e1;
-        }
-
-        /* Option Button (Selected) */
-        .btn-option-selected {
-            background-color: #fef08a; /* yellow-200 */
-            color: #854d0e;
-            border-color: #eab308;
-            box-shadow: 0 4px 0 #ca8a04;
-        }
-        .btn-option-selected:active {
-            top: 4px;
-            box-shadow: 0 0px 0 #ca8a04;
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border: 4px solid white;
-        }
-
-        /* Animasi timer berkedip saat kritis */
-        @keyframes pulse-red {
-            0%, 100% { color: #ef4444; transform: scale(1); }
-            50% { color: #991b1b; transform: scale(1.05); }
-        }
-        .timer-critical {
-            animation: pulse-red 1s infinite;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
+    <div id="root"></div>
 
-    <!-- Container Utama -->
-    <div class="w-full max-w-4xl min-h-[600px] flex flex-col" id="app-container">
-        
-        <!-- ================= START SCREEN ================= -->
-        <div id="start-screen" class="glass-panel w-full p-8 md:p-12 flex flex-col items-center text-center my-auto transition-opacity duration-300">
-            <div class="mb-6 inline-block bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-bold text-sm tracking-widest uppercase">
-                Ujian Interaktif
-            </div>
-            <h1 class="text-4xl md:text-5xl font-black text-slate-800 mb-2 leading-tight">Asesmen<br><span class="text-blue-600">Bahasa Indonesia</span></h1>
-            <p class="text-slate-500 font-semibold mb-8 text-lg">Kelas V / Semester I • Waktu: 90 Menit</p>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-            <div class="w-full max-w-md bg-slate-50 p-6 rounded-2xl border-2 border-slate-100 mb-8 text-left">
-                <div class="mb-4">
-                    <label class="block text-slate-700 font-bold mb-2 ml-1">Nama Siswa</label>
-                    <input type="text" id="input-nama" placeholder="Masukkan namamu..." class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all font-semibold text-slate-700">
-                </div>
-                <div>
-                    <label class="block text-slate-700 font-bold mb-2 ml-1">No. Absen</label>
-                    <input type="number" id="input-absen" placeholder="Contoh: 12" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all font-semibold text-slate-700">
-                </div>
-            </div>
+        const questions = [
+            // ================= BAGIAN A: PILIHAN GANDA (Bobot: 5) =================
+            {
+                id: 1, section: "A", weight: 5,
+                stimulus: "Pada perumusan dasar negara Indonesia, BPUPKI menggelar sidang pertama pada 29 Mei – 1 Juni 1945. Tokoh-tokoh bangsa menyampaikan gagasan dasar negara. Selanjutnya dibentuk Panitia Sembilan yang berhasil menyusun Piagam Jakarta pada tanggal 22 Juni 1945. Setelah melalui musyawarah dan penyesuaian demi menjaga persatuan bangsa, Pancasila disahkan secara resmi sebagai dasar negara oleh PPKI pada tanggal 18 Agustus 1945.",
+                text: "1. Berdasarkan narasi di atas, jarak waktu antara perumusan Rancangan Piagam Jakarta oleh Panitia Sembilan hingga pengesahan resmi Pancasila oleh PPKI adalah ....",
+                options: ["22 hari", "57 hari", "81 hari", "2 bulan 18 hari"],
+                answer: 1 // B. 57 hari
+            },
+            {
+                id: 2, section: "A", weight: 5,
+                stimulus: "Kelas V SDN 4 Rambutan mengadakan pemilihan ketua kelas secara demokratis. Hasil penghitungan suara (tally) dicatat pada papan tulis sebagai berikut:\n- Kadir: 15 suara\n- Yamid: 10 suara\n- Ona: 13 suara\nTotal peserta didik yang memberikan suara adalah 38 orang.",
+                text: "2. Berdasarkan data di atas, kesimpulan hasil musyawarah dan sikap berpancasila yang wajib ditunjukkan oleh seluruh siswa Kelas V adalah ....",
+                options: [
+                    "Kadir terpilih menjadi ketua kelas karena unggul 5 suara dari Yamid, dan para calon lain harus saling bekerja sama.",
+                    "Ona terpilih menjadi ketua kelas karena meraih suara terbanyak kedua.",
+                    "Pemilihan harus diulang karena jumlah suara Kadir kurang dari setengah total pemilih (38 suara).",
+                    "Yamid tidak perlu menerima hasil keputusan karena selisih suaranya terlalu jauh."
+                ],
+                answer: 0 // A
+            },
+            {
+                id: 3, section: "A", weight: 5,
+                text: "3. Saat penyusunan Piagam Jakarta pada 22 Juni 1945, terdapat perbedaan pendapat mengenai rumusan sila pertama. Para perumus Pancasila sepakat mengutamakan persatuan nasional di atas kepentingan kelompok sehingga menyetujui perubahan rumusan sila pertama menjadi \"Ketuhanan Yang Maha Esa\". Sikap perumus Pancasila yang wajib kita teladani dalam kehidupan sehari-hari adalah ....",
+                options: [
+                    "Mempertahankan pendapat pribadi hingga semua orang mengalah",
+                    "Berjiwa besar, bertoleransi, dan mendahulukan kepentingan bersama",
+                    "Menolak hasil musyawarah jika tidak sesuai dengan keinginan diri sendiri",
+                    "Mengikuti pendapat mayoritas hanya jika mendapatkan keuntungan pribadi"
+                ],
+                answer: 1 // B
+            },
+            {
+                id: 4, section: "A", weight: 5,
+                text: "4. Ketika bencana banjir menimpa warga sekitar sekolah, siswa kelas V SDN 4 Rambutan mengumpulkan sumbangan sukarela (Sila ke-2), berdoa bersama untuk keselamatan korban (Sila ke-1), dan menyalurkan bantuan secara gotong royong tanpa membedakan suku (Sila ke-3). Hal ini membuktikan bahwa sila-sila dalam Pancasila ....",
+                options: [
+                    "Dapat diterapkan secara terpisah sesuai kebutuhan situasi",
+                    "Merupakan satu kesatuan utuh yang saling berkaitan dan menjiwai satu sama lain",
+                    "Hanya sila kedua yang paling penting diterapkan dalam aksi sosial",
+                    "Berdiri sendiri-sendiri tanpa ada hubungan antarsila"
+                ],
+                answer: 1 // B
+            },
+            {
+                id: 5, section: "A", weight: 5,
+                stimulus: "Warga Desa Rambutan mengadakan gotong royong membersihkan saluran air. Kegiatan dimulai pukul 07.00 WIB dan selesai pukul 10.00 WIB. Dari total 60 KK warga, sebanyak 45 KK hadir bergotong royong, sedangkan sisanya berhalangan karena sakit dan memberikan bantuan makanan.",
+                text: "5. Persentase tingkat partisipasi warga yang hadir langsung dalam kegiatan gotong royong tersebut serta nilai Pancasila yang tercermin adalah ....",
+                options: [
+                    "50% - Nilai Keadilan Sosial",
+                    "65% - Nilai Persatuan Indonesia",
+                    "75% - Nilai Persatuan dan Gotong Royong",
+                    "80% - Nilai Kerakyatan"
+                ],
+                answer: 2 // C
+            },
+            {
+                id: 6, section: "A", weight: 5,
+                text: "6. Setiap berangkat sekolah, Ani selalu mencium tangan orang tuanya dan mengucapkan salam. Di jalan raya, ayah Ani memakai helm standar dan berhenti saat lampu lalu lintas berwarna merah. Secara berurutan, norma yang diterapkan oleh Ani dan Ayahnya adalah norma ....",
+                options: [
+                    "Kesopanan dan Norma Hukum",
+                    "Kesusilaan dan Norma Agama",
+                    "Agama dan Norma Kesopanan",
+                    "Hukum dan Norma Kesusilaan"
+                ],
+                answer: 0 // A
+            },
+            {
+                id: 7, section: "A", weight: 5,
+                stimulus: "Alokasi waktu harian Dodi setelah pulang sekolah (14.00 – 20.00 / 6 jam):\n- Bermain game: 3 jam\n- Membantu orang tua: 30 menit\n- Mengerjakan PR dan belajar: 1 jam\n- Istirahat dan mandi: 1,5 jam",
+                text: "7. Analisis yang tepat mengenai pemenuhan hak dan pelaksanaan kewajiban Dodi sebagai anak adalah ....",
+                options: [
+                    "Dodi sudah seimbang karena waktu bermain game sama dengan waktu belajarnya.",
+                    "Dodi belum seimbang karena porsi waktu bermain game (50% dari waktu luang) jauh lebih dominan dibanding kewajiban belajar dan membantu orang tua.",
+                    "Dodi tidak mendapatkan haknya untuk menikmati waktu luang bersama keluarga.",
+                    "Dodi telah melaksanakan kewajibannya melebihi hak yang diterimanya di rumah."
+                ],
+                answer: 1 // B
+            },
+            {
+                id: 8, section: "A", weight: 5,
+                text: "8. Di perpustakaan SDN 4 Rambutan, Riko menemukan uang jatuh sebesar Rp20.000,00. Meskipun tidak ada orang yang melihat, Riko tidak mengambil uang tersebut melainkan menyerahkannya kepada petugas perpustakaan. Tindakan Riko didasari oleh dorongan hati nurani yang mencerminkan pelaksanaan norma ....",
+                options: ["Kesopanan", "Kesusilaan", "Hukum", "Agama"],
+                answer: 1 // B
+            },
+            {
+                id: 9, section: "A", weight: 5,
+                text: "9. Kelompok belajar Sintia mengalami perdebatan sengit saat menentukan tema kliping Pendidikan Pancasila. Dua anggota kelompok saling memaksakan kehendaknya. Langkah terbaik yang harus diambil Sintia sesuai prinsip musyawarah Pancasila adalah ....",
+                options: [
+                    "Menghentikan kerja kelompok dan melaporkan teman-temannya ke kepala sekolah",
+                    "Mengambil keputusan sendiri tanpa memedulikan anggota kelompok yang lain",
+                    "Mengajak seluruh anggota duduk bersama, mendengarkan alasan tiap usulan, dan mencari kesepakatan bersama secara santun",
+                    "Mengikuti usulan anggota yang paling galak agar diskusi cepat selesai"
+                ],
+                answer: 2 // C
+            },
+            {
+                id: 10, section: "A", weight: 5,
+                text: "10. Dalam sebuah data tata tertib sekolah, tercatat 12 dari 120 siswa kelas V sering terlambat masuk kelas setelah jam istirahat. Jika hal ini dibiarkan, akibat buruk yang terjadi terhadap penerapan norma di sekolah adalah ....",
+                options: [
+                    "Persentase siswa yang disiplin mencapai 10%, sehingga suasana kelas menjadi tenang.",
+                    "Sebanyak 10% siswa melanggar aturan, yang dapat mengganggu hak siswa lain untuk belajar dengan tertib dan nyaman.",
+                    "Sekolah akan menghapuskan aturan jam istirahat agar siswa tidak terlambat lagi.",
+                    "Hak siswa yang terlambat akan bertambah karena guru memberikan dispensasi khusus."
+                ],
+                answer: 1 // B
+            },
 
-            <button onclick="startExam()" class="btn-3d btn-3d-green w-full max-w-md py-4 text-2xl">
-                🚀 Mulai Ujian!
-            </button>
-            
-            <div class="mt-6 text-sm font-bold text-slate-400 bg-white px-4 py-2 rounded-xl inline-block border-2 border-slate-100">
-                PETUNJUK: Setiap soal berbatas waktu 2 Menit!
-            </div>
-        </div>
+            // ================= BAGIAN B: MENJODOHKAN (Bobot: 4) =================
+            {
+                id: 11, section: "B", weight: 4,
+                text: "11. Tanggal diperingatinya Hari Lahir Pancasila sesuai pidato Ir. Soekarno di sidang BPUPKI.",
+                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
+                answer: 1 // B
+            },
+            {
+                id: 12, section: "B", weight: 4,
+                text: "12. Menjaga kebersihan kelas dengan melaksanakan piket bersama sesuai jadwal.",
+                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
+                answer: 3 // D
+            },
+            {
+                id: 13, section: "B", weight: 4,
+                text: "13. Sesuatu yang layak diterima siswa, seperti mendapatkan bimbingan dan nilai dari guru.",
+                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
+                answer: 0 // A
+            },
+            {
+                id: 14, section: "B", weight: 4,
+                text: "14. Mengucapkan kata \"permisi\" dan membungkukkan badan saat berjalan di depan guru.",
+                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
+                answer: 2 // C
+            },
+            {
+                id: 15, section: "B", weight: 4,
+                text: "15. Hasil keputusan bersama dalam musyawarah wajib dilaksanakan oleh semua peserta dengan rasa ....",
+                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
+                answer: 4 // E
+            },
 
-        <!-- ================= EXAM SCREEN ================= -->
-        <div id="exam-screen" class="hidden w-full h-full flex flex-col flex-grow">
-            <!-- Header: Timer & Info -->
-            <div class="flex justify-between items-center mb-4 px-2">
-                <div class="bg-white px-4 py-2 rounded-xl shadow-sm border-2 border-slate-200 font-bold text-slate-600">
-                    Soal <span id="soal-counter" class="text-blue-600 text-lg">1/20</span>
-                </div>
-                <!-- Timer Display -->
-                <div class="bg-white px-6 py-2 rounded-2xl shadow-sm border-4 border-slate-200 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span id="timer-display" class="font-black text-3xl text-slate-700 tracking-wider">02:00</span>
-                </div>
-            </div>
+            // ================= BAGIAN C: BENAR/SALAH (Bobot: 6) =================
+            {
+                id: 16, section: "C", weight: 6,
+                text: "16. Sidang pertama BPUPKI dipimpin oleh Ir. Soekarno untuk mengesahkan UUD NRI Tahun 1945.",
+                options: ["BENAR", "SALAH"],
+                answer: 1 // SALAH
+            },
+            {
+                id: 17, section: "C", weight: 6,
+                text: "17. Melaksanakan hasil keputusan musyawarah dengan ikhlas meskipun pendapat pribadi kita tidak terpilih merupakan cerminan pengamalan sila ke-4 Pancasila.",
+                options: ["BENAR", "SALAH"],
+                answer: 0 // BENAR
+            },
+            {
+                id: 18, section: "C", weight: 6,
+                text: "18. Sanksi bagi seseorang yang melanggar norma kesusilaan adalah hukuman penjara atau denda uang dari pengadilan negara.",
+                options: ["BENAR", "SALAH"],
+                answer: 1 // SALAH
+            },
+            {
+                id: 19, section: "C", weight: 6,
+                text: "19. Membantu orang tua membersihkan tempat tidur dan merapikan kamar setelah bangun adalah bentuk kewajiban anak di lingkungan rumah.",
+                options: ["BENAR", "SALAH"],
+                answer: 0 // BENAR
+            },
+            {
+                id: 20, section: "C", weight: 6,
+                text: "20. Apabila hak dan kewajiban dijalankan secara seimbang, maka kehidupan bermasyarakat akan menjadi harmonis, adil, dan tertib.",
+                options: ["BENAR", "SALAH"],
+                answer: 0 // BENAR
+            }
+        ];
 
-            <!-- Content Area -->
-            <div class="glass-panel flex-grow p-6 md:p-8 flex flex-col overflow-hidden relative">
-                
-                <div class="overflow-y-auto flex-grow pr-2 pb-4 custom-scrollbar" id="question-container">
-                    <!-- Teks Stimulus (jika ada) -->
-                    <div id="stimulus-container" class="mb-6 p-5 bg-blue-50 border-l-4 border-blue-500 rounded-r-2xl rounded-bl-2xl text-slate-700 leading-relaxed hidden">
-                        <!-- Stimulus content diinject di sini -->
+        const ExamApp = () => {
+            const [hasStarted, setHasStarted] = useState(false);
+            const [currentQ, setCurrentQ] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [timeLeft, setTimeLeft] = useState(120); // 120 detik (2 menit) per soal
+            const [isFinished, setIsFinished] = useState(false);
+            const [studentInfo, setStudentInfo] = useState({ name: '', number: '' });
+
+            // Timer Logic
+            useEffect(() => {
+                if (!hasStarted || isFinished) return;
+
+                const timerId = setInterval(() => {
+                    setTimeLeft(prev => {
+                        if (prev <= 1) {
+                            handleAutoNext();
+                            return 120; // reset 2 menit
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+
+                return () => clearInterval(timerId);
+            }, [hasStarted, currentQ, isFinished]);
+
+            const handleAutoNext = () => {
+                if (currentQ < questions.length - 1) {
+                    setCurrentQ(prev => prev + 1);
+                } else {
+                    setIsFinished(true);
+                }
+            };
+
+            const handleNext = () => {
+                if (currentQ < questions.length - 1) {
+                    setCurrentQ(currentQ + 1);
+                    setTimeLeft(120); // Reset timer saat pindah manual
+                } else {
+                    setIsFinished(true);
+                }
+            };
+
+            const handlePrev = () => {
+                if (currentQ > 0) {
+                    setCurrentQ(currentQ - 1);
+                    setTimeLeft(120); // Reset timer
+                }
+            };
+
+            const selectOption = (optIndex) => {
+                setAnswers({ ...answers, [currentQ]: optIndex });
+            };
+
+            const calculateScore = () => {
+                let total = 0;
+                questions.forEach((q, index) => {
+                    if (answers[index] === q.answer) {
+                        total += q.weight;
+                    }
+                });
+                return total;
+            };
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            };
+
+            if (!hasStarted) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4">
+                        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl text-center">
+                            <h1 className="text-2xl font-bold text-gray-800 mb-2">PEMERINTAH KABUPATEN BANYUASIN</h1>
+                            <h2 className="text-xl font-semibold text-gray-700">SD NEGERI 4 RAMBUTAN</h2>
+                            <p className="text-gray-600 mb-6 font-medium">SUMATIF TENGAH SEMESTER (STS) 1 TAHUN AJARAN 2024/2025</p>
+                            
+                            <div className="bg-blue-50 p-4 rounded-lg text-left mb-6 border border-blue-200">
+                                <p><strong>Mata Pelajaran:</strong> Pendidikan Pancasila</p>
+                                <p><strong>Kelas:</strong> V (Lima)</p>
+                                <p className="mt-2 text-sm text-red-600 font-semibold">* Aturan: Setiap soal diberi batas waktu 2 menit otomatis.</p>
+                            </div>
+
+                            <div className="flex flex-col gap-4 mb-8">
+                                <input 
+                                    type="text" placeholder="Masukkan Nama Siswa" 
+                                    className="border-2 border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:border-blue-500"
+                                    onChange={e => setStudentInfo({...studentInfo, name: e.target.value})}
+                                />
+                                <input 
+                                    type="text" placeholder="Masukkan No. Absen" 
+                                    className="border-2 border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:border-blue-500"
+                                    onChange={e => setStudentInfo({...studentInfo, number: e.target.value})}
+                                />
+                            </div>
+
+                            <button 
+                                onClick={() => { if(studentInfo.name) setHasStarted(true); else alert('Silakan isi nama terlebih dahulu!'); }}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-full text-xl shadow-lg transition transform hover:scale-105"
+                            >
+                                MULAI UJIAN
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (isFinished) {
+                const finalScore = calculateScore();
+                let message = "";
+                if(finalScore >= 85) message = "Luar Biasa! Pertahankan prestasimu.";
+                else if(finalScore >= 70) message = "Bagus! Kamu sudah menguasai materi.";
+                else message = "Tetap Semangat! Terus belajar dengan giat ya.";
+
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4 fade-in">
+                        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl text-center">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-2">Ujian Selesai!</h2>
+                            <p className="text-gray-600 mb-6">Terima kasih, <strong>{studentInfo.name}</strong> (Absen: {studentInfo.number})</p>
+                            
+                            <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-inner mb-6">
+                                <p className="text-lg">Nilai Akhir Kamu</p>
+                                <p className="text-6xl font-black mt-2">{finalScore}</p>
+                                <p className="text-sm mt-4 bg-white/20 inline-block px-4 py-1 rounded-full">Skor Maksimal: 100</p>
+                            </div>
+                            
+                            <p className="text-lg font-semibold text-gray-700 italic">{message}</p>
+                            
+                            <button 
+                                onClick={() => window.location.reload()}
+                                className="mt-8 bg-gray-800 hover:bg-gray-900 text-white py-3 px-8 rounded-full font-semibold transition"
+                            >
+                                Selesai
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            const q = questions[currentQ];
+
+            return (
+                <div className="min-h-screen flex flex-col fade-in">
+                    {/* Header */}
+                    <div className="bg-white shadow-md p-4 sticky top-0 z-10 flex justify-between items-center">
+                        <div>
+                            <p className="text-sm text-gray-500 font-semibold">Soal {currentQ + 1} dari {questions.length}</p>
+                            <p className="font-bold text-blue-600">Bagian {q.section}</p>
+                        </div>
+                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold ${timeLeft <= 30 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-green-100 text-green-700'}`}>
+                            ⏱ {formatTime(timeLeft)}
+                        </div>
                     </div>
 
-                    <!-- Pertanyaan -->
-                    <h2 id="question-text" class="text-xl md:text-2xl font-bold text-slate-800 mb-6 leading-snug">
-                        <!-- Teks pertanyaan -->
-                    </h2>
+                    {/* Question Content */}
+                    <div className="flex-1 w-full max-w-3xl mx-auto p-4 md:p-6 pb-24">
+                        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+                            {q.stimulus && (
+                                <div className="bg-amber-50 p-4 rounded-lg mb-6 border border-amber-200 text-gray-800 text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+                                    {q.stimulus}
+                                </div>
+                            )}
+                            
+                            <h3 className="text-lg md:text-xl font-medium text-gray-800 leading-relaxed mb-6">
+                                {q.text}
+                            </h3>
 
-                    <!-- Pilihan Jawaban -->
-                    <div id="options-container" class="flex flex-col gap-4 mt-auto">
-                        <!-- Tombol opsi diinject di sini -->
+                            <div className="flex flex-col gap-3">
+                                {q.options.map((opt, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => selectOption(idx)}
+                                        className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                                            answers[currentQ] === idx 
+                                            ? 'border-blue-500 bg-blue-50 text-blue-800 font-medium shadow-md' 
+                                            : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50 text-gray-700'
+                                        }`}
+                                    >
+                                        {opt}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Navigation Footer */}
+                    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                        <div className="max-w-3xl mx-auto flex justify-between">
+                            <button 
+                                onClick={handlePrev} 
+                                disabled={currentQ === 0}
+                                className={`px-6 py-3 rounded-xl font-bold transition ${currentQ === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                            >
+                                ← Kembali
+                            </button>
+                            
+                            <button 
+                                onClick={handleNext}
+                                className={`px-8 py-3 rounded-xl font-bold shadow-md transition ${
+                                    currentQ === questions.length - 1 
+                                    ? 'bg-green-500 hover:bg-green-600 text-white' 
+                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                }`}
+                            >
+                                {currentQ === questions.length - 1 ? 'Selesai ✔' : 'Lanjut →'}
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Footer: Navigasi (tetap di bawah) -->
-                <div class="mt-6 pt-4 border-t-2 border-slate-100 flex justify-between gap-4 shrink-0">
-                    <button onclick="prevQuestion()" id="btn-prev" class="btn-3d btn-3d-yellow px-6 py-3 text-lg flex-1 max-w-[200px]">
-                        ◀ Kembali
-                    </button>
-                    <button onclick="nextQuestion()" id="btn-next" class="btn-3d btn-3d-blue px-6 py-3 text-lg flex-1 max-w-[200px]">
-                        Lanjut ▶
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= RESULT SCREEN ================= -->
-        <div id="result-screen" class="hidden glass-panel w-full p-8 md:p-12 flex flex-col items-center text-center my-auto">
-            <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-2">Ujian Selesai!</h2>
-            <p class="text-xl text-slate-600 font-bold mb-8">Kerja bagus, <span id="res-nama" class="text-blue-600"></span>!</p>
-
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-3xl shadow-lg border-4 border-white mb-8 w-full max-w-sm relative overflow-hidden">
-                <!-- Dekorasi latar -->
-                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
-                <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
-                
-                <p class="text-blue-100 font-bold text-lg mb-2 uppercase tracking-wider relative z-10">Nilai Akhir</p>
-                <div id="res-score" class="text-7xl font-black text-white relative z-10 drop-shadow-md">100</div>
-                <div class="mt-4 flex justify-center gap-4 text-blue-100 font-semibold relative z-10">
-                    <div class="bg-black/20 px-3 py-1 rounded-lg">Benar: <span id="res-correct" class="text-white"></span></div>
-                    <div class="bg-black/20 px-3 py-1 rounded-lg">Salah: <span id="res-wrong" class="text-white"></span></div>
-                </div>
-            </div>
-
-            <button onclick="resetApp()" class="btn-3d btn-3d-green px-8 py-4 text-xl">
-                🔄 Ulangi Ujian
-            </button>
-        </div>
-
-    </div>
-
-    <!-- Data dan Logika Aplikasi -->
-    <script>
-        // --- 1. DATA SOAL ---
-        const stimulus1 = "<b>Mengenal Taha</b><br/><br/>Taha adalah anak kelas V SD yang sangat teratur. Setiap kali pulang sekolah, ia tidak pernah membiarkan tas dan sepatu berserakan. Ia langsung mengganti seragamnya, lalu menyusun buku-buku pelajaran di meja belajarnya dengan apik. Selain disiplin, Taha juga dikenal sebagai anak yang periang. Ia suka menyapa teman-temannya dengan senyuman hangat. Namun, ketika ada temannya yang kesulitan memahami pelajaran, Taha dengan tekun dan telaten membantunya hingga paham.";
-        const stimulus2 = "<b>Keteguhan Heo</b><br/><br/>Abu vulkanik dari letusan gunung membumbung tinggi menutup langit. Suasana menjadi gelap gulita. Orang-orang berlarian menyelamatkan diri sambil berteriak ketakutan. Di tengah kepanikan itu, Heo tidak memikirkan dirinya sendiri. Ia teringat pada adik dan kedua orang tuanya yang berada di desa sebelah. Tanpa ragu, Heo memacu kudanya sekuat tenaga menembus hujan abu yang makin pekat. Meski matanya perih dan napasnya sesak, ia menolak untuk menyerah demi bertemu kembali dengan keluarganya.";
-        const stimulus3 = "Para pelaut tradisional mengarungi samudra luas dengan keras hati demi menghidupi keluarga mereka. Bagi mereka, laut bukanlah ancaman, melainkan jendela ke dunia lain yang penuh dengan pengetahuan dan kehidupan. kisah perjuangan para pelaut ini dicatat secara nyata dalam buku sejarah pelayaran Indonesia.";
-        const stimulus4 = "<b>Perpustakaan Mini Dira</b><br/><br/>Dira sangat hobi membaca buku cerita rakyat. Di rumahnya, ia memiliki rak buku kecil yang tertata sangat apik. Setiap kali selesai membaca, Dira selalu menuliskan ringkasan cerita dan pesan moral dalam Jurnal Membaca miliknya. Dira bercita-cita ingin menjadi seorang penulis hebat agar bisa menginspirasi anak-anak lain.";
-
-        const matchingOptions = [
-            { id: 'A', text: 'A. Editor' },
-            { id: 'B', text: 'B. Sinonim' },
-            { id: 'C', text: 'C. Antonim' },
-            { id: 'D', text: 'D. Majas Metafora' },
-            { id: 'E', text: 'E. Puisi Akrostik' }
-        ];
-
-        const trueFalseOptions = [
-            { id: 'B', text: 'BENAR (B)' },
-            { id: 'S', text: 'SALAH (S)' }
-        ];
-
-        const questionsData = [
-            // BAGIAN I: PILIHAN GANDA
-            {
-                type: 'mc', stimulus: stimulus1,
-                question: "1. Berdasarkan tindakan Taha dalam cerita di atas, sifat utama yang menggambarkan sosok Taha adalah ...",
-                options: [
-                    { id: 'A', text: "A. Penakut dan pendiam" },
-                    { id: 'B', text: "B. Rapi, disiplin, dan telaten" },
-                    { id: 'C', text: "C. Pemarah dan acuh tak acuh" },
-                    { id: 'D', text: "D. Suka mengabaikan tugas sekolah" }
-                ],
-                answer: 'B'
-            },
-            {
-                type: 'mc', stimulus: stimulus1,
-                question: "2. Perhatikan kalimat berikut: \"Taha menyusun buku-buku pelajaran di meja belajarnya dengan apik.\"<br/>Antonim dari kata apik pada kalimat tersebut adalah ...",
-                options: [
-                    { id: 'A', text: "A. Rapi" }, { id: 'B', text: "B. Indah" },
-                    { id: 'C', text: "C. Bersih" }, { id: 'D', text: "D. Berantakan" }
-                ],
-                answer: 'D'
-            },
-            {
-                type: 'mc', stimulus: stimulus2,
-                question: "3. Amanat tersirat yang dapat diambil dari kisah keteguhan Heo di atas adalah ...",
-                options: [
-                    { id: 'A', text: "A. Kita harus selalu panik saat terjadi bencana alam." },
-                    { id: 'B', text: "B. Keberanian dan kasih sayang kepada keluarga memberi kekuatan dalam menghadapi cobaan." },
-                    { id: 'C', text: "C. Menyerah adalah pilihan terbaik jika menghadapi jalan yang sangat sulit." },
-                    { id: 'D', text: "D. Kita tidak perlu memikirkan keselamatan orang lain saat terjadi bahaya." }
-                ],
-                answer: 'B'
-            },
-            {
-                type: 'mc', stimulus: stimulus2,
-                question: "4. Kata \"penyayang\" memiliki kata dasar sayang yang mendapat awalan pe-. Kata berimbuhan pe- yang menyatakan sifat seseorang dalam cerita Heo di atas adalah ...",
-                options: [
-                    { id: 'A', text: "A. Pelari" }, { id: 'B', text: "B. Pemberani" },
-                    { id: 'C', text: "C. Pemukulan" }, { id: 'D', text: "D. Pelabuhan" }
-                ],
-                answer: 'B'
-            },
-            {
-                type: 'mc', stimulus: null,
-                question: "5. Rana dan Rani adalah saudara kembar identik. Meskipun rupa mereka sangat mirip, sifat mereka berbeda. Rana adalah anak yang pendiam dan tenang, sedangkan Rani sangat aktif dan suka berbicara.<br/><br/>Manakah pernyataan berikut yang menunjukkan perbandingan sifat yang benar antara Rana dan Rani?",
-                options: [
-                    { id: 'A', text: "A. Rana lebih suka tampil di depan umum dibanding Rani." },
-                    { id: 'B', text: "B. Rani cenderung tenang saat menghadapi masalah daripada Rana." },
-                    { id: 'C', text: "C. Rana lebih banyak berdiam diri, sedangkan Rani lebih komunikatif." },
-                    { id: 'D', text: "D. Kedua saudara kembar tersebut memiliki sifat yang persis sama." }
-                ],
-                answer: 'C'
-            },
-            {
-                type: 'mc', stimulus: stimulus3,
-                question: "6. Kalimat tersebut menggunakan majas metafora \"keras hati\". Makna tersirat dari kata keras hati pada teks di atas adalah ...",
-                options: [
-                    { id: 'A', text: "A. Suka marah dan kasar" },
-                    { id: 'B', text: "B. Teguh pendirian dan pantang menyerah" },
-                    { id: 'C', text: "C. Hatinya membatu karena sedih" },
-                    { id: 'D', text: "D. Tidak mau mendengar nasehat orang lain" }
-                ],
-                answer: 'B'
-            },
-            {
-                type: 'mc', stimulus: null,
-                question: "7. Teks yang memuat kisah sejarah pelayaran berdasarkan fakta dan kejadian nyata dinamakan teks ...",
-                options: [
-                    { id: 'A', text: "A. Fiksi" }, { id: 'B', text: "B. Nonfiksi" },
-                    { id: 'C', text: "C. Dongeng" }, { id: 'D', text: "D. Mitos" }
-                ],
-                answer: 'B'
-            },
-            {
-                type: 'mc', stimulus: null,
-                question: "8. Dalam proses penerbitan buku, seorang ilustrator bertugas untuk ...",
-                options: [
-                    { id: 'A', text: "A. Memeriksa kesalahan ejaan dan tata bahasa pada naskah" },
-                    { id: 'B', text: "B. Menuliskan isi seluruh cerita dari awal sampai akhir" },
-                    { id: 'C', text: "C. Membuat gambar visual yang memperjelas dan memperindah cerita" },
-                    { id: 'D', text: "D. Menjual dan mendistribusikan buku ke toko-toko buku" }
-                ],
-                answer: 'C'
-            },
-            {
-                type: 'mc', stimulus: null,
-                question: "9. Bacalah kalimat berikut!<br/>\"Karena penebangan hutan secara liar terus terjadi di hulu sungai, saat hujan deras turun pemukiman warga dilanda banjir bandang.\"<br/><br/>Akibat utama dari peristiwa dalam kalimat di atas adalah ...",
-                options: [
-                    { id: 'A', text: "A. Penebangan hutan secara liar" },
-                    { id: 'B', text: "B. Hujan deras turun di hulu sungai" },
-                    { id: 'C', text: "C. Warga menebang pohon di hutan" },
-                    { id: 'D', text: "D. Pemukiman warga dilanda banjir bandang" }
-                ],
-                answer: 'D'
-            },
-            {
-                type: 'mc', stimulus: null,
-                question: "10. Membaca buku secara rutin dapat membuka wawasan kita tentang berbagai hal di dunia. Dengan membaca, otak terbiasa mengolah informasi dan bernalar secara kritis. Oleh karena itu, buku sering disebut sebagai jendela dunia.<br/><br/>Ide pokok dari paragraf di atas adalah ...",
-                options: [
-                    { id: 'A', text: "A. Cara membeli buku di perpustakaan" },
-                    { id: 'B', text: "B. Otak manusia tidak membutuhkan bacaan" },
-                    { id: 'C', text: "C. Manfaat penting membaca buku bagi peningkatan wawasan" },
-                    { id: 'D', text: "D. Buku hanya berguna untuk anak sekolah" }
-                ],
-                answer: 'C'
-            },
-            // BAGIAN II: MENJODOHKAN
-            {
-                type: 'match', stimulus: "<div class='text-center font-bold mb-2'>BAGIAN II: MENJODOHKAN</div>Jodohkanlah pernyataan di bawah ini dengan pilihan jawaban yang tepat!",
-                question: "11. Kata yang memiliki persamaan arti dengan kata lain.",
-                options: matchingOptions, answer: 'B'
-            },
-            {
-                type: 'match', stimulus: null,
-                question: "12. Kata atau kelompok kata yang artinya tidak sebenarnya (kiasan).",
-                options: matchingOptions, answer: 'D'
-            },
-            {
-                type: 'match', stimulus: null,
-                question: "13. Profesi yang bertugas menyunting naskah dan memperbaiki kesalahan tata bahasa sebelum diterbitkan.",
-                options: matchingOptions, answer: 'A'
-            },
-            {
-                type: 'match', stimulus: null,
-                question: "14. Puisi yang setiap huruf awal lariknya membentuk sebuah kata bermakna.",
-                options: matchingOptions, answer: 'E'
-            },
-            {
-                type: 'match', stimulus: null,
-                question: "15. Lawan kata dari suatu kata sifat.",
-                options: matchingOptions, answer: 'C'
-            },
-            // BAGIAN III: BENAR / SALAH
-            {
-                type: 'tf', stimulus: stimulus4,
-                question: "16. Dira memiliki kebiasaan menyusun buku-bukunya dengan berantakan.",
-                options: trueFalseOptions, answer: 'S'
-            },
-            {
-                type: 'tf', stimulus: stimulus4,
-                question: "17. Buku yang sering dibaca oleh Dira adalah jenis teks cerita rakyat.",
-                options: trueFalseOptions, answer: 'B'
-            },
-            {
-                type: 'tf', stimulus: stimulus4,
-                question: "18. Menuliskan hasil bacaan ke dalam Jurnal Membaca membantu Dira memahami isi cerita dengan lebih baik.",
-                options: trueFalseOptions, answer: 'B'
-            },
-            {
-                type: 'tf', stimulus: stimulus4,
-                question: "19. Cita-cita Dira adalah menjadi seorang ilustrator buku anak-anak.",
-                options: trueFalseOptions, answer: 'S'
-            },
-            {
-                type: 'tf', stimulus: stimulus4,
-                question: "20. Cerita rakyat tergolong sebagai teks nonfiksi karena ditulis berdasarkan data ilmiah.",
-                options: trueFalseOptions, answer: 'S'
-            }
-        ];
-
-        // --- 2. STATE APLIKASI ---
-        let studentData = { name: '', absen: '' };
-        let currentQuestionIndex = 0;
-        let userAnswers = new Array(questionsData.length).fill(null);
-        let timerInterval = null;
-        const TIME_PER_QUESTION = 120; // 120 detik = 2 menit
-        let timeLeft = TIME_PER_QUESTION;
-
-        // --- 3. DOM ELEMENTS ---
-        const screens = {
-            start: document.getElementById('start-screen'),
-            exam: document.getElementById('exam-screen'),
-            result: document.getElementById('result-screen')
-        };
-        const els = {
-            inputNama: document.getElementById('input-nama'),
-            inputAbsen: document.getElementById('input-absen'),
-            soalCounter: document.getElementById('soal-counter'),
-            timerDisplay: document.getElementById('timer-display'),
-            stimulusContainer: document.getElementById('stimulus-container'),
-            questionText: document.getElementById('question-text'),
-            optionsContainer: document.getElementById('options-container'),
-            btnPrev: document.getElementById('btn-prev'),
-            btnNext: document.getElementById('btn-next'),
-            resNama: document.getElementById('res-nama'),
-            resScore: document.getElementById('res-score'),
-            resCorrect: document.getElementById('res-correct'),
-            resWrong: document.getElementById('res-wrong')
+            );
         };
 
-        // --- 4. FUNGSI LOGIKA ---
-
-        function startExam() {
-            const nama = els.inputNama.value.trim();
-            const absen = els.inputAbsen.value.trim();
-
-            if (!nama || !absen) {
-                alert("Tolong isi Nama dan No. Absen terlebih dahulu ya!"); // Fallback native, tapi UI menghindari kebutuhan ini dg validasi
-                els.inputNama.focus();
-                return;
-            }
-
-            studentData.name = nama;
-            studentData.absen = absen;
-
-            screens.start.classList.add('hidden');
-            screens.exam.classList.remove('hidden');
-            
-            currentQuestionIndex = 0;
-            renderQuestion();
-        }
-
-        function renderQuestion() {
-            const q = questionsData[currentQuestionIndex];
-            
-            // Reset Scroll
-            document.getElementById('question-container').scrollTop = 0;
-
-            // Update Counter
-            els.soalCounter.innerText = `${currentQuestionIndex + 1}/${questionsData.length}`;
-
-            // Handle Nav Buttons
-            els.btnPrev.style.visibility = (currentQuestionIndex === 0) ? 'hidden' : 'visible';
-            els.btnNext.innerHTML = (currentQuestionIndex === questionsData.length - 1) ? 'Selesai 🏁' : 'Lanjut ▶';
-            els.btnNext.className = (currentQuestionIndex === questionsData.length - 1) 
-                ? 'btn-3d btn-3d-green px-6 py-3 text-lg flex-1 max-w-[200px]' 
-                : 'btn-3d btn-3d-blue px-6 py-3 text-lg flex-1 max-w-[200px]';
-
-            // Render Stimulus
-            if (q.stimulus) {
-                els.stimulusContainer.innerHTML = q.stimulus;
-                els.stimulusContainer.classList.remove('hidden');
-            } else {
-                els.stimulusContainer.classList.add('hidden');
-                els.stimulusContainer.innerHTML = '';
-            }
-
-            // Render Question
-            els.questionText.innerHTML = q.question;
-
-            // Render Options
-            els.optionsContainer.innerHTML = '';
-            q.options.forEach(opt => {
-                const isSelected = userAnswers[currentQuestionIndex] === opt.id;
-                const btnClass = isSelected ? 'btn-3d btn-option btn-option-selected w-full px-6 py-4' : 'btn-3d btn-option w-full px-6 py-4';
-                
-                const btn = document.createElement('button');
-                btn.className = btnClass;
-                btn.innerHTML = `<span class="font-bold text-lg">${opt.text}</span>`;
-                btn.onclick = () => selectOption(opt.id);
-                els.optionsContainer.appendChild(btn);
-            });
-
-            // Start/Reset Timer
-            resetTimer();
-        }
-
-        function selectOption(optionId) {
-            userAnswers[currentQuestionIndex] = optionId;
-            // Re-render only options to show selection
-            const q = questionsData[currentQuestionIndex];
-            els.optionsContainer.innerHTML = '';
-            q.options.forEach(opt => {
-                const isSelected = userAnswers[currentQuestionIndex] === opt.id;
-                const btnClass = isSelected ? 'btn-3d btn-option btn-option-selected w-full px-6 py-4' : 'btn-3d btn-option w-full px-6 py-4';
-                
-                const btn = document.createElement('button');
-                btn.className = btnClass;
-                btn.innerHTML = `<span class="font-bold text-lg">${opt.text}</span>`;
-                btn.onclick = () => selectOption(opt.id);
-                els.optionsContainer.appendChild(btn);
-            });
-        }
-
-        function nextQuestion() {
-            if (currentQuestionIndex < questionsData.length - 1) {
-                currentQuestionIndex++;
-                renderQuestion();
-            } else {
-                finishExam();
-            }
-        }
-
-        function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                renderQuestion();
-            }
-        }
-
-        // --- 5. TIMER LOGIC ---
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timeLeft = TIME_PER_QUESTION;
-            updateTimerUI();
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerUI();
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    // Time's up for this question, auto next
-                    nextQuestion();
-                }
-            }, 1000);
-        }
-
-        function updateTimerUI() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            els.timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            if (timeLeft <= 10) {
-                els.timerDisplay.classList.add('timer-critical');
-            } else {
-                els.timerDisplay.classList.remove('timer-critical');
-            }
-        }
-
-        // --- 6. SCORING & RESULT ---
-        function finishExam() {
-            clearInterval(timerInterval);
-            screens.exam.classList.add('hidden');
-            screens.result.classList.remove('hidden');
-
-            let correctCount = 0;
-            for (let i = 0; i < questionsData.length; i++) {
-                if (userAnswers[i] === questionsData[i].answer) {
-                    correctCount++;
-                }
-            }
-
-            const totalQuestions = questionsData.length;
-            const wrongCount = totalQuestions - correctCount;
-            // Rumus: (Benar / Total) * 100
-            const score = Math.round((correctCount / totalQuestions) * 100);
-
-            els.resNama.innerText = studentData.name;
-            els.resScore.innerText = score;
-            els.resCorrect.innerText = correctCount;
-            els.resWrong.innerText = wrongCount;
-        }
-
-        function resetApp() {
-            studentData = { name: '', absen: '' };
-            currentQuestionIndex = 0;
-            userAnswers = new Array(questionsData.length).fill(null);
-            
-            els.inputNama.value = '';
-            els.inputAbsen.value = '';
-            
-            screens.result.classList.add('hidden');
-            screens.start.classList.remove('hidden');
-        }
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ExamApp />);
     </script>
 </body>
 </html>
