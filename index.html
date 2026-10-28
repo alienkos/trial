@@ -2,418 +2,553 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ujian Sekolah - SDN 4 Rambutan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aplikasi Ujian STS 1 - SDN 4 Rambutan</title>
+    
+    <!-- Google Fonts: Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] },
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#f43f5e',
+                        accent: '#fbbf24',
+                        success: '#22c55e'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS untuk Layar Penuh dan Tombol 3D -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Mencegah scroll pada body */
+            background-color: #f0f9ff;
+        }
+        
+        /* Sembunyikan scrollbar tapi tetap bisa scroll pada container tertentu */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .btn-3d {
+            transition: all 0.1s;
+            border-bottom-width: 6px;
+        }
+        .btn-3d:active {
+            transform: translateY(4px);
+            border-bottom-width: 2px;
+            margin-top: 4px;
+        }
+        .btn-3d-blue { background-color: #3b82f6; border-color: #1d4ed8; color: white; }
+        .btn-3d-green { background-color: #22c55e; border-color: #15803d; color: white; }
+        .btn-3d-red { background-color: #ef4444; border-color: #b91c1c; color: white; }
+        .btn-3d-yellow { background-color: #eab308; border-color: #a16207; color: white; }
+        .btn-3d-white { background-color: #ffffff; border-color: #d1d5db; color: #1f2937; }
+        .btn-3d-white.selected { background-color: #bfdbfe; border-color: #3b82f6; border-width: 2px; border-bottom-width: 6px; }
+    </style>
+
+    <!-- React & ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel CDN untuk JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
     <div id="root"></div>
+
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        const injectGlobalStyles = () => {
-          if (!document.getElementById('nunito-font')) {
-            const link = document.createElement('link');
-            link.id = 'nunito-font';
-            link.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap';
-            link.rel = 'stylesheet';
-            document.head.appendChild(link);
-          }
-
-          if (!document.getElementById('global-styles')) {
-            const style = document.createElement('style');
-            style.id = 'global-styles';
-            style.innerHTML = `
-              * {
-                font-family: 'Nunito', sans-serif;
-                box-sizing: border-box;
-              }
-              body {
-                margin: 0;
-                padding: 0;
-                overflow: hidden;
-                background-color: #f0f9ff;
-                width: 100vw;
-                height: 100vh; /* fallback */
-                height: 100dvh; /* FIX: agar tombol bawah tidak terpotong URL bar browser HP */
-              }
-              #root {
-                width: 100%;
-                height: 100%;
-              }
-              
-              /* Scrollbar custom untuk anak-anak */
-              ::-webkit-scrollbar {
-                width: 12px;
-              }
-              ::-webkit-scrollbar-track {
-                background: #f1f1f1; 
-                border-radius: 10px;
-              }
-              ::-webkit-scrollbar-thumb {
-                background: #cbd5e1; 
-                border-radius: 10px;
-                border: 3px solid #f1f1f1;
-              }
-              ::-webkit-scrollbar-thumb:hover {
-                background: #94a3b8; 
-              }
-            `;
-            document.head.appendChild(style);
-          }
-        };
-
-        const QUESTIONS = [
-          { id: 1, type: 'PG', stimulus: 'Kegiatan Bazaar Kewirausahaan SDN 4 Rambutan\n\nDalam rangka kegiatan P5, siswa Kelas 5 SDN 4 Rambutan menggelar bazaar sekolah. Kelompok Asep berhasil menjual hasil karya kerajinan tangan dan memperoleh total uang hasil penjualan sebesar Rp85.420,00. Uang tersebut terdiri dari beberapa lembaran pecahan rupiah.', text: 'Pada bilangan 85.420, angka 5 menempati nilai tempat ...', options: ['Puluh ribuan', 'Ribuan', 'Ratusan', 'Puluhan'], answer: 1, score: 3 },
-          { id: 2, type: 'PG', stimulus: 'Kegiatan Bazaar Kewirausahaan SDN 4 Rambutan...', text: 'Bentuk dekomposisi berdasarkan nilai tempat dari total hasil penjualan Rp85.420,00 yang tepat adalah ...', options: ['80.000 + 5.000 + 400 + 20 + 0', '80.000 + 500 + 40 + 2 + 0', '8.000 + 500 + 400 + 20 + 0', '85.000 + 400 + 200 + 0'], answer: 0, score: 3 },
-          { id: 3, type: 'PG', stimulus: 'Literasi-Numerasi (Penggalangan Dana Sosial):\nSiswa Kelas 5A dan 5B mengumpulkan dana peduli bencana alam. Kelas 5A mengumpulkan uang sebesar Rp38.500,00 dan Kelas 5B mengumpulkan Rp43.250,00. Dari total uang yang terkumpul, Panitia menyalurkan Rp65.000,00 untuk membeli paket sembako.', text: 'Sisa uang bantuan peduli bencana yang belum terpakai adalah ...', options: ['Rp15.750,00', 'Rp16.750,00', 'Rp26.750,00', 'Rp81.750,00'], answer: 1, score: 3 },
-          { id: 4, type: 'PG', text: 'Perhatikan kelompok bilangan berikut: (21, 23, 27, 29)\nDi antara bilangan-bilangan di atas, pasangan bilangan yang keduanya merupakan bilangan prima adalah ...', options: ['21 dan 23', '21 dan 27', '23 dan 29', '27 dan 29'], answer: 2, score: 3 },
-          { id: 5, type: 'PG', text: 'Perkalian faktor-faktor prima (faktorisasi prima) dari bilangan 60 menggunakan pohon faktor adalah ...', options: ['2 x 3 x 5', '2² x 3 x 5', '2 x 3² x 5', '2² x 5²'], answer: 1, score: 3 },
-          { id: 6, type: 'PG', stimulus: 'HOTS - Analisis (Jadwal Ekstrakurikuler Berulang):\nAndi dan Budi mengikuti ekstrakurikuler pramuka dan pencak silat. Andi berlatih setiap 4 hari sekali, sedangkan Budi berlatih setiap 6 hari sekali.', text: 'Jika pada tanggal 2 Oktober mereka berlatih bersama untuk pertama kalinya, pada tanggal berapakah mereka akan berlatih bersama-sama lagi untuk kedua kalinya?', options: ['10 Oktober', '12 Oktober', '14 Oktober', '26 Oktober'], answer: 2, score: 3 },
-          { id: 7, type: 'PG', stimulus: 'HOTS - Pemecahan Masalah (Paket Bingkisan Sembako):\nIbu Guru menyiapkan 24 pensil dan 36 buku tulis untuk dijadikan bingkisan hadiah murid berprestasi. Setiap paket bingkisan harus berisi pensil dan buku tulis dengan jumlah yang sama banyak tanpa ada sisa.', text: 'Jumlah paket bingkisan terbanyak yang dapat dibuat oleh Ibu Guru adalah ...', options: ['6 paket', '8 paket', '12 paket', '24 paket'], answer: 2, score: 3 },
-          { id: 8, type: 'PG', stimulus: 'Numerasi (Panjang Pita Prakarya):\nTiga orang siswa menyiapkan pita untuk kerajinan tangan. Siti memiliki pita sepanjang 3/4 meter, Dayu 2/3 meter, dan Lani 5/6 meter.', text: 'Urutan nama siswa dari yang memiliki pita paling panjang hingga yang paling pendek adalah ...', options: ['Lani, Siti, Dayu', 'Siti, Dayu, Lani', 'Dayu, Siti, Lani', 'Lani, Dayu, Siti'], answer: 0, score: 3 },
-          { id: 9, type: 'PG', text: 'Ibu Nisa membeli 1/2 kg gula pasir dan 3/4 kg tepung terigu untuk keperluan praktik memasak di sekolah. Total berat seluruh bahan yang dibeli Ibu Nisa adalah ...', options: ['4/6 kg', '1 kg', '1 1/4 kg', '1 1/2 kg'], answer: 2, score: 3 },
-          { id: 10, type: 'PG', text: 'Pak Doni memiliki sebidang tanah kas desa seluas 4/5 hektar. Sebanyak 1/2 hektar dari tanah tersebut ditanami jagung, sedangkan sisanya ditanami kedelai. Luas tanah yang ditanami kedelai adalah ...', options: ['3/10 hektar', '3/5 hektar', '5/10 hektar', '1/3 hektar'], answer: 0, score: 3 },
-          { id: 11, type: 'Menjodohkan', text: 'Nilai tempat angka 5 pada bilangan 65.420.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 1, score: 4 },
-          { id: 12, type: 'Menjodohkan', text: 'Kelipatan Persekutuan Terkecil (KPK) dari 6 dan 8.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 3, score: 4 },
-          { id: 13, type: 'Menjodohkan', text: 'Faktor Persekutuan Terbesar (FPB) dari 18 dan 24.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 0, score: 4 },
-          { id: 14, type: 'Menjodohkan', text: 'Hasil dari penjumlahan pecahan 2/5 + 1/3.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 4, score: 4 },
-          { id: 15, type: 'Menjodohkan', text: 'Bentuk paling sederhana dari pecahan 8/12.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 2, score: 4 },
-          { id: 16, type: 'BS', stimulus: 'Program literasi dan numerasi rutin setiap minggu.', text: 'Bilangan 47.250 jika ditulis dalam bentuk kata/sebutan dibaca "Empat puluh tujuh ribu dua ratus lima puluh".', options: ['BENAR', 'SALAH'], answer: 0, score: 10 },
-          { id: 17, type: 'BS', text: 'Bilangan 17, 19, dan 21 seluruhnya merupakan kelompok bilangan prima di bawah 30.', options: ['BENAR', 'SALAH'], answer: 1, score: 10 },
-          { id: 18, type: 'BS', text: 'Kelipatan Persekutuan Terkecil (KPK) dari dua bilangan prima 3 dan 5 adalah 15.', options: ['BENAR', 'SALAH'], answer: 0, score: 10 },
-          { id: 19, type: 'BS', text: 'Nilai pecahan 3/5 lebih kecil daripada nilai pecahan 2/3.', options: ['BENAR', 'SALAH'], answer: 0, score: 10 },
-          { id: 20, type: 'BS', text: 'Pak Ahmad memiliki tali sepanjang 3/4 meter. Setelah dipotong sepanjang 1/2 meter, sisa panjang tali Pak Ahmad adalah 1/4 meter.', options: ['BENAR', 'SALAH'], answer: 0, score: 10 }
+        const soalData = [
+            // BAGIAN A: PILIHAN GANDA
+            {
+                id: 1, type: 'pg',
+                literasi: 'Teks Literasi 1: Kejayaan Bahari dan Pelayaran di Perairan Nusantara. Indonesia terletak di antara dua benua (Asia dan Australia) serta dua samudra (Samudra Hindia dan Samudra Pasifik). Letak geografis ini menjadikan Indonesia berada di persimpangan lalu lintas perdagangan dunia. Wilayah perairan Indonesia yang sangat luas menghubungkan ribuan pulau dari Sabang sampai Merauke. Sejak zaman dahulu, posisi ini dimanfaatkan oleh nelayan dan pedagang untuk mendistribusikan hasil bumi.',
+                question: 'Berdasarkan Teks Literasi 1, keuntungan utama yang diperoleh masyarakat Indonesia dari letak geografisnya yang berada di jalur persimpangan dunia adalah...',
+                options: [
+                    'Indonesia tidak pernah mengalami perubahan cuaca ekstrem.',
+                    'Wilayah Indonesia menjadi jalur strategis perdagangan Internasional sehingga mempercepat interaksi ekonomi dan budaya.',
+                    'Seluruh wilayah daratan Indonesia dapat ditanami rempah-rempah tanpa memerlukan air.',
+                    'Jumlah pulau di Indonesia berkurang karena dikelilingi oleh dua samudra.'
+                ],
+                answer: 1, poin: 1
+            },
+            {
+                id: 2, type: 'pg',
+                literasi: null,
+                question: 'Indonesia dikenal sebagai negara maritim. Pernyataan berikut yang menunjukkan alasan kuat Indonesia dinamakan negara maritim berdasarkan kondisi geografisnya adalah...',
+                options: [
+                    'Sebagian besar wilayah Indonesia terdiri dari daratan tinggi yang luas.',
+                    'Sebagian besar wilayah Indonesia berupa perairan/lautan dan masyarakatnya memanfaatkan sumber daya laut untuk kehidupan.',
+                    'Indonesia memiliki jumlah penduduk terkecil di benua Asia.',
+                    'Mata pencaharian utama seluruh penduduk Indonesia adalah penambang batubara.'
+                ],
+                answer: 1, poin: 1
+            },
+            {
+                id: 3, type: 'pg',
+                literasi: 'Teks Literasi 2: Roda Ekonomi di Desa Rambutan. Pak Budi tinggal di daerah dataran tinggi Desa Rambutan yang subur. Ia menanam sayuran wortel dan kubis. Setelah panen, Pak Budi menjual hasil sayurannya kepada Pak Ahmad, seorang pedagang pengumpul yang mengendarai truk angkutan. Pak Ahmad menyalurkan sayuran tersebut ke pasar-pasar kota agar dapat dibeli oleh masyarakat perkotaan.',
+                question: 'Berdasarkan Teks Literasi 2, jenis mata pencaharian Pak Budi sangat dipengaruhi oleh kondisi alam sekitarnya. Hal ini membuktikan bahwa...',
+                options: [
+                    'Bentang alam dataran tinggi sangat cocok untuk kegiatan pertanian hortikultura sehingga Indonesia dikenal sebagai negara agraris.',
+                    'Dataran tinggi hanya bisa dimanfaatkan untuk pembuatan pelabuhan kapal laut.',
+                    'Kegiatan ekonomi di dataran tinggi tidak membutuhkan air dan tanah.',
+                    'Masyarakat dataran tinggi tidak membutuhkan bantuan pedagang untuk menyalurkan barang.'
+                ],
+                answer: 0, poin: 1
+            },
+            {
+                id: 4, type: 'pg',
+                literasi: 'Teks Literasi 2: Roda Ekonomi di Desa Rambutan. Pak Budi (Petani) -> Pak Ahmad (Pedagang Pengumpul) -> Masyarakat Kota (Pembeli).',
+                question: 'Urutan kegiatan ekonomi yang dilakukan oleh Pak Budi, Pak Ahmad, dan masyarakat kota dalam Teks Literasi 2 berturut-turut adalah...',
+                options: [
+                    'Konsumsi -> Distribusi -> Produksi',
+                    'Produksi -> Konsumsi -> Distribusi',
+                    'Produksi -> Distribusi -> Konsumsi',
+                    'Distribusi -> Produksi -> Konsumsi'
+                ],
+                answer: 2, poin: 1
+            },
+            {
+                id: 5, type: 'pg',
+                literasi: 'Studi Kasus Ekonomi: Pada musim kemarau panjang, hasil panen padi di daerah Rambutan mengalami penurunan drastis akibat kekurangan air. Hal ini menyebabkan harga beras di pasar lokal melonjak naik.',
+                question: 'Solusi terbaik dan paling bijak yang dapat dilakukan oleh pelaku ekonomi daerah untuk mengatasi masalah tersebut adalah...',
+                options: [
+                    'Membiarkan sawah mengering dan berhenti melakukan kegiatan ekonomi.',
+                    'Mengembangkan sistem irigasi hemat air serta memanfaatkan tanaman pangan alternatif lokal yang tahan kekeringan.',
+                    'Membeli seluruh pasokan beras yang ada di pasar untuk disimpan sendiri.',
+                    'Menjual lahan pertanian kepada pihak lain untuk dibangun pabrik semen.'
+                ],
+                answer: 1, poin: 1
+            },
+            {
+                id: 6, type: 'pg',
+                literasi: 'Teks Literasi 3: Kehidupan di Ekosistem Sawah. Di sebuah ekosistem sawah dekat sekolah, terdapat komponen abiotik seperti tanah, air, udara, dan cahaya matahari. Komponen-komponen ini mendukung tumbuhnya tanaman padi. Tanaman padi menjadi makanan bagi belalang dan tikus.',
+                question: 'Berdasarkan Teks Literasi 3, contoh interaksi antara komponen abiotik dan komponen biotik yang saling memengaruhi adalah...',
+                options: [
+                    'Burung hantu berburu tikus pada malam hari.',
+                    'Cahaya matahari dan air membantu tanaman padi melakukan proses fotosintesis.',
+                    'Ular sawah memangsa tikus tanah.',
+                    'Belalang hinggap di batang padi.'
+                ],
+                answer: 1, poin: 1
+            },
+            {
+                id: 7, type: 'pg',
+                literasi: 'Teks Literasi 3: Lanjutan Ekosistem Sawah. Belalang dan tikus dimakan oleh burung pemangsa dan ular sawah. Ketika hewan-hewan tersebut mati, bangkainya akan diuraikan oleh jamur dan bakteri.',
+                question: 'Apabila petani di Desa Rambutan menggalakkan perburuan ular sawah secara berlebihan hingga populasi ular habis, dampak yang paling mungkin terjadi pada jaring-jaring makanan tersebut adalah...',
+                options: [
+                    'Populasi tanaman padi akan meningkat pesat.',
+                    'Populasi tikus akan melonjak tajam sehingga merusak tanaman padi.',
+                    'Jamur pengurai akan kehilangan tempat tinggal.',
+                    'Jumlah air di sawah akan berkurang drastis.'
+                ],
+                answer: 1, poin: 1
+            },
+            {
+                id: 8, type: 'pg',
+                literasi: null,
+                question: 'Peran bakteri dan jamur pengurai (dekomposer) dalam ekosistem pada Teks Literasi 3 sangat penting karena...',
+                options: [
+                    'Menghasilkan makanan utama bagi konsumen tingkat pertama.',
+                    'Mengubah zat organik dari bangkai makhluk hidup menjadi nutrisi penyubur tanah bagi produsen.',
+                    'Mencegah cahaya matahari masuk ke dalam tanah.',
+                    'Membantu tikus berkembang biak lebih cepat.'
+                ],
+                answer: 1, poin: 1
+            },
+            {
+                id: 9, type: 'pg',
+                literasi: 'Teks Literasi 4: Kerusakan Hutan dan Keseimbangan Alam. Hutan merupakan rumah bagi berbagai jenis hewan dan tumbuhan. Pohon-pohon di hutan berperan penting menyerap air hujan dan menghasilkan oksigen. Namun, baru-baru ini terjadi penebangan hutan secara liar untuk pembukaan lahan perkebunan. Akibatnya, saat musim hujan tiba, sering terjadi bencana tanah longsor dan banjir.',
+                question: 'Berdasarkan Teks Literasi 4, evaluasi yang tepat mengenai dampak jangka panjang dari alih fungsi hutan secara liar adalah...',
+                options: [
+                    'Keseimbangan ekosistem terganggu, hilangnya habitat hewan, dan meningkatnya risiko bencana alam.',
+                    'Tanah menjadi makin subur dan keanekaragaman hayati makin bertambah.',
+                    'Jumlah air bersih di permukiman akan melimpah sepanjang tahun.',
+                    'Suhu udara di sekitar perkebunan akan menjadi jauh lebih sejuk.'
+                ],
+                answer: 0, poin: 1
+            },
+            {
+                id: 10, type: 'pg',
+                literasi: null,
+                question: 'Pasangan tindakan manusia berikut yang paling tepat untuk memulihkan kembali keseimbangan ekosistem hutan yang rusak adalah...',
+                options: [
+                    'Membakar sisa-sisa pohon dan membangun pemukiman baru.',
+                    'Melakukan reboisasi (penanaman kembali) dan menerapkan sistem tebang pilih.',
+                    'Mengubah seluruh kawasan hutan menjadi area pertambangan batubara.',
+                    'Membuang sampah plastik di area bekas penebangan.'
+                ],
+                answer: 1, poin: 1
+            },
+            // BAGIAN B: MENJODOHKAN
+            {
+                id: 11, type: 'menjodohkan', literasi: null,
+                question: 'Negara yang memiliki wilayah perairan luas dan memanfaatkan potensi lautnya.',
+                options: ['A. Komponen Abiotik', 'B. Konsumsi', 'C. Negara Maritim', 'D. Distribusi', 'E. Produsen (Tumbuhan)'],
+                answer: 'C. Negara Maritim', poin: 2
+            },
+            {
+                id: 12, type: 'menjodohkan', literasi: null,
+                question: 'Kegiatan menyalurkan barang hasil produksi dari produsen ke tangan konsumen.',
+                options: ['A. Komponen Abiotik', 'B. Konsumsi', 'C. Negara Maritim', 'D. Distribusi', 'E. Produsen (Tumbuhan)'],
+                answer: 'D. Distribusi', poin: 2
+            },
+            {
+                id: 13, type: 'menjodohkan', literasi: null,
+                question: 'Unsur tak hidup di dalam ekosistem seperti air, tanah, udara, dan cahaya matahari.',
+                options: ['A. Komponen Abiotik', 'B. Konsumsi', 'C. Negara Maritim', 'D. Distribusi', 'E. Produsen (Tumbuhan)'],
+                answer: 'A. Komponen Abiotik', poin: 2
+            },
+            {
+                id: 14, type: 'menjodohkan', literasi: null,
+                question: 'Organisme dalam ekosistem yang mampu membuat makanannya sendiri melalui fotosintesis.',
+                options: ['A. Komponen Abiotik', 'B. Konsumsi', 'C. Negara Maritim', 'D. Distribusi', 'E. Produsen (Tumbuhan)'],
+                answer: 'E. Produsen (Tumbuhan)', poin: 2
+            },
+            {
+                id: 15, type: 'menjodohkan', literasi: null,
+                question: 'Kegiatan menggunakan atau menghabiskan nilai guna barang dan jasa untuk memenuhi kebutuhan.',
+                options: ['A. Komponen Abiotik', 'B. Konsumsi', 'C. Negara Maritim', 'D. Distribusi', 'E. Produsen (Tumbuhan)'],
+                answer: 'B. Konsumsi', poin: 2
+            },
+            // BAGIAN C: BENAR / SALAH
+            {
+                id: 16, type: 'bs', 
+                literasi: 'Stimulus Literasi Ringkas: Indonesia kaya akan sumber daya alam, baik di darat maupun laut. Manusia membutuhkan sumber daya ini untuk melangsungkan kegiatan ekonomi. Namun, jika eksploitasi alam dilakukan tanpa perhitungan, ekosistem akan rusak dan mengancam kehidupan masa depan.',
+                question: 'Letak geografis Indonesia yang dihimpit dua samudra tidak memberikan pengaruh terhadap iklim maupun kegiatan perdagangan masyarakat.',
+                answer: 'S', poin: 4 
+            },
+            {
+                id: 17, type: 'bs', literasi: null,
+                question: 'Petani yang menanam padi di sawah dikategorikan sebagai pelaku kegiatan ekonomi produksi.',
+                answer: 'B', poin: 4
+            },
+            {
+                id: 18, type: 'bs', literasi: null,
+                question: 'Membuang limbah rumah tangga ke sungai dapat merusak komponen abiotik air dan mengganggu kehidupan ikan di dalam ekosistem.',
+                answer: 'B', poin: 4
+            },
+            {
+                id: 19, type: 'bs', literasi: null,
+                question: 'Jika populasi katak pemakan belalang di sawah punah, maka populasi belalang akan makin berkurang.',
+                answer: 'S', poin: 4
+            },
+            {
+                id: 20, type: 'bs', literasi: null,
+                question: 'Menjaga keseimbangan ekosistem dapat dilakukan dengan cara menerapkan prinsip pemanfaatan sumber daya alam secara bijak dan berkelanjutan.',
+                answer: 'B', poin: 4
+            },
         ];
 
-        const TIMER_DURATION = 120; 
+        const App = () => {
+            const [hasStarted, setHasStarted] = useState(false);
+            const [nama, setNama] = useState('');
+            const [absen, setAbsen] = useState('');
+            
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [alasanBS, setAlasanBS] = useState({});
+            const [isFinished, setIsFinished] = useState(false);
+            
+            const [timeLeft, setTimeLeft] = useState(120); // 2 menit per soal
+            const [isTtsEnabled, setIsTtsEnabled] = useState(true);
 
-        function UjianSekolahApp() {
-          const [view, setView] = useState('login'); 
-          const [student, setStudent] = useState({ name: '', absen: '' });
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [answers, setAnswers] = useState({});
-          const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
-          const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-
-          useEffect(() => {
-            injectGlobalStyles();
-          }, []);
-
-          // TTS Effect
-          useEffect(() => {
-            if (view === 'exam' && isAudioEnabled && window.speechSynthesis) {
-              window.speechSynthesis.cancel();
-              
-              const currentQ = QUESTIONS[currentIndex];
-              let textToRead = "";
-              
-              if (currentQ.stimulus) {
-                textToRead += "Teks bacaan. " + currentQ.stimulus + ". ";
-              }
-              textToRead += "Pertanyaan. " + currentQ.text + ". ";
-              textToRead += "Pilihan jawaban. ";
-              
-              currentQ.options.forEach((opt, idx) => {
-                const huruf = String.fromCharCode(65 + idx);
-                textToRead += huruf + ". " + opt + ". ";
-              });
-
-              textToRead = textToRead.replace(/\//g, " per ");
-              textToRead = textToRead.replace(/\+/g, " tambah ");
-              textToRead = textToRead.replace(/x/g, " dikali ");
-
-              const utterance = new SpeechSynthesisUtterance(textToRead);
-              utterance.lang = 'id-ID';
-              utterance.rate = 0.85; 
-              
-              setTimeout(() => {
-                if (window.speechSynthesis && isAudioEnabled && view === 'exam') {
-                    window.speechSynthesis.speak(utterance);
+            // Fungsi Text-to-Speech
+            const speakText = (textToRead) => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Hentikan suara sebelumnya
+                    if (isTtsEnabled && hasStarted && !isFinished) {
+                        const utterance = new SpeechSynthesisUtterance(textToRead);
+                        utterance.lang = 'id-ID';
+                        utterance.rate = 0.9; // Agak lambat agar jelas
+                        window.speechSynthesis.speak(utterance);
+                    }
                 }
-              }, 300);
-            }
-
-            return () => {
-              if (window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-              }
             };
-          }, [currentIndex, view, isAudioEnabled]);
 
-          // Timer Effect
-          useEffect(() => {
-            let timer;
-            if (view === 'exam') {
-              timer = setInterval(() => {
-                setTimeLeft((prev) => {
-                  if (prev <= 1) {
-                    handleNextAuto();
-                    return TIMER_DURATION;
-                  }
-                  return prev - 1;
-                });
-              }, 1000);
-            }
-            return () => clearInterval(timer);
-          }, [view, currentIndex]);
-
-          const handleNextAuto = () => {
-            if (currentIndex < QUESTIONS.length - 1) {
-              setCurrentIndex((prev) => prev + 1);
-            } else {
-              if (window.speechSynthesis) window.speechSynthesis.cancel();
-              setView('result');
-            }
-          };
-
-          const handleStart = (e) => {
-            e.preventDefault();
-            if (student.name.trim() && student.absen.trim()) {
-              setView('exam');
-              setCurrentIndex(0);
-              setTimeLeft(TIMER_DURATION);
-              setAnswers({});
-            }
-          };
-
-          const handleSelectOption = (optionIndex) => {
-            setAnswers({ ...answers, [currentIndex]: optionIndex });
-          };
-
-          const handleNext = () => {
-            if (currentIndex < QUESTIONS.length - 1) {
-              setCurrentIndex((prev) => prev + 1);
-              setTimeLeft(TIMER_DURATION);
-            } else {
-              if (window.speechSynthesis) window.speechSynthesis.cancel();
-              setView('result');
-            }
-          };
-
-          const handlePrev = () => {
-            if (currentIndex > 0) {
-              setCurrentIndex((prev) => prev - 1);
-              setTimeLeft(TIMER_DURATION);
-            }
-          };
-          
-          const toggleAudio = () => {
-             if (isAudioEnabled) {
-                 if (window.speechSynthesis) window.speechSynthesis.cancel();
-             }
-             setIsAudioEnabled(!isAudioEnabled);
-          }
-
-          const calculateScore = () => {
-            let total = 0;
-            QUESTIONS.forEach((q, index) => {
-              if (answers[index] === q.answer) {
-                total += q.score;
-              }
-            });
-            return total;
-          };
-
-          const formatTime = (seconds) => {
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-          };
-
-          if (view === 'login') {
-            return (
-              <div className="flex items-center justify-center h-[100dvh] w-screen bg-gradient-to-b from-sky-300 to-sky-100 p-4">
-                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border-4 border-sky-400 transform transition-all">
-                  <div className="text-center mb-6">
-                    <h1 className="text-4xl font-black text-sky-600 mb-2 tracking-tight">Halo Teman! 👋</h1>
-                    <p className="text-gray-500 font-semibold text-lg">Siap untuk mulai ujian hari ini?</p>
-                  </div>
-                  
-                  <form onSubmit={handleStart} className="flex flex-col gap-5">
-                    <div>
-                      <label className="block text-gray-700 font-bold mb-2 ml-1 text-lg">Nama Lengkap</label>
-                      <input 
-                        type="text" 
-                        required
-                        className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl p-4 text-xl focus:outline-none focus:border-sky-500 focus:bg-white transition-colors font-semibold"
-                        placeholder="Tulis namamu..."
-                        value={student.name}
-                        onChange={(e) => setStudent({ ...student, name: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 font-bold mb-2 ml-1 text-lg">Nomor Absen</label>
-                      <input 
-                        type="number" 
-                        required
-                        className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl p-4 text-xl focus:outline-none focus:border-sky-500 focus:bg-white transition-colors font-semibold"
-                        placeholder="Contoh: 12"
-                        value={student.absen}
-                        onChange={(e) => setStudent({ ...student, absen: e.target.value })}
-                      />
-                    </div>
+            // Trigger TTS tiap ganti soal
+            useEffect(() => {
+                if (hasStarted && !isFinished) {
+                    const q = soalData[currentIndex];
+                    let text = '';
                     
-                    <div className="flex items-center justify-center gap-3 bg-blue-50 p-3 rounded-xl border-2 border-blue-200 mt-2">
-                        <span className="text-2xl">{isAudioEnabled ? '🔊' : '🔇'}</span>
-                        <span className="text-sm font-bold text-blue-800">
-                          Fitur Suara: {isAudioEnabled ? 'MENYALA' : 'MATI'}
-                        </span>
-                        <button type="button" onClick={toggleAudio} className="ml-auto bg-blue-200 hover:bg-blue-300 text-blue-800 text-xs font-bold py-1 px-3 rounded-lg">Ubah</button>
+                    if (q.literasi) text += q.literasi + ". ";
+                    text += "Pertanyaan: " + q.question + ". ";
+                    
+                    if (q.type === 'pg') {
+                        text += "Pilihan jawabannya adalah: ";
+                        q.options.forEach((opt, i) => {
+                            text += `Pilihan ${String.fromCharCode(65 + i)}: ${opt}. `;
+                        });
+                    } else if (q.type === 'menjodohkan') {
+                        text += "Pilih pasangan yang tepat dari pilihan berikut: ";
+                        q.options.forEach(opt => { text += opt + ". "; });
+                    } else if (q.type === 'bs') {
+                        text += "Tentukan apakah pernyataan ini Benar atau Salah, lalu tuliskan alasan singkatmu.";
+                    }
+                    
+                    speakText(text);
+                }
+                
+                // Cleanup saat unmount/ganti soal
+                return () => {
+                    if('speechSynthesis' in window) window.speechSynthesis.cancel();
+                };
+            }, [currentIndex, hasStarted, isFinished, isTtsEnabled]);
+
+            // Timer Logic
+            useEffect(() => {
+                let timerId;
+                if (hasStarted && !isFinished) {
+                    if (timeLeft > 0) {
+                        timerId = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+                    } else {
+                        handleNext();
+                    }
+                }
+                return () => clearTimeout(timerId);
+            }, [timeLeft, hasStarted, isFinished]);
+
+            const handleStart = (e) => {
+                e.preventDefault();
+                if(nama && absen) {
+                    setHasStarted(true);
+                    setTimeLeft(120);
+                    // Inisialisasi Audio Engine di browser
+                    if('speechSynthesis' in window) {
+                        const initAudio = new SpeechSynthesisUtterance('');
+                        window.speechSynthesis.speak(initAudio);
+                    }
+                }
+            };
+
+            const handleNext = () => {
+                if (currentIndex < soalData.length - 1) {
+                    setCurrentIndex(prev => prev + 1);
+                    setTimeLeft(120);
+                } else {
+                    setIsFinished(true);
+                }
+            };
+
+            const handlePrev = () => {
+                if (currentIndex > 0) {
+                    setCurrentIndex(prev => prev - 1);
+                    setTimeLeft(120);
+                }
+            };
+
+            const handleAnswer = (answerVal) => {
+                setAnswers({...answers, [currentIndex]: answerVal});
+            };
+
+            const handleAlasan = (val) => {
+                setAlasanBS({...alasanBS, [currentIndex]: val});
+            };
+
+            const toggleTTS = () => {
+                setIsTtsEnabled(!isTtsEnabled);
+                if(isTtsEnabled && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                } else if (!isTtsEnabled) {
+                    // Trigger pembacaan ulang soal saat ini jika dihidupkan
+                    const q = soalData[currentIndex];
+                    speakText(q.question); 
+                }
+            };
+
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const s = (seconds % 60).toString().padStart(2, '0');
+                return `${m}:${s}`;
+            };
+
+            const calculateScore = () => {
+                let totalSkor = 0;
+                soalData.forEach((q, index) => {
+                    if (q.type === 'pg' && answers[index] === q.answer) totalSkor += q.poin;
+                    if (q.type === 'menjodohkan' && answers[index] === q.answer) totalSkor += q.poin;
+                    if (q.type === 'bs') {
+                        if (answers[index] === q.answer) totalSkor += 2; 
+                        if (alasanBS[index] && alasanBS[index].trim().length > 5) totalSkor += 2; 
+                    }
+                });
+                return Math.round((totalSkor / 40) * 100);
+            };
+
+            if (!hasStarted) {
+                return (
+                    <div className="flex flex-col items-center justify-center h-full w-full p-4">
+                        <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border-4 border-blue-200">
+                            <h1 className="text-2xl md:text-3xl font-black text-blue-600 text-center mb-2">UJIAN STS 1 IPAS</h1>
+                            <p className="text-center font-bold text-gray-500 mb-6">Kelas 5 SDN 4 Rambutan</p>
+                            
+                            <form onSubmit={handleStart} className="flex flex-col gap-4">
+                                <div>
+                                    <label className="font-bold text-gray-700 block mb-1">Nama Lengkap</label>
+                                    <input required type="text" value={nama} onChange={e => setNama(e.target.value)} 
+                                        className="w-full p-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none font-semibold text-lg" 
+                                        placeholder="Ketik namamu..." />
+                                </div>
+                                <div>
+                                    <label className="font-bold text-gray-700 block mb-1">Nomor Absen</label>
+                                    <input required type="number" value={absen} onChange={e => setAbsen(e.target.value)} 
+                                        className="w-full p-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none font-semibold text-lg" 
+                                        placeholder="Ketik absen..." />
+                                </div>
+                                <button type="submit" className="btn-3d btn-3d-blue py-4 rounded-2xl font-black text-xl mt-4">
+                                    MULAI UJIAN
+                                </button>
+                            </form>
+                        </div>
                     </div>
+                );
+            }
 
-                    <button 
-                      type="submit"
-                      className="mt-2 w-full bg-orange-400 hover:bg-orange-500 text-white font-black text-2xl py-4 rounded-2xl border-b-8 border-orange-600 active:border-b-0 active:translate-y-2 transition-all shadow-lg"
-                    >
-                      MULAI UJIAN 🚀
-                    </button>
-                  </form>
-                </div>
-              </div>
-            );
-          }
+            if (isFinished) {
+                const nilai = calculateScore();
+                return (
+                    <div className="flex flex-col items-center justify-center h-full w-full p-4">
+                        <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border-4 border-green-200 text-center">
+                            <h2 className="text-3xl font-black text-green-600 mb-2">SELESAI!</h2>
+                            <div className="bg-green-50 rounded-2xl p-6 my-6 border-2 border-green-100">
+                                <p className="text-gray-500 font-bold mb-1">Nilai Akhir (Estimasi)</p>
+                                <p className="text-6xl font-black text-green-500">{nilai}</p>
+                            </div>
+                            <div className="text-left mb-6 font-bold text-gray-600 bg-gray-50 p-4 rounded-xl">
+                                <p>Nama: <span className="text-gray-800">{nama}</span></p>
+                                <p>Absen: <span className="text-gray-800">{absen}</span></p>
+                            </div>
+                            <button onClick={() => window.location.reload()} className="btn-3d btn-3d-yellow w-full py-3 rounded-xl font-bold text-lg">
+                                Kembali ke Awal
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
 
-          if (view === 'result') {
-            const finalScore = calculateScore();
+            const q = soalData[currentIndex];
+
             return (
-              <div className="flex flex-col items-center justify-center h-[100dvh] w-screen bg-gradient-to-b from-green-300 to-green-100 p-4">
-                <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border-4 border-green-500 text-center flex flex-col items-center">
-                  <div className="text-7xl mb-4">🏆</div>
-                  <h1 className="text-4xl md:text-5xl font-black text-green-600 mb-2">Hore, Selesai!</h1>
-                  <p className="text-xl text-gray-600 font-bold mb-6">Kerja bagus, <span className="text-sky-600">{student.name}</span> (Absen: {student.absen})</p>
-                  
-                  <div className="bg-green-50 rounded-2xl p-6 w-full mb-8 border-2 border-green-200">
-                    <p className="text-gray-500 font-bold uppercase tracking-widest text-lg mb-2">Nilai Akhir Kamu</p>
-                    <p className="text-[5rem] leading-none font-black text-green-600">{finalScore}</p>
-                    <p className="text-gray-400 font-bold mt-2 text-xl">dari 100</p>
-                  </div>
-
-                  <button 
-                    onClick={() => {
-                      setView('login');
-                      setStudent({ name: '', absen: '' });
-                    }}
-                    className="w-full bg-sky-500 hover:bg-sky-400 text-white font-black text-2xl py-4 rounded-2xl border-b-8 border-sky-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg"
-                  >
-                    Selesai
-                  </button>
-                </div>
-              </div>
-            );
-          }
-
-          const currentQ = QUESTIONS[currentIndex];
-          const isAnswered = answers[currentIndex] !== undefined;
-
-          return (
-            <div className="flex flex-col h-[100dvh] w-screen bg-blue-50">
-              {/* Header Panel */}
-              <header className="flex-none bg-white p-3 md:p-4 shadow-sm border-b-4 border-gray-200 flex justify-between items-center z-10">
-                <div className="flex items-center gap-3 md:gap-5">
-                    <div className="flex flex-col">
-                      <span className="font-extrabold text-gray-400 text-xs md:text-sm uppercase tracking-wider">Soal</span>
-                      <span className="font-black text-sky-600 text-2xl md:text-3xl">{currentIndex + 1} <span className="text-gray-300">/ {QUESTIONS.length}</span></span>
+                <div className="flex flex-col h-full w-full max-w-3xl mx-auto bg-white shadow-2xl relative">
+                    
+                    {/* Header: Progress, Timer, TTS Toggle */}
+                    <div className="flex justify-between items-center p-3 sm:p-4 bg-blue-600 text-white shadow-md z-10 shrink-0">
+                        <div className="font-black text-lg sm:text-xl bg-blue-800 px-3 py-1 rounded-lg border-2 border-blue-400">
+                            {currentIndex + 1} / {soalData.length}
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                            <button onClick={toggleTTS} 
+                                className={`p-2 rounded-lg font-bold border-2 transition-colors ${isTtsEnabled ? 'bg-green-400 border-green-200' : 'bg-red-400 border-red-200'}`}>
+                                {isTtsEnabled ? '🔊 Suara ON' : '🔈 Suara OFF'}
+                            </button>
+                            <div className={`font-black text-xl sm:text-2xl px-3 py-1 rounded-lg border-2 ${timeLeft <= 10 ? 'bg-red-500 border-red-300 animate-pulse' : 'bg-yellow-400 border-yellow-200 text-yellow-900'}`}>
+                                ⏱ {formatTime(timeLeft)}
+                            </div>
+                        </div>
                     </div>
-                    <button 
-                        onClick={toggleAudio}
-                        className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl border-b-4 transition-all text-xl md:text-2xl shadow-sm
-                            ${isAudioEnabled 
-                                ? 'bg-green-100 border-green-300 text-green-600 active:border-b-0 active:translate-y-1' 
-                                : 'bg-red-100 border-red-300 text-red-500 active:border-b-0 active:translate-y-1'}`}
-                        title={isAudioEnabled ? "Matikan Suara" : "Nyalakan Suara"}
-                    >
-                        {isAudioEnabled ? '🔊' : '🔇'}
-                    </button>
-                </div>
-                
-                <div className="flex items-center gap-2 bg-rose-100 px-4 py-2 md:py-3 rounded-xl border-2 border-rose-200 shadow-sm">
-                  <span className="text-rose-500 text-xl md:text-2xl font-black">⏱️</span>
-                  <span className={`font-black text-xl md:text-3xl ${timeLeft <= 30 ? 'text-rose-600 animate-pulse' : 'text-rose-500'}`}>
-                    {formatTime(timeLeft)}
-                  </span>
-                </div>
-              </header>
 
-              {/* Main Content Area */}
-              <main className="flex-1 flex flex-col p-3 md:p-6 overflow-hidden gap-3 md:gap-5 min-h-0">
-                
-                {currentQ.stimulus && (
-                  <div className="flex-shrink max-h-[35vh] overflow-y-auto bg-amber-50 p-4 md:p-6 rounded-3xl border-2 md:border-4 border-amber-200 shadow-inner">
-                    <p className="text-[clamp(1rem,2.5vw,1.25rem)] text-gray-700 font-bold whitespace-pre-wrap leading-relaxed">
-                      {currentQ.stimulus}
-                    </p>
-                  </div>
-                )}
+                    {/* Content Area */}
+                    <div className="flex-1 flex flex-col p-3 sm:p-5 overflow-hidden gap-3">
+                        
+                        {/* Box Literasi */}
+                        {q.literasi && (
+                            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-3 sm:p-4 overflow-y-auto no-scrollbar shrink border-l-8 border-l-yellow-400 max-h-[30vh]">
+                                <p className="text-sm sm:text-base font-semibold text-gray-800 leading-relaxed text-justify">
+                                    {q.literasi}
+                                </p>
+                            </div>
+                        )}
 
-                <div className="flex-none">
-                  <h2 className="text-[clamp(1.25rem,3.5vw,2rem)] font-black text-slate-800 leading-snug whitespace-pre-wrap">
-                    {currentQ.text}
-                  </h2>
-                </div>
+                        {/* Box Pertanyaan */}
+                        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 sm:p-4 shrink-0 shadow-sm">
+                            <h3 className="font-extrabold text-base sm:text-lg lg:text-xl text-blue-900 leading-snug">
+                                {q.question}
+                            </h3>
+                        </div>
 
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-1">
-                  <div className={`grid gap-3 md:gap-5 h-auto content-start pb-2 ${currentQ.type === 'BS' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2'}`}>
-                    {currentQ.options.map((opt, idx) => {
-                      const isSelected = answers[currentIndex] === idx;
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => handleSelectOption(idx)}
-                          className={`
-                            text-left p-4 md:p-6 rounded-3xl font-bold text-[clamp(1.125rem,2.5vw,1.5rem)] transition-all
-                            border-b-4 md:border-b-[6px] outline-none min-h-[4rem] md:min-h-[5rem]
-                            ${isSelected 
-                              ? 'bg-sky-400 text-white border-sky-600 transform translate-y-1 border-b-0 md:translate-y-[6px] shadow-none' 
-                              : 'bg-white text-gray-700 border-gray-300 hover:bg-sky-50 hover:border-sky-300 active:border-b-0 active:translate-y-1 shadow-sm'}
-                          `}
-                        >
-                          <div className="flex items-center gap-4">
-                            <span className={`flex-none w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-lg md:text-xl
-                              ${isSelected ? 'bg-sky-500 text-white shadow-inner' : 'bg-gray-100 text-gray-500 border-2 border-gray-200'}`}>
-                              {String.fromCharCode(65 + idx)}
-                            </span>
-                            <span className="flex-1 leading-tight">{opt}</span>
-                          </div>
+                        {/* Box Pilihan Jawaban */}
+                        <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-2 sm:gap-3 pb-2">
+                            {q.type === 'pg' && q.options.map((opt, i) => (
+                                <button key={i} 
+                                    onClick={() => handleAnswer(i)}
+                                    className={`btn-3d w-full text-left p-3 sm:p-4 rounded-xl font-bold text-sm sm:text-base border-2 
+                                        ${answers[currentIndex] === i ? 'btn-3d-white selected' : 'btn-3d-white'}`}>
+                                    <span className="inline-block bg-gray-200 rounded-lg px-2 py-1 mr-2 text-gray-700 border border-gray-300">
+                                        {String.fromCharCode(65 + i)}
+                                    </span>
+                                    {opt}
+                                </button>
+                            ))}
+
+                            {/* UPDATE: Soal Menjodohkan tanpa Dropdown */}
+                            {q.type === 'menjodohkan' && (
+                                <div className="flex flex-col gap-2 sm:gap-3">
+                                    <p className="font-bold text-gray-600 mb-1 text-sm">Pilih jawaban pasangan yang tepat:</p>
+                                    {q.options.map((opt, i) => (
+                                        <button key={i} 
+                                            onClick={() => handleAnswer(opt)}
+                                            className={`btn-3d w-full text-left p-3 sm:p-4 rounded-xl font-bold text-sm sm:text-base border-2 
+                                                ${answers[currentIndex] === opt ? 'btn-3d-white selected' : 'btn-3d-white'}`}>
+                                            {opt}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {q.type === 'bs' && (
+                                <div className="flex flex-col gap-3 h-full">
+                                    <div className="flex gap-3 shrink-0">
+                                        <button onClick={() => handleAnswer('B')}
+                                            className={`flex-1 btn-3d py-3 sm:py-4 rounded-xl font-black text-lg border-2 ${answers[currentIndex] === 'B' ? 'btn-3d-green border-b-2 mt-1' : 'btn-3d-white'}`}>
+                                            BENAR (B)
+                                        </button>
+                                        <button onClick={() => handleAnswer('S')}
+                                            className={`flex-1 btn-3d py-3 sm:py-4 rounded-xl font-black text-lg border-2 ${answers[currentIndex] === 'S' ? 'btn-3d-red border-b-2 mt-1' : 'btn-3d-white'}`}>
+                                            SALAH (S)
+                                        </button>
+                                    </div>
+                                    <textarea 
+                                        placeholder="Tuliskan alasan singkat logismu di sini..."
+                                        className="flex-1 w-full p-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none font-semibold text-sm sm:text-base resize-none"
+                                        value={alasanBS[currentIndex] || ""}
+                                        onChange={(e) => handleAlasan(e.target.value)}
+                                    ></textarea>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Footer / Navigasi */}
+                    <div className="flex gap-3 p-3 sm:p-4 bg-gray-100 border-t-2 border-gray-200 shrink-0 z-10">
+                        <button onClick={handlePrev} disabled={currentIndex === 0}
+                            className={`flex-1 btn-3d py-3 rounded-xl font-bold text-sm sm:text-base ${currentIndex === 0 ? 'bg-gray-300 text-gray-500 border-gray-400 cursor-not-allowed border-b-2 mt-1' : 'btn-3d-white'}`}>
+                            ⬅️ KEMBALI
                         </button>
-                      );
-                    })}
-                  </div>
+                        <button onClick={handleNext}
+                            className="flex-1 btn-3d btn-3d-blue py-3 rounded-xl font-black text-sm sm:text-base">
+                            {currentIndex === soalData.length - 1 ? 'SELESAI 🏁' : 'LANJUT ➡️'}
+                        </button>
+                    </div>
                 </div>
-              </main>
-
-              {/* Footer Navigation (Tombol Lanjut & Kembali) */}
-              <footer className="flex-none bg-white p-4 md:p-5 pb-6 md:pb-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t-4 border-gray-200 flex justify-between items-center gap-4 z-10">
-                <button
-                  onClick={handlePrev}
-                  disabled={currentIndex === 0}
-                  className={`flex-1 md:flex-none md:w-40 py-4 rounded-2xl font-black text-lg md:text-xl border-b-[6px] transition-all
-                    ${currentIndex === 0 
-                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                      : 'bg-indigo-100 text-indigo-600 border-indigo-300 hover:bg-indigo-200 active:border-b-0 active:translate-y-[6px]'}`}
-                >
-                  ⬅️ KEMBALI
-                </button>
-
-                <button
-                  onClick={handleNext}
-                  className={`flex-1 md:flex-none md:w-56 py-4 rounded-2xl font-black text-lg md:text-xl border-b-[6px] transition-all text-white
-                    ${currentIndex === QUESTIONS.length - 1 
-                      ? 'bg-green-500 border-green-700 hover:bg-green-400 active:border-b-0 active:translate-y-[6px]'
-                      : 'bg-sky-500 border-sky-700 hover:bg-sky-400 active:border-b-0 active:translate-y-[6px]'}`}
-                >
-                  {currentIndex === QUESTIONS.length - 1 ? 'SELESAI 🏁' : 'LANJUT ➡️'}
-                </button>
-              </footer>
-            </div>
-          );
-        }
+            );
+        };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<UjianSekolahApp />);
+        root.render(<App />);
     </script>
 </body>
 </html>
