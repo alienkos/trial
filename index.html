@@ -3,412 +3,639 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Ujian Interaktif - SDN 4 Rambutan</title>
-    <!-- Tailwind CSS -->
+    <title>Aplikasi Ujian SPA - 1920x1080</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Mengatur font default dan memastikan body mengisi layar */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e2e8f0; /* bg-slate-200 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container utama dengan aspect ratio 16:9 untuk target 1920x1080 */
+        #app-container {
+            width: 1920px;
+            height: 1080px;
+            background-color: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform-origin: center;
+        }
+
+        /* Responsive scaling mechanism to fit smaller screens while maintaining 16:9 
+           (Useful if previewed on screens < 1920x1080) */
+        @media (max-width: 1920px), (max-height: 1080px) {
+            body {
+                background-color: #333;
+            }
+            #app-container {
+                /* Menggunakan JS untuk set transform scale agar pas di layar */
+                transform: scale(var(--scale-factor, 1));
+            }
+        }
+
+        .hide { display: none !important; }
+        
+        /* Animasi timer berkedip saat waktu mau habis */
+        @keyframes pulse-red {
+            0%, 100% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+            50% { color: #991b1b; text-shadow: none; }
+        }
+        .timer-warning {
+            animation: pulse-red 1s infinite;
+        }
+
+        .option-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            background-color: #e2e8f0;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <div id="app-container">
+        
+        <!-- ==================== SCREEN 1: START SCREEN ==================== -->
+        <!-- Diperlukan agar browser mengizinkan pemutaran audio (autoplay policy) -->
+        <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-blue-900 text-white z-50">
+            <h1 class="text-6xl font-bold mb-8 text-center leading-tight">
+                LEMBAR SOAL SUMATIF TENGAH SEMESTER 1<br>
+                TAHUN AJARAN 2024/2025
+            </h1>
+            <p class="text-3xl mb-12">SD NEGERI 4 RAMBUTAN</p>
+            <button id="btn-start" class="px-12 py-6 bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-4xl font-bold rounded-2xl shadow-lg transition-transform transform hover:scale-105">
+                MULAI UJIAN
+            </button>
+            <p class="mt-8 text-xl text-blue-200">Tekan tombol untuk memulai ujian dan mengaktifkan fitur pembaca suara.</p>
+        </div>
 
-        const questions = [
-            // ================= BAGIAN A: PILIHAN GANDA (Bobot: 5) =================
-            {
-                id: 1, section: "A", weight: 5,
-                stimulus: "Pada perumusan dasar negara Indonesia, BPUPKI menggelar sidang pertama pada 29 Mei – 1 Juni 1945. Tokoh-tokoh bangsa menyampaikan gagasan dasar negara. Selanjutnya dibentuk Panitia Sembilan yang berhasil menyusun Piagam Jakarta pada tanggal 22 Juni 1945. Setelah melalui musyawarah dan penyesuaian demi menjaga persatuan bangsa, Pancasila disahkan secara resmi sebagai dasar negara oleh PPKI pada tanggal 18 Agustus 1945.",
-                text: "1. Berdasarkan narasi di atas, jarak waktu antara perumusan Rancangan Piagam Jakarta oleh Panitia Sembilan hingga pengesahan resmi Pancasila oleh PPKI adalah ....",
-                options: ["22 hari", "57 hari", "81 hari", "2 bulan 18 hari"],
-                answer: 1 // B. 57 hari
-            },
-            {
-                id: 2, section: "A", weight: 5,
-                stimulus: "Kelas V SDN 4 Rambutan mengadakan pemilihan ketua kelas secara demokratis. Hasil penghitungan suara (tally) dicatat pada papan tulis sebagai berikut:\n- Kadir: 15 suara\n- Yamid: 10 suara\n- Ona: 13 suara\nTotal peserta didik yang memberikan suara adalah 38 orang.",
-                text: "2. Berdasarkan data di atas, kesimpulan hasil musyawarah dan sikap berpancasila yang wajib ditunjukkan oleh seluruh siswa Kelas V adalah ....",
-                options: [
-                    "Kadir terpilih menjadi ketua kelas karena unggul 5 suara dari Yamid, dan para calon lain harus saling bekerja sama.",
-                    "Ona terpilih menjadi ketua kelas karena meraih suara terbanyak kedua.",
-                    "Pemilihan harus diulang karena jumlah suara Kadir kurang dari setengah total pemilih (38 suara).",
-                    "Yamid tidak perlu menerima hasil keputusan karena selisih suaranya terlalu jauh."
-                ],
-                answer: 0 // A
-            },
-            {
-                id: 3, section: "A", weight: 5,
-                text: "3. Saat penyusunan Piagam Jakarta pada 22 Juni 1945, terdapat perbedaan pendapat mengenai rumusan sila pertama. Para perumus Pancasila sepakat mengutamakan persatuan nasional di atas kepentingan kelompok sehingga menyetujui perubahan rumusan sila pertama menjadi \"Ketuhanan Yang Maha Esa\". Sikap perumus Pancasila yang wajib kita teladani dalam kehidupan sehari-hari adalah ....",
-                options: [
-                    "Mempertahankan pendapat pribadi hingga semua orang mengalah",
-                    "Berjiwa besar, bertoleransi, dan mendahulukan kepentingan bersama",
-                    "Menolak hasil musyawarah jika tidak sesuai dengan keinginan diri sendiri",
-                    "Mengikuti pendapat mayoritas hanya jika mendapatkan keuntungan pribadi"
-                ],
-                answer: 1 // B
-            },
-            {
-                id: 4, section: "A", weight: 5,
-                text: "4. Ketika bencana banjir menimpa warga sekitar sekolah, siswa kelas V SDN 4 Rambutan mengumpulkan sumbangan sukarela (Sila ke-2), berdoa bersama untuk keselamatan korban (Sila ke-1), dan menyalurkan bantuan secara gotong royong tanpa membedakan suku (Sila ke-3). Hal ini membuktikan bahwa sila-sila dalam Pancasila ....",
-                options: [
-                    "Dapat diterapkan secara terpisah sesuai kebutuhan situasi",
-                    "Merupakan satu kesatuan utuh yang saling berkaitan dan menjiwai satu sama lain",
-                    "Hanya sila kedua yang paling penting diterapkan dalam aksi sosial",
-                    "Berdiri sendiri-sendiri tanpa ada hubungan antarsila"
-                ],
-                answer: 1 // B
-            },
-            {
-                id: 5, section: "A", weight: 5,
-                stimulus: "Warga Desa Rambutan mengadakan gotong royong membersihkan saluran air. Kegiatan dimulai pukul 07.00 WIB dan selesai pukul 10.00 WIB. Dari total 60 KK warga, sebanyak 45 KK hadir bergotong royong, sedangkan sisanya berhalangan karena sakit dan memberikan bantuan makanan.",
-                text: "5. Persentase tingkat partisipasi warga yang hadir langsung dalam kegiatan gotong royong tersebut serta nilai Pancasila yang tercermin adalah ....",
-                options: [
-                    "50% - Nilai Keadilan Sosial",
-                    "65% - Nilai Persatuan Indonesia",
-                    "75% - Nilai Persatuan dan Gotong Royong",
-                    "80% - Nilai Kerakyatan"
-                ],
-                answer: 2 // C
-            },
-            {
-                id: 6, section: "A", weight: 5,
-                text: "6. Setiap berangkat sekolah, Ani selalu mencium tangan orang tuanya dan mengucapkan salam. Di jalan raya, ayah Ani memakai helm standar dan berhenti saat lampu lalu lintas berwarna merah. Secara berurutan, norma yang diterapkan oleh Ani dan Ayahnya adalah norma ....",
-                options: [
-                    "Kesopanan dan Norma Hukum",
-                    "Kesusilaan dan Norma Agama",
-                    "Agama dan Norma Kesopanan",
-                    "Hukum dan Norma Kesusilaan"
-                ],
-                answer: 0 // A
-            },
-            {
-                id: 7, section: "A", weight: 5,
-                stimulus: "Alokasi waktu harian Dodi setelah pulang sekolah (14.00 – 20.00 / 6 jam):\n- Bermain game: 3 jam\n- Membantu orang tua: 30 menit\n- Mengerjakan PR dan belajar: 1 jam\n- Istirahat dan mandi: 1,5 jam",
-                text: "7. Analisis yang tepat mengenai pemenuhan hak dan pelaksanaan kewajiban Dodi sebagai anak adalah ....",
-                options: [
-                    "Dodi sudah seimbang karena waktu bermain game sama dengan waktu belajarnya.",
-                    "Dodi belum seimbang karena porsi waktu bermain game (50% dari waktu luang) jauh lebih dominan dibanding kewajiban belajar dan membantu orang tua.",
-                    "Dodi tidak mendapatkan haknya untuk menikmati waktu luang bersama keluarga.",
-                    "Dodi telah melaksanakan kewajibannya melebihi hak yang diterimanya di rumah."
-                ],
-                answer: 1 // B
-            },
-            {
-                id: 8, section: "A", weight: 5,
-                text: "8. Di perpustakaan SDN 4 Rambutan, Riko menemukan uang jatuh sebesar Rp20.000,00. Meskipun tidak ada orang yang melihat, Riko tidak mengambil uang tersebut melainkan menyerahkannya kepada petugas perpustakaan. Tindakan Riko didasari oleh dorongan hati nurani yang mencerminkan pelaksanaan norma ....",
-                options: ["Kesopanan", "Kesusilaan", "Hukum", "Agama"],
-                answer: 1 // B
-            },
-            {
-                id: 9, section: "A", weight: 5,
-                text: "9. Kelompok belajar Sintia mengalami perdebatan sengit saat menentukan tema kliping Pendidikan Pancasila. Dua anggota kelompok saling memaksakan kehendaknya. Langkah terbaik yang harus diambil Sintia sesuai prinsip musyawarah Pancasila adalah ....",
-                options: [
-                    "Menghentikan kerja kelompok dan melaporkan teman-temannya ke kepala sekolah",
-                    "Mengambil keputusan sendiri tanpa memedulikan anggota kelompok yang lain",
-                    "Mengajak seluruh anggota duduk bersama, mendengarkan alasan tiap usulan, dan mencari kesepakatan bersama secara santun",
-                    "Mengikuti usulan anggota yang paling galak agar diskusi cepat selesai"
-                ],
-                answer: 2 // C
-            },
-            {
-                id: 10, section: "A", weight: 5,
-                text: "10. Dalam sebuah data tata tertib sekolah, tercatat 12 dari 120 siswa kelas V sering terlambat masuk kelas setelah jam istirahat. Jika hal ini dibiarkan, akibat buruk yang terjadi terhadap penerapan norma di sekolah adalah ....",
-                options: [
-                    "Persentase siswa yang disiplin mencapai 10%, sehingga suasana kelas menjadi tenang.",
-                    "Sebanyak 10% siswa melanggar aturan, yang dapat mengganggu hak siswa lain untuk belajar dengan tertib dan nyaman.",
-                    "Sekolah akan menghapuskan aturan jam istirahat agar siswa tidak terlambat lagi.",
-                    "Hak siswa yang terlambat akan bertambah karena guru memberikan dispensasi khusus."
-                ],
-                answer: 1 // B
-            },
-
-            // ================= BAGIAN B: MENJODOHKAN (Bobot: 4) =================
-            {
-                id: 11, section: "B", weight: 4,
-                text: "11. Tanggal diperingatinya Hari Lahir Pancasila sesuai pidato Ir. Soekarno di sidang BPUPKI.",
-                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
-                answer: 1 // B
-            },
-            {
-                id: 12, section: "B", weight: 4,
-                text: "12. Menjaga kebersihan kelas dengan melaksanakan piket bersama sesuai jadwal.",
-                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
-                answer: 3 // D
-            },
-            {
-                id: 13, section: "B", weight: 4,
-                text: "13. Sesuatu yang layak diterima siswa, seperti mendapatkan bimbingan dan nilai dari guru.",
-                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
-                answer: 0 // A
-            },
-            {
-                id: 14, section: "B", weight: 4,
-                text: "14. Mengucapkan kata \"permisi\" dan membungkukkan badan saat berjalan di depan guru.",
-                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
-                answer: 2 // C
-            },
-            {
-                id: 15, section: "B", weight: 4,
-                text: "15. Hasil keputusan bersama dalam musyawarah wajib dilaksanakan oleh semua peserta dengan rasa ....",
-                options: ["A. Hak Anak di Sekolah", "B. 1 Juni 1945", "C. Norma Kesopanan", "D. Kewajiban Siswa", "E. Tanggung Jawab"],
-                answer: 4 // E
-            },
-
-            // ================= BAGIAN C: BENAR/SALAH (Bobot: 6) =================
-            {
-                id: 16, section: "C", weight: 6,
-                text: "16. Sidang pertama BPUPKI dipimpin oleh Ir. Soekarno untuk mengesahkan UUD NRI Tahun 1945.",
-                options: ["BENAR", "SALAH"],
-                answer: 1 // SALAH
-            },
-            {
-                id: 17, section: "C", weight: 6,
-                text: "17. Melaksanakan hasil keputusan musyawarah dengan ikhlas meskipun pendapat pribadi kita tidak terpilih merupakan cerminan pengamalan sila ke-4 Pancasila.",
-                options: ["BENAR", "SALAH"],
-                answer: 0 // BENAR
-            },
-            {
-                id: 18, section: "C", weight: 6,
-                text: "18. Sanksi bagi seseorang yang melanggar norma kesusilaan adalah hukuman penjara atau denda uang dari pengadilan negara.",
-                options: ["BENAR", "SALAH"],
-                answer: 1 // SALAH
-            },
-            {
-                id: 19, section: "C", weight: 6,
-                text: "19. Membantu orang tua membersihkan tempat tidur dan merapikan kamar setelah bangun adalah bentuk kewajiban anak di lingkungan rumah.",
-                options: ["BENAR", "SALAH"],
-                answer: 0 // BENAR
-            },
-            {
-                id: 20, section: "C", weight: 6,
-                text: "20. Apabila hak dan kewajiban dijalankan secara seimbang, maka kehidupan bermasyarakat akan menjadi harmonis, adil, dan tertib.",
-                options: ["BENAR", "SALAH"],
-                answer: 0 // BENAR
-            }
-        ];
-
-        const ExamApp = () => {
-            const [hasStarted, setHasStarted] = useState(false);
-            const [currentQ, setCurrentQ] = useState(0);
-            const [answers, setAnswers] = useState({});
-            const [timeLeft, setTimeLeft] = useState(120); // 120 detik (2 menit) per soal
-            const [isFinished, setIsFinished] = useState(false);
-            const [studentInfo, setStudentInfo] = useState({ name: '', number: '' });
-
-            // Timer Logic
-            useEffect(() => {
-                if (!hasStarted || isFinished) return;
-
-                const timerId = setInterval(() => {
-                    setTimeLeft(prev => {
-                        if (prev <= 1) {
-                            handleAutoNext();
-                            return 120; // reset 2 menit
-                        }
-                        return prev - 1;
-                    });
-                }, 1000);
-
-                return () => clearInterval(timerId);
-            }, [hasStarted, currentQ, isFinished]);
-
-            const handleAutoNext = () => {
-                if (currentQ < questions.length - 1) {
-                    setCurrentQ(prev => prev + 1);
-                } else {
-                    setIsFinished(true);
-                }
-            };
-
-            const handleNext = () => {
-                if (currentQ < questions.length - 1) {
-                    setCurrentQ(currentQ + 1);
-                    setTimeLeft(120); // Reset timer saat pindah manual
-                } else {
-                    setIsFinished(true);
-                }
-            };
-
-            const handlePrev = () => {
-                if (currentQ > 0) {
-                    setCurrentQ(currentQ - 1);
-                    setTimeLeft(120); // Reset timer
-                }
-            };
-
-            const selectOption = (optIndex) => {
-                setAnswers({ ...answers, [currentQ]: optIndex });
-            };
-
-            const calculateScore = () => {
-                let total = 0;
-                questions.forEach((q, index) => {
-                    if (answers[index] === q.answer) {
-                        total += q.weight;
-                    }
-                });
-                return total;
-            };
-
-            const formatTime = (seconds) => {
-                const m = Math.floor(seconds / 60);
-                const s = seconds % 60;
-                return `${m}:${s < 10 ? '0' : ''}${s}`;
-            };
-
-            if (!hasStarted) {
-                return (
-                    <div className="min-h-screen flex items-center justify-center p-4">
-                        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl text-center">
-                            <h1 className="text-2xl font-bold text-gray-800 mb-2">PEMERINTAH KABUPATEN BANYUASIN</h1>
-                            <h2 className="text-xl font-semibold text-gray-700">SD NEGERI 4 RAMBUTAN</h2>
-                            <p className="text-gray-600 mb-6 font-medium">SUMATIF TENGAH SEMESTER (STS) 1 TAHUN AJARAN 2024/2025</p>
-                            
-                            <div className="bg-blue-50 p-4 rounded-lg text-left mb-6 border border-blue-200">
-                                <p><strong>Mata Pelajaran:</strong> Pendidikan Pancasila</p>
-                                <p><strong>Kelas:</strong> V (Lima)</p>
-                                <p className="mt-2 text-sm text-red-600 font-semibold">* Aturan: Setiap soal diberi batas waktu 2 menit otomatis.</p>
-                            </div>
-
-                            <div className="flex flex-col gap-4 mb-8">
-                                <input 
-                                    type="text" placeholder="Masukkan Nama Siswa" 
-                                    className="border-2 border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:border-blue-500"
-                                    onChange={e => setStudentInfo({...studentInfo, name: e.target.value})}
-                                />
-                                <input 
-                                    type="text" placeholder="Masukkan No. Absen" 
-                                    className="border-2 border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:border-blue-500"
-                                    onChange={e => setStudentInfo({...studentInfo, number: e.target.value})}
-                                />
-                            </div>
-
-                            <button 
-                                onClick={() => { if(studentInfo.name) setHasStarted(true); else alert('Silakan isi nama terlebih dahulu!'); }}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-full text-xl shadow-lg transition transform hover:scale-105"
-                            >
-                                MULAI UJIAN
-                            </button>
-                        </div>
+        <!-- ==================== SCREEN 2: MAIN EXAM UI ==================== -->
+        <div id="exam-screen" class="flex flex-col h-full hide">
+            
+            <!-- HEADER -->
+            <header class="bg-blue-800 text-white p-6 flex justify-between items-center border-b-8 border-yellow-400 shrink-0">
+                <div class="flex flex-col">
+                    <h2 class="text-2xl font-bold tracking-wider">SD NEGERI 4 RAMBUTAN</h2>
+                    <p class="text-lg text-blue-200">SUMATIF TENGAH SEMESTER (STS) 1</p>
+                </div>
+                
+                <div class="flex gap-10 text-xl font-semibold">
+                    <div class="flex flex-col">
+                        <span>Nama: <span class="font-normal border-b-2 border-dashed border-white inline-block w-64 text-center">Siswa Dummy</span></span>
+                        <span>Kelas: <span class="font-normal">V (Lima)</span></span>
                     </div>
-                );
-            }
-
-            if (isFinished) {
-                const finalScore = calculateScore();
-                let message = "";
-                if(finalScore >= 85) message = "Luar Biasa! Pertahankan prestasimu.";
-                else if(finalScore >= 70) message = "Bagus! Kamu sudah menguasai materi.";
-                else message = "Tetap Semangat! Terus belajar dengan giat ya.";
-
-                return (
-                    <div className="min-h-screen flex items-center justify-center p-4 fade-in">
-                        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-xl text-center">
-                            <h2 className="text-3xl font-bold text-gray-800 mb-2">Ujian Selesai!</h2>
-                            <p className="text-gray-600 mb-6">Terima kasih, <strong>{studentInfo.name}</strong> (Absen: {studentInfo.number})</p>
-                            
-                            <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-inner mb-6">
-                                <p className="text-lg">Nilai Akhir Kamu</p>
-                                <p className="text-6xl font-black mt-2">{finalScore}</p>
-                                <p className="text-sm mt-4 bg-white/20 inline-block px-4 py-1 rounded-full">Skor Maksimal: 100</p>
-                            </div>
-                            
-                            <p className="text-lg font-semibold text-gray-700 italic">{message}</p>
-                            
-                            <button 
-                                onClick={() => window.location.reload()}
-                                className="mt-8 bg-gray-800 hover:bg-gray-900 text-white py-3 px-8 rounded-full font-semibold transition"
-                            >
-                                Selesai
-                            </button>
-                        </div>
+                    <div class="flex flex-col">
+                        <span>Mapel: <span class="font-normal text-yellow-300">Bahasa Inggris</span></span>
+                        <span>Waktu: <span class="font-normal">60 Menit</span></span>
                     </div>
-                );
-            }
+                </div>
 
-            const q = questions[currentQ];
-
-            return (
-                <div className="min-h-screen flex flex-col fade-in">
-                    {/* Header */}
-                    <div className="bg-white shadow-md p-4 sticky top-0 z-10 flex justify-between items-center">
-                        <div>
-                            <p className="text-sm text-gray-500 font-semibold">Soal {currentQ + 1} dari {questions.length}</p>
-                            <p className="font-bold text-blue-600">Bagian {q.section}</p>
-                        </div>
-                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold ${timeLeft <= 30 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-green-100 text-green-700'}`}>
-                            ⏱ {formatTime(timeLeft)}
-                        </div>
+                <!-- TIMER DISPLAY -->
+                <div class="bg-gray-900 px-8 py-4 rounded-xl border-4 border-gray-700 flex flex-col items-center justify-center w-64">
+                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-1">Sisa Waktu Soal</span>
+                    <div id="timer-display" class="text-5xl font-mono font-bold text-white tracking-wider">
+                        02:00
                     </div>
+                </div>
+            </header>
 
-                    {/* Question Content */}
-                    <div className="flex-1 w-full max-w-3xl mx-auto p-4 md:p-6 pb-24">
-                        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                            {q.stimulus && (
-                                <div className="bg-amber-50 p-4 rounded-lg mb-6 border border-amber-200 text-gray-800 text-sm md:text-base leading-relaxed whitespace-pre-wrap">
-                                    {q.stimulus}
-                                </div>
-                            )}
-                            
-                            <h3 className="text-lg md:text-xl font-medium text-gray-800 leading-relaxed mb-6">
-                                {q.text}
-                            </h3>
-
-                            <div className="flex flex-col gap-3">
-                                {q.options.map((opt, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => selectOption(idx)}
-                                        className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-                                            answers[currentQ] === idx 
-                                            ? 'border-blue-500 bg-blue-50 text-blue-800 font-medium shadow-md' 
-                                            : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50 text-gray-700'
-                                        }`}
-                                    >
-                                        {opt}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Navigation Footer */}
-                    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                        <div className="max-w-3xl mx-auto flex justify-between">
-                            <button 
-                                onClick={handlePrev} 
-                                disabled={currentQ === 0}
-                                className={`px-6 py-3 rounded-xl font-bold transition ${currentQ === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                            >
-                                ← Kembali
-                            </button>
-                            
-                            <button 
-                                onClick={handleNext}
-                                className={`px-8 py-3 rounded-xl font-bold shadow-md transition ${
-                                    currentQ === questions.length - 1 
-                                    ? 'bg-green-500 hover:bg-green-600 text-white' 
-                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                }`}
-                            >
-                                {currentQ === questions.length - 1 ? 'Selesai ✔' : 'Lanjut →'}
-                            </button>
+            <!-- MAIN CONTENT AREA -->
+            <main class="flex-1 flex overflow-hidden bg-gray-50">
+                
+                <!-- STIMULUS PANEL (Left side, only shows if stimulus exists) -->
+                <div id="stimulus-panel" class="w-1/2 p-10 overflow-y-auto border-r-4 border-gray-200 bg-white hide">
+                    <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100 mb-6">
+                        <h3 id="stimulus-title" class="text-2xl font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2"></h3>
+                        <div id="stimulus-content" class="text-xl text-gray-800 leading-relaxed whitespace-pre-line font-medium">
+                            <!-- Stimulus text injected here -->
                         </div>
                     </div>
                 </div>
-            );
+
+                <!-- QUESTION PANEL (Right side, or full width if no stimulus) -->
+                <div id="question-panel" class="w-1/2 p-12 overflow-y-auto flex flex-col relative transition-all duration-300">
+                    
+                    <!-- TTS Indicator -->
+                    <div id="tts-indicator" class="absolute top-6 right-8 flex items-center gap-3 bg-green-100 text-green-700 px-4 py-2 rounded-full border border-green-300 shadow-sm hide">
+                        <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                        <span class="font-semibold text-lg">Membaca otomatis...</span>
+                    </div>
+
+                    <div class="mb-8 mt-4">
+                        <span id="question-category" class="inline-block bg-yellow-100 text-yellow-800 text-lg font-bold px-4 py-1 rounded-md mb-4 border border-yellow-300"></span>
+                        <h3 id="question-text" class="text-3xl font-bold text-gray-900 leading-snug">
+                            <!-- Question text injected here -->
+                        </h3>
+                    </div>
+
+                    <div id="options-container" class="flex flex-col gap-5 mt-auto mb-auto">
+                        <!-- Options injected here -->
+                    </div>
+
+                </div>
+            </main>
+
+            <!-- FOOTER NAVIGATION -->
+            <footer class="bg-white border-t-4 border-gray-200 p-6 flex justify-between items-center shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)]">
+                <button id="btn-prev" class="px-8 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 text-2xl font-bold rounded-xl transition-colors flex items-center gap-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                    KEMBALI
+                </button>
+                
+                <div class="flex items-center gap-4">
+                    <div class="text-2xl font-bold text-gray-500">SOAL</div>
+                    <div class="bg-blue-100 text-blue-800 px-6 py-2 rounded-lg text-3xl font-black border-2 border-blue-200">
+                        <span id="current-question-num">1</span> <span class="text-xl text-blue-500 font-bold mx-1">/</span> 20
+                    </div>
+                </div>
+
+                <button id="btn-next" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-2xl font-bold rounded-xl transition-colors shadow-md flex items-center gap-2">
+                    LANJUT
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </footer>
+        </div>
+
+        <!-- ==================== SCREEN 3: END SCREEN ==================== -->
+        <div id="end-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-green-50 text-green-900 z-50 hide">
+            <svg class="w-40 h-40 text-green-500 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h1 class="text-6xl font-bold mb-4">UJIAN SELESAI</h1>
+            <p class="text-3xl text-green-700">Terima kasih telah mengerjakan dengan baik.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // --- SCALING LOGIC TO FIT PID SCREENS ---
+        function scaleContainer() {
+            const container = document.getElementById('app-container');
+            const targetWidth = 1920;
+            const targetHeight = 1080;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+            const scale = Math.min(scaleX, scaleY);
+            
+            // Apply CSS variable for scale
+            container.style.setProperty('--scale-factor', scale);
+        }
+        window.addEventListener('resize', scaleContainer);
+        scaleContainer(); // Initial scale
+
+        // --- DATA SOAL & TTS BAHASA INDONESIA ---
+        const examData = [
+            // STIMULUS 1 (Questions 1 - 5)
+            {
+                id: 1, type: 'pg',
+                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
+                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
+                category: "Literasi & Numerasi - C4",
+                question: "1. How much is the total cost of Mita's shopping (1 kg apples, 2 kg oranges, and 1 bunch of spinach)?",
+                options: ["A. Rp 51,000", "B. Rp 64,000", "C. Rp 69,000", "D. Rp 74,000"],
+                ttsIndo: "Stimulus satu. Di kedai buah dan sayuran Pak Ahmad. Pada sabtu pagi, Mita dan ibunya pergi ke kedai buah Pak Ahmad di Pasar Rambutan. Pak Ahmad menjual buah segar dan sayuran dengan daftar harga berikut: Apel 28 ribu rupiah per kilogram. Jeruk 18 ribu rupiah per kilogram. Anggur 34 ribu rupiah per kilogram. Bawang putih 12 ribu rupiah per kantong. Bayam 5 ribu rupiah per ikat. Susu 10 ribu rupiah per kotak. Mita ingin membeli 1 kilogram apel, 2 kilogram jeruk, dan 1 ikat bayam. Ibunya membawa total uang 100 ribu rupiah. Pertanyaan nomor 1. Berapakah total biaya belanjaan Mita untuk 1 kilogram apel, 2 kilogram jeruk, dan 1 ikat bayam? Pilihan A, 51 ribu rupiah. Pilihan B, 64 ribu rupiah. Pilihan C, 69 ribu rupiah. Pilihan D, 74 ribu rupiah."
+            },
+            {
+                id: 2, type: 'pg',
+                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
+                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
+                category: "Numerasi - C4",
+                question: "2. How much change (sisa uang) will Mita's mother receive from her Rp 100,000 note?",
+                options: ["A. Rp 26,000", "B. Rp 31,000", "C. Rp 36,000", "D. Rp 41,000"],
+                ttsIndo: "Berdasarkan stimulus satu tentang belanjaan Mita. Pertanyaan nomor 2. Berapakah uang kembalian atau sisa uang yang akan diterima ibu Mita dari uang 100 ribu rupiah miliknya? Pilihan A, 26 ribu rupiah. Pilihan B, 31 ribu rupiah. Pilihan C, 36 ribu rupiah. Pilihan D, 41 ribu rupiah."
+            },
+            {
+                id: 3, type: 'pg',
+                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
+                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
+                category: "Literasi Kebahasaan - C3",
+                question: "3. What is the correct quantifier used for buying green leaves like spinach?",
+                options: ["A. A kilo of spinach", "B. A bunch of spinach", "C. A bottle of spinach", "D. A glass of spinach"],
+                ttsIndo: "Masih pada stimulus satu. Pertanyaan nomor 3. Apakah satuan takaran yang tepat digunakan untuk membeli sayuran daun hijau seperti bayam dalam bahasa Inggris? Pilihan A, A kilo of spinach. Pilihan B, A bunch of spinach. Pilihan C, A bottle of spinach. Pilihan D, A glass of spinach."
+            },
+            {
+                id: 4, type: 'pg',
+                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
+                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
+                category: "Evaluasi Anggaran - C5",
+                question: "4. If Mita's mother decides to add 1 bag of garlic (Rp 12,000) and 1 box of milk (Rp 10,000) to her shopping list, is her Rp 100,000 money enough?",
+                options: ["A. No, she needs Rp 1,000 more.", "B. Yes, and she will have Rp 9,000 left.", "C. Yes, and she will have Rp 15,000 left.", "D. No, she needs Rp 10,000 more."],
+                ttsIndo: "Pertanyaan nomor 4 terkait stimulus satu. Jika ibu Mita memutuskan untuk menambahkan 1 kantong bawang putih seharga 12 ribu rupiah dan 1 kotak susu seharga 10 ribu rupiah ke daftar belanjanya, apakah uang 100 ribu rupiahnya cukup? Pilihan A, Tidak, dia butuh seribu rupiah lagi. Pilihan B, Ya, dan dia akan memiliki sisa 9 ribu rupiah. Pilihan C, Ya, dan dia akan memiliki sisa 15 ribu rupiah. Pilihan D, Tidak, dia butuh 10 ribu rupiah lagi."
+            },
+            {
+                id: 5, type: 'pg',
+                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
+                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
+                category: "Analisis Data - C4",
+                question: "5. Which item has the highest price per kilogram at Pak Ahmad's stand?",
+                options: ["A. Apples", "B. Oranges", "C. Grapes", "D. Garlic"],
+                ttsIndo: "Pertanyaan nomor 5 dari stimulus satu. Barang manakah yang memiliki harga paling tinggi per kilogram di kedai Pak Ahmad? Pilihan A, Apel. Pilihan B, Jeruk. Pilihan C, Anggur. Pilihan D, Bawang putih."
+            },
+
+            // STIMULUS 2 (Questions 6 - 8)
+            {
+                id: 6, type: 'pg',
+                stimulusTitle: "STIMULUS 2: In the Kitchen with Pipit",
+                stimulusText: "Pipit and her mother are preparing Sayur Bening in the kitchen. First, Pipit washes two stalks of celery and two bowls of spinach. Then, her mother boils water in a pot. After the water boils, Pipit puts the spinach into the pot. She adds 1 pinch of salt and 2 spoons of sugar to make the soup tasty. Pipit says, \"If we put 5 spoons of salt instead of 1 pinch of salt, the soup will taste very salty!\"",
+                category: "Sekuensial / Langkah Kerja - C4",
+                question: "6. What should Pipit do right after the water in the pot boils?",
+                options: ["A. Wash two stalks of celery.", "B. Serve the soup into two bowls.", "C. Put the spinach into the boiling water and add seasoning.", "D. Turn off the stove immediately."],
+                ttsIndo: "Stimulus dua. Di dapur bersama Pipit. Pipit dan ibunya sedang menyiapkan Sayur Bening di dapur. Pertama, Pipit mencuci dua batang seledri dan dua mangkuk bayam. Kemudian, ibunya merebus air di dalam panci. Setelah air mendidih, Pipit memasukkan bayam ke dalam panci. Dia menambahkan satu jumput garam dan dua sendok gula agar supnya enak. Pipit berkata, jika kita memasukkan 5 sendok garam, bukan 1 jumput garam, supnya akan terasa sangat asin. Pertanyaan nomor 6. Apa yang harus Pipit lakukan tepat setelah air di panci mendidih? Pilihan A, Mencuci dua batang seledri. Pilihan B, Menyajikan sup ke dalam dua mangkuk. Pilihan C, Memasukkan bayam ke dalam air mendidih dan menambahkan bumbu. Pilihan D, Segera mematikan kompor."
+            },
+            {
+                id: 7, type: 'pg',
+                stimulusTitle: "STIMULUS 2: In the Kitchen with Pipit",
+                stimulusText: "Pipit and her mother are preparing Sayur Bening in the kitchen. First, Pipit washes two stalks of celery and two bowls of spinach. Then, her mother boils water in a pot. After the water boils, Pipit puts the spinach into the pot. She adds 1 pinch of salt and 2 spoons of sugar to make the soup tasty. Pipit says, \"If we put 5 spoons of salt instead of 1 pinch of salt, the soup will taste very salty!\"",
+                category: "Literasi Takaran - C3",
+                question: "7. How many bowls of spinach did Pipit prepare for the soup?",
+                options: ["A. One bowl", "B. Two bowls", "C. Three bowls", "D. Four bowls"],
+                ttsIndo: "Berdasarkan stimulus dua tentang resep Pipit. Pertanyaan nomor 7. Berapa mangkuk bayam yang disiapkan Pipit untuk sup tersebut? Pilihan A, Satu mangkuk. Pilihan B, Dua mangkuk. Pilihan C, Tiga mangkuk. Pilihan D, Empat mangkuk."
+            },
+            {
+                id: 8, type: 'pg',
+                stimulusTitle: "STIMULUS 2: In the Kitchen with Pipit",
+                stimulusText: "Pipit and her mother are preparing Sayur Bening in the kitchen. First, Pipit washes two stalks of celery and two bowls of spinach. Then, her mother boils water in a pot. After the water boils, Pipit puts the spinach into the pot. She adds 1 pinch of salt and 2 spoons of sugar to make the soup tasty. Pipit says, \"If we put 5 spoons of salt instead of 1 pinch of salt, the soup will taste very salty!\"",
+                category: "Sebab-Akibat - C4",
+                question: "8. What will happen to the soup if Pipit puts 5 spoons of salt into the pot?",
+                options: ["A. The soup will taste sweet.", "B. The soup will taste very salty.", "C. The soup will taste bitter.", "D. The soup will become sour."],
+                ttsIndo: "Pertanyaan nomor 8 terkait stimulus dua. Apa yang akan terjadi pada sup jika Pipit memasukkan 5 sendok garam ke dalam panci? Pilihan A, Sup akan terasa manis. Pilihan B, Sup akan terasa sangat asin. Pilihan C, Sup akan terasa pahit. Pilihan D, Sup akan menjadi asam."
+            },
+
+            // STIMULUS 3 (Questions 9 - 10)
+            {
+                id: 9, type: 'pg',
+                stimulusTitle: "STIMULUS 3: Visiting Bara's House and School Library",
+                stimulusText: "Ferdinand wants to visit Bara's house after school. Bara gives him the directions: \"From our school on Garuda Street, go straight until you find the market. Turn right to Merpati Street. Go straight on Merpati Street, and my house is in front of the beach\".\nOn the way, Bara and Ferdinand stop at the school library. In the library, students can read books quietly and borrow books politely, but they cannot eat snacks, drink, or run around.",
+                category: "Literasi Spasial - C4",
+                question: "9. Where is Bara's house located based on the directions given?",
+                options: ["A. Beside the market on Garuda Street.", "B. In front of the beach at the end of Merpati Street.", "C. Behind the school library.", "D. Between the grocery store and the bank."],
+                ttsIndo: "Stimulus tiga. Mengunjungi rumah Bara dan perpustakaan sekolah. Ferdinand ingin mengunjungi rumah Bara sepulang sekolah. Bara memberinya petunjuk arah. Dari sekolah kita di Jalan Garuda, lurus terus sampai kamu menemukan pasar. Belok kanan ke Jalan Merpati. Lurus terus di Jalan Merpati, dan rumahku ada di depan pantai. Dalam perjalanan, mereka mampir ke perpustakaan. Di sana siswa boleh membaca dan meminjam buku dengan tenang, tapi tidak boleh makan, minum, atau berlarian. Pertanyaan nomor 9. Di manakah letak rumah Bara berdasarkan petunjuk yang diberikan? Pilihan A, Di sebelah pasar di Jalan Garuda. Pilihan B, Di depan pantai di ujung Jalan Merpati. Pilihan C, Di belakang perpustakaan sekolah. Pilihan D, Di antara toko kelontong dan bank."
+            },
+            {
+                id: 10, type: 'pg',
+                stimulusTitle: "STIMULUS 3: Visiting Bara's House and School Library",
+                stimulusText: "Ferdinand wants to visit Bara's house after school. Bara gives him the directions: \"From our school on Garuda Street, go straight until you find the market. Turn right to Merpati Street. Go straight on Merpati Street, and my house is in front of the beach\".\nOn the way, Bara and Ferdinand stop at the school library. In the library, students can read books quietly and borrow books politely, but they cannot eat snacks, drink, or run around.",
+                category: "Analisis Aturan - C4",
+                question: "10. Which activity is PERMITTED (diperbolehkan) inside the school library?",
+                options: ["A. Eating roasted corn and drinking ice tea.", "B. Running around between book shelves.", "C. Reading books quietly and borrowing them politely.", "D. Speaking very loudly with friends."],
+                ttsIndo: "Pertanyaan nomor 10 dari stimulus tiga. Kegiatan manakah yang diperbolehkan di dalam perpustakaan sekolah? Pilihan A, Makan jagung bakar dan minum es teh. Pilihan B, Berlarian di antara rak buku. Pilihan C, Membaca buku dengan tenang dan meminjamnya dengan sopan. Pilihan D, Berbicara dengan sangat keras bersama teman-teman."
+            },
+
+            // MATCHING SECTION (Questions 11 - 15 formatted as direct questions)
+            {
+                id: 11, type: 'matching_adapted',
+                stimulusTitle: "BAGIAN B: MENJODOHKAN",
+                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
+                category: "Menjodohkan",
+                question: "11. A quantifier for a bunch of leafy green vegetables",
+                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
+                ttsIndo: "Bagian B, Menjodohkan. Pilihlah jawaban yang tepat. Pertanyaan nomor 11. Kata takaran dalam bahasa Inggris untuk seikat sayuran daun hijau. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
+            },
+            {
+                id: 12, type: 'matching_adapted',
+                stimulusTitle: "BAGIAN B: MENJODOHKAN",
+                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
+                category: "Menjodohkan",
+                question: "12. Taste of food when you add two spoons of sugar",
+                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
+                ttsIndo: "Pertanyaan nomor 12. Rasa makanan ketika kamu menambahkan dua sendok gula. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
+            },
+            {
+                id: 13, type: 'matching_adapted',
+                stimulusTitle: "BAGIAN B: MENJODOHKAN",
+                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
+                category: "Menjodohkan",
+                question: "13. A direction phrase to change way to the right side",
+                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
+                ttsIndo: "Pertanyaan nomor 13. Frasa penunjuk arah untuk mengubah jalan ke sisi kanan. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
+            },
+            {
+                id: 14, type: 'matching_adapted',
+                stimulusTitle: "BAGIAN B: MENJODOHKAN",
+                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
+                category: "Menjodohkan",
+                question: "14. Preposition used when a building is directly facing the beach",
+                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
+                ttsIndo: "Pertanyaan nomor 14. Kata depan yang digunakan ketika sebuah bangunan menghadap langsung ke pantai. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
+            },
+            {
+                id: 15, type: 'matching_adapted',
+                stimulusTitle: "BAGIAN B: MENJODOHKAN",
+                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
+                category: "Menjodohkan",
+                question: "15. A quantifier for liquid items like milk or juice",
+                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
+                ttsIndo: "Pertanyaan nomor 15. Kata takaran untuk benda cair seperti susu atau jus. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
+            },
+
+            // TRUE / FALSE SECTION (Questions 16 - 20)
+            {
+                id: 16, type: 'tf',
+                stimulusTitle: "BAGIAN C: BENAR - SALAH",
+                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
+                category: "Benar - Salah",
+                question: "16. The price of 1 kg of oranges at Pak Ahmad's stand is Rp 18,000.",
+                options: ["True (Benar)", "False (Salah)"],
+                ttsIndo: "Bagian C, Benar atau Salah. Pertanyaan nomor 16. Harga satu kilogram jeruk di kedai Pak Ahmad adalah 18 ribu rupiah. Pilihan A, Benar. Pilihan B, Salah."
+            },
+            {
+                id: 17, type: 'tf',
+                stimulusTitle: "BAGIAN C: BENAR - SALAH",
+                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
+                category: "Benar - Salah",
+                question: "17. To cook Sayur Bening, Pipit adds three spoons of chili powder to make it spicy.",
+                options: ["True (Benar)", "False (Salah)"],
+                ttsIndo: "Pertanyaan nomor 17. Untuk memasak Sayur Bening, Pipit menambahkan tiga sendok bubuk cabai agar pedas. Pilihan A, Benar. Pilihan B, Salah."
+            },
+            {
+                id: 18, type: 'tf',
+                stimulusTitle: "BAGIAN C: BENAR - SALAH",
+                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
+                category: "Benar - Salah",
+                question: "18. Students are allowed to eat snacks and drink milk freely inside the school library.",
+                options: ["True (Benar)", "False (Salah)"],
+                ttsIndo: "Pertanyaan nomor 18. Siswa diizinkan makan camilan dan minum susu dengan bebas di dalam perpustakaan sekolah. Pilihan A, Benar. Pilihan B, Salah."
+            },
+            {
+                id: 19, type: 'tf',
+                stimulusTitle: "BAGIAN C: BENAR - SALAH",
+                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
+                category: "Benar - Salah",
+                question: "19. If Mita buys 1 kg of apples (Rp 28,000) and 2 kg of oranges (Rp 36,000), the cost is Rp 64,000.",
+                options: ["True (Benar)", "False (Salah)"],
+                ttsIndo: "Pertanyaan nomor 19. Jika Mita membeli satu kilogram apel seharga 28 ribu dan dua kilogram jeruk seharga 36 ribu, maka biayanya adalah 64 ribu rupiah. Pilihan A, Benar. Pilihan B, Salah."
+            },
+            {
+                id: 20, type: 'tf',
+                stimulusTitle: "BAGIAN C: BENAR - SALAH",
+                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
+                category: "Benar - Salah",
+                question: "20. Bara's house is located in front of the beach at the end of Merpati Street.",
+                options: ["True (Benar)", "False (Salah)"],
+                ttsIndo: "Pertanyaan nomor 20. Rumah Bara terletak di depan pantai di ujung Jalan Merpati. Pilihan A, Benar. Pilihan B, Salah."
+            }
+        ];
+
+        // --- STATE VARIABLES ---
+        let currentIndex = 0;
+        const TIME_LIMIT = 120; // 2 minutes per question
+        let timeLeft = TIME_LIMIT;
+        let timerInterval;
+        let selectedAnswers = new Array(examData.length).fill(null);
+        let ttsActive = false;
+
+        // --- DOM ELEMENTS ---
+        const screens = {
+            start: document.getElementById('start-screen'),
+            exam: document.getElementById('exam-screen'),
+            end: document.getElementById('end-screen')
+        };
+        const elements = {
+            stimulusPanel: document.getElementById('stimulus-panel'),
+            questionPanel: document.getElementById('question-panel'),
+            stimulusTitle: document.getElementById('stimulus-title'),
+            stimulusContent: document.getElementById('stimulus-content'),
+            questionCategory: document.getElementById('question-category'),
+            questionText: document.getElementById('question-text'),
+            optionsContainer: document.getElementById('options-container'),
+            currentNum: document.getElementById('current-question-num'),
+            timerDisplay: document.getElementById('timer-display'),
+            btnPrev: document.getElementById('btn-prev'),
+            btnNext: document.getElementById('btn-next'),
+            ttsIndicator: document.getElementById('tts-indicator')
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<ExamApp />);
+        // --- TTS LOGIC ---
+        const synth = window.speechSynthesis;
+        function playTTS(text) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            if (!text) return;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID'; // Read in Indonesian
+            utterance.rate = 0.9; // Slightly slower for clarity
+            
+            utterance.onstart = () => {
+                elements.ttsIndicator.classList.remove('hide');
+            };
+            utterance.onend = () => {
+                elements.ttsIndicator.classList.add('hide');
+            };
+            utterance.onerror = () => {
+                elements.ttsIndicator.classList.add('hide');
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopTTS() {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            elements.ttsIndicator.classList.add('hide');
+        }
+
+        // --- TIMER LOGIC ---
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = TIME_LIMIT;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    autoAdvance();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            elements.timerDisplay.textContent = formatTime(timeLeft);
+            if (timeLeft <= 10) {
+                elements.timerDisplay.classList.add('timer-warning');
+            } else {
+                elements.timerDisplay.classList.remove('timer-warning');
+            }
+        }
+
+        function autoAdvance() {
+            // Time is up, move to next automatically
+            if (currentIndex < examData.length - 1) {
+                goToQuestion(currentIndex + 1);
+            } else {
+                finishExam();
+            }
+        }
+
+        // --- RENDER LOGIC ---
+        function renderQuestion(index) {
+            const data = examData[index];
+            elements.currentNum.textContent = index + 1;
+
+            // Handle Navigation Buttons
+            elements.btnPrev.disabled = index === 0;
+            elements.btnPrev.style.opacity = index === 0 ? '0.3' : '1';
+            elements.btnPrev.style.cursor = index === 0 ? 'not-allowed' : 'pointer';
+            
+            if (index === examData.length - 1) {
+                elements.btnNext.innerHTML = 'SELESAI <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+                elements.btnNext.classList.replace('bg-blue-600', 'bg-green-600');
+                elements.btnNext.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+            } else {
+                elements.btnNext.innerHTML = 'LANJUT <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>';
+                elements.btnNext.classList.replace('bg-green-600', 'bg-blue-600');
+                elements.btnNext.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
+            }
+
+            // Render Stimulus if exists
+            if (data.stimulusText) {
+                elements.stimulusPanel.classList.remove('hide');
+                elements.questionPanel.classList.remove('w-full');
+                elements.questionPanel.classList.add('w-1/2');
+                elements.stimulusTitle.textContent = data.stimulusTitle;
+                elements.stimulusContent.textContent = data.stimulusText;
+            } else {
+                elements.stimulusPanel.classList.add('hide');
+                elements.questionPanel.classList.remove('w-1/2');
+                elements.questionPanel.classList.add('w-full');
+            }
+
+            // Render Question
+            elements.questionCategory.textContent = data.category;
+            elements.questionText.textContent = data.question;
+
+            // Render Options
+            elements.optionsContainer.innerHTML = '';
+            const labels = ['A', 'B', 'C', 'D', 'E'];
+            
+            data.options.forEach((optText, i) => {
+                const optDiv = document.createElement('div');
+                const isSelected = selectedAnswers[index] === i;
+                
+                // Extract label letter if it exists in the string (e.g. "A. Apple" -> "A")
+                let displayLabel = labels[i];
+                let displayOptText = optText;
+                
+                // UI Styling
+                optDiv.className = `p-6 rounded-2xl border-4 cursor-pointer text-2xl transition-all duration-200 flex items-center shadow-sm ${
+                    isSelected 
+                    ? 'border-blue-500 bg-blue-50 text-blue-900 shadow-md transform scale-[1.01]' 
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50 text-gray-700'
+                }`;
+                
+                optDiv.onclick = () => selectOption(index, i);
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = `option-label text-xl ${isSelected ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`;
+                labelSpan.textContent = displayLabel;
+
+                const textSpan = document.createElement('span');
+                textSpan.className = 'font-semibold';
+                textSpan.textContent = displayOptText;
+
+                optDiv.appendChild(labelSpan);
+                optDiv.appendChild(textSpan);
+                elements.optionsContainer.appendChild(optDiv);
+            });
+
+            // Start Timer for this question
+            startTimer();
+            
+            // Trigger TTS reading
+            playTTS(data.ttsIndo);
+        }
+
+        function selectOption(qIndex, optIndex) {
+            selectedAnswers[qIndex] = optIndex;
+            // Re-render options to update UI selection state without resetting timer or TTS
+            const optionsDivs = elements.optionsContainer.children;
+            for (let i = 0; i < optionsDivs.length; i++) {
+                const div = optionsDivs[i];
+                const label = div.querySelector('.option-label');
+                if (i === optIndex) {
+                    div.className = 'p-6 rounded-2xl border-4 cursor-pointer text-2xl transition-all duration-200 flex items-center shadow-md border-blue-500 bg-blue-50 text-blue-900 transform scale-[1.01]';
+                    label.className = 'option-label text-xl bg-blue-500 text-white';
+                } else {
+                    div.className = 'p-6 rounded-2xl border-4 cursor-pointer text-2xl transition-all duration-200 flex items-center shadow-sm border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50 text-gray-700';
+                    label.className = 'option-label text-xl bg-gray-200 text-gray-700';
+                }
+            }
+        }
+
+        function goToQuestion(index) {
+            stopTTS(); // Stop reading current before moving
+            currentIndex = index;
+            renderQuestion(currentIndex);
+        }
+
+        function finishExam() {
+            stopTTS();
+            clearInterval(timerInterval);
+            screens.exam.classList.add('hide');
+            screens.end.classList.remove('hide');
+            
+            // Optional: Announce end in Indonesian
+            playTTS("Ujian telah selesai. Terima kasih.");
+        }
+
+        // --- EVENT LISTENERS ---
+        document.getElementById('btn-start').addEventListener('click', () => {
+            // User interaction required to start audio context
+            // Initialize empty speech just to unlock
+            const unlockUtterance = new SpeechSynthesisUtterance('');
+            synth.speak(unlockUtterance);
+            
+            screens.start.classList.add('hide');
+            screens.exam.classList.remove('hide');
+            
+            // Initialize first question
+            renderQuestion(0);
+        });
+
+        elements.btnNext.addEventListener('click', () => {
+            if (currentIndex < examData.length - 1) {
+                goToQuestion(currentIndex + 1);
+            } else {
+                finishExam();
+            }
+        });
+
+        elements.btnPrev.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                goToQuestion(currentIndex - 1);
+            }
+        });
+
     </script>
 </body>
 </html>
