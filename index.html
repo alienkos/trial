@@ -28,12 +28,12 @@
 
     <!-- Custom CSS untuk Layar Penuh dan Tombol 3D -->
     <style>
-        body, html {
+        body, html, #root {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden; /* Mencegah scroll pada body */
+            height: 100%; /* FIX: Memastikan div root mengambil tinggi penuh */
+            width: 100%;
+            overflow: hidden; /* Mencegah scroll pada body utama */
             background-color: #f0f9ff;
         }
         
@@ -262,23 +262,21 @@
             const [alasanBS, setAlasanBS] = useState({});
             const [isFinished, setIsFinished] = useState(false);
             
-            const [timeLeft, setTimeLeft] = useState(120); // 2 menit per soal
+            const [timeLeft, setTimeLeft] = useState(120);
             const [isTtsEnabled, setIsTtsEnabled] = useState(true);
 
-            // Fungsi Text-to-Speech
             const speakText = (textToRead) => {
                 if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel(); // Hentikan suara sebelumnya
+                    window.speechSynthesis.cancel();
                     if (isTtsEnabled && hasStarted && !isFinished) {
                         const utterance = new SpeechSynthesisUtterance(textToRead);
                         utterance.lang = 'id-ID';
-                        utterance.rate = 0.9; // Agak lambat agar jelas
+                        utterance.rate = 0.9;
                         window.speechSynthesis.speak(utterance);
                     }
                 }
             };
 
-            // Trigger TTS tiap ganti soal
             useEffect(() => {
                 if (hasStarted && !isFinished) {
                     const q = soalData[currentIndex];
@@ -302,13 +300,11 @@
                     speakText(text);
                 }
                 
-                // Cleanup saat unmount/ganti soal
                 return () => {
                     if('speechSynthesis' in window) window.speechSynthesis.cancel();
                 };
             }, [currentIndex, hasStarted, isFinished, isTtsEnabled]);
 
-            // Timer Logic
             useEffect(() => {
                 let timerId;
                 if (hasStarted && !isFinished) {
@@ -326,7 +322,6 @@
                 if(nama && absen) {
                     setHasStarted(true);
                     setTimeLeft(120);
-                    // Inisialisasi Audio Engine di browser
                     if('speechSynthesis' in window) {
                         const initAudio = new SpeechSynthesisUtterance('');
                         window.speechSynthesis.speak(initAudio);
@@ -363,7 +358,6 @@
                 if(isTtsEnabled && 'speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                 } else if (!isTtsEnabled) {
-                    // Trigger pembacaan ulang soal saat ini jika dihidupkan
                     const q = soalData[currentIndex];
                     speakText(q.question); 
                 }
@@ -390,7 +384,7 @@
 
             if (!hasStarted) {
                 return (
-                    <div className="flex flex-col items-center justify-center h-full w-full p-4">
+                    <div className="flex flex-col items-center justify-center h-[100dvh] w-full p-4">
                         <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border-4 border-blue-200">
                             <h1 className="text-2xl md:text-3xl font-black text-blue-600 text-center mb-2">UJIAN STS 1 IPAS</h1>
                             <p className="text-center font-bold text-gray-500 mb-6">Kelas 5 SDN 4 Rambutan</p>
@@ -420,7 +414,7 @@
             if (isFinished) {
                 const nilai = calculateScore();
                 return (
-                    <div className="flex flex-col items-center justify-center h-full w-full p-4">
+                    <div className="flex flex-col items-center justify-center h-[100dvh] w-full p-4">
                         <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md border-4 border-green-200 text-center">
                             <h2 className="text-3xl font-black text-green-600 mb-2">SELESAI!</h2>
                             <div className="bg-green-50 rounded-2xl p-6 my-6 border-2 border-green-100">
@@ -442,7 +436,8 @@
             const q = soalData[currentIndex];
 
             return (
-                <div className="flex flex-col h-full w-full max-w-3xl mx-auto bg-white shadow-2xl relative">
+                /* FIX: Menggunakan h-[100dvh] dan overflow-hidden agar kotak tidak melebihi tinggi layar pada layar lebar */
+                <div className="flex flex-col h-[100dvh] w-full max-w-3xl mx-auto bg-white shadow-2xl relative overflow-hidden">
                     
                     {/* Header: Progress, Timer, TTS Toggle */}
                     <div className="flex justify-between items-center p-3 sm:p-4 bg-blue-600 text-white shadow-md z-10 shrink-0">
@@ -461,12 +456,12 @@
                         </div>
                     </div>
 
-                    {/* Content Area */}
-                    <div className="flex-1 flex flex-col p-3 sm:p-5 overflow-hidden gap-3">
+                    {/* Content Area - FIX: Menggunakan min-h-0 agar flexbox tidak melar paksa keluar layar */}
+                    <div className="flex-1 flex flex-col p-3 sm:p-5 overflow-hidden gap-3 min-h-0">
                         
                         {/* Box Literasi */}
                         {q.literasi && (
-                            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-3 sm:p-4 overflow-y-auto no-scrollbar shrink border-l-8 border-l-yellow-400 max-h-[30vh]">
+                            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-3 sm:p-4 overflow-y-auto no-scrollbar shrink max-h-[30vh] border-l-8 border-l-yellow-400">
                                 <p className="text-sm sm:text-base font-semibold text-gray-800 leading-relaxed text-justify">
                                     {q.literasi}
                                 </p>
@@ -480,8 +475,8 @@
                             </h3>
                         </div>
 
-                        {/* Box Pilihan Jawaban */}
-                        <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-2 sm:gap-3 pb-2">
+                        {/* Box Pilihan Jawaban - FIX: Menggunakan min-h-0 agar list opsi bisa discroll secara internal jika terlalu banyak */}
+                        <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-2 sm:gap-3 pb-2 min-h-0">
                             {q.type === 'pg' && q.options.map((opt, i) => (
                                 <button key={i} 
                                     onClick={() => handleAnswer(i)}
@@ -494,7 +489,6 @@
                                 </button>
                             ))}
 
-                            {/* UPDATE: Soal Menjodohkan tanpa Dropdown */}
                             {q.type === 'menjodohkan' && (
                                 <div className="flex flex-col gap-2 sm:gap-3">
                                     <p className="font-bold text-gray-600 mb-1 text-sm">Pilih jawaban pasangan yang tepat:</p>
@@ -523,7 +517,7 @@
                                     </div>
                                     <textarea 
                                         placeholder="Tuliskan alasan singkat logismu di sini..."
-                                        className="flex-1 w-full p-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none font-semibold text-sm sm:text-base resize-none"
+                                        className="flex-1 w-full p-3 rounded-xl border-2 border-gray-300 focus:border-blue-500 focus:outline-none font-semibold text-sm sm:text-base resize-none min-h-[80px]"
                                         value={alasanBS[currentIndex] || ""}
                                         onChange={(e) => handleAlasan(e.target.value)}
                                     ></textarea>
