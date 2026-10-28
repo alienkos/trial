@@ -1,641 +1,329 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Ujian SPA - 1920x1080</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ujian Sekolah - SDN 4 Rambutan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Mengatur font default dan memastikan body mengisi layar */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #e2e8f0; /* bg-slate-200 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Container utama dengan aspect ratio 16:9 untuk target 1920x1080 */
-        #app-container {
-            width: 1920px;
-            height: 1080px;
-            background-color: #ffffff;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            transform-origin: center;
-        }
-
-        /* Responsive scaling mechanism to fit smaller screens while maintaining 16:9 
-           (Useful if previewed on screens < 1920x1080) */
-        @media (max-width: 1920px), (max-height: 1080px) {
-            body {
-                background-color: #333;
-            }
-            #app-container {
-                /* Menggunakan JS untuk set transform scale agar pas di layar */
-                transform: scale(var(--scale-factor, 1));
-            }
-        }
-
-        .hide { display: none !important; }
-        
-        /* Animasi timer berkedip saat waktu mau habis */
-        @keyframes pulse-red {
-            0%, 100% { color: #ef4444; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
-            50% { color: #991b1b; text-shadow: none; }
-        }
-        .timer-warning {
-            animation: pulse-red 1s infinite;
-        }
-
-        .option-label {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 9999px;
-            background-color: #e2e8f0;
-            font-weight: bold;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-    </style>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 <body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-    <div id="app-container">
-        
-        <!-- ==================== SCREEN 1: START SCREEN ==================== -->
-        <!-- Diperlukan agar browser mengizinkan pemutaran audio (autoplay policy) -->
-        <div id="start-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-blue-900 text-white z-50">
-            <h1 class="text-6xl font-bold mb-8 text-center leading-tight">
-                LEMBAR SOAL SUMATIF TENGAH SEMESTER 1<br>
-                TAHUN AJARAN 2024/2025
-            </h1>
-            <p class="text-3xl mb-12">SD NEGERI 4 RAMBUTAN</p>
-            <button id="btn-start" class="px-12 py-6 bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-4xl font-bold rounded-2xl shadow-lg transition-transform transform hover:scale-105">
-                MULAI UJIAN
-            </button>
-            <p class="mt-8 text-xl text-blue-200">Tekan tombol untuk memulai ujian dan mengaktifkan fitur pembaca suara.</p>
-        </div>
+        const injectGlobalStyles = () => {
+          if (!document.getElementById('nunito-font')) {
+            const link = document.createElement('link');
+            link.id = 'nunito-font';
+            link.href = 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap';
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+          }
 
-        <!-- ==================== SCREEN 2: MAIN EXAM UI ==================== -->
-        <div id="exam-screen" class="flex flex-col h-full hide">
-            
-            <!-- HEADER -->
-            <header class="bg-blue-800 text-white p-6 flex justify-between items-center border-b-8 border-yellow-400 shrink-0">
-                <div class="flex flex-col">
-                    <h2 class="text-2xl font-bold tracking-wider">SD NEGERI 4 RAMBUTAN</h2>
-                    <p class="text-lg text-blue-200">SUMATIF TENGAH SEMESTER (STS) 1</p>
-                </div>
-                
-                <div class="flex gap-10 text-xl font-semibold">
-                    <div class="flex flex-col">
-                        <span>Nama: <span class="font-normal border-b-2 border-dashed border-white inline-block w-64 text-center">Siswa Dummy</span></span>
-                        <span>Kelas: <span class="font-normal">V (Lima)</span></span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span>Mapel: <span class="font-normal text-yellow-300">Bahasa Inggris</span></span>
-                        <span>Waktu: <span class="font-normal">60 Menit</span></span>
-                    </div>
-                </div>
+          if (!document.getElementById('global-styles')) {
+            const style = document.createElement('style');
+            style.id = 'global-styles';
+            style.innerHTML = `
+              * {
+                font-family: 'Nunito', sans-serif;
+                box-sizing: border-box;
+              }
+              body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: #f0f9ff;
+                width: 100vw;
+                height: 100vh;
+              }
+              #root {
+                width: 100%;
+                height: 100%;
+              }
+            `;
+            document.head.appendChild(style);
+          }
+        };
 
-                <!-- TIMER DISPLAY -->
-                <div class="bg-gray-900 px-8 py-4 rounded-xl border-4 border-gray-700 flex flex-col items-center justify-center w-64">
-                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-1">Sisa Waktu Soal</span>
-                    <div id="timer-display" class="text-5xl font-mono font-bold text-white tracking-wider">
-                        02:00
-                    </div>
-                </div>
-            </header>
-
-            <!-- MAIN CONTENT AREA -->
-            <main class="flex-1 flex overflow-hidden bg-gray-50">
-                
-                <!-- STIMULUS PANEL (Left side, only shows if stimulus exists) -->
-                <div id="stimulus-panel" class="w-1/2 p-10 overflow-y-auto border-r-4 border-gray-200 bg-white hide">
-                    <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-100 mb-6">
-                        <h3 id="stimulus-title" class="text-2xl font-bold text-blue-800 mb-4 border-b-2 border-blue-200 pb-2"></h3>
-                        <div id="stimulus-content" class="text-xl text-gray-800 leading-relaxed whitespace-pre-line font-medium">
-                            <!-- Stimulus text injected here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- QUESTION PANEL (Right side, or full width if no stimulus) -->
-                <div id="question-panel" class="w-1/2 p-12 overflow-y-auto flex flex-col relative transition-all duration-300">
-                    
-                    <!-- TTS Indicator -->
-                    <div id="tts-indicator" class="absolute top-6 right-8 flex items-center gap-3 bg-green-100 text-green-700 px-4 py-2 rounded-full border border-green-300 shadow-sm hide">
-                        <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
-                        <span class="font-semibold text-lg">Membaca otomatis...</span>
-                    </div>
-
-                    <div class="mb-8 mt-4">
-                        <span id="question-category" class="inline-block bg-yellow-100 text-yellow-800 text-lg font-bold px-4 py-1 rounded-md mb-4 border border-yellow-300"></span>
-                        <h3 id="question-text" class="text-3xl font-bold text-gray-900 leading-snug">
-                            <!-- Question text injected here -->
-                        </h3>
-                    </div>
-
-                    <div id="options-container" class="flex flex-col gap-5 mt-auto mb-auto">
-                        <!-- Options injected here -->
-                    </div>
-
-                </div>
-            </main>
-
-            <!-- FOOTER NAVIGATION -->
-            <footer class="bg-white border-t-4 border-gray-200 p-6 flex justify-between items-center shrink-0 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)]">
-                <button id="btn-prev" class="px-8 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 text-2xl font-bold rounded-xl transition-colors flex items-center gap-2">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
-                    KEMBALI
-                </button>
-                
-                <div class="flex items-center gap-4">
-                    <div class="text-2xl font-bold text-gray-500">SOAL</div>
-                    <div class="bg-blue-100 text-blue-800 px-6 py-2 rounded-lg text-3xl font-black border-2 border-blue-200">
-                        <span id="current-question-num">1</span> <span class="text-xl text-blue-500 font-bold mx-1">/</span> 20
-                    </div>
-                </div>
-
-                <button id="btn-next" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-2xl font-bold rounded-xl transition-colors shadow-md flex items-center gap-2">
-                    LANJUT
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-            </footer>
-        </div>
-
-        <!-- ==================== SCREEN 3: END SCREEN ==================== -->
-        <div id="end-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-green-50 text-green-900 z-50 hide">
-            <svg class="w-40 h-40 text-green-500 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <h1 class="text-6xl font-bold mb-4">UJIAN SELESAI</h1>
-            <p class="text-3xl text-green-700">Terima kasih telah mengerjakan dengan baik.</p>
-        </div>
-
-    </div>
-
-    <script>
-        // --- SCALING LOGIC TO FIT PID SCREENS ---
-        function scaleContainer() {
-            const container = document.getElementById('app-container');
-            const targetWidth = 1920;
-            const targetHeight = 1080;
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            
-            const scaleX = windowWidth / targetWidth;
-            const scaleY = windowHeight / targetHeight;
-            const scale = Math.min(scaleX, scaleY);
-            
-            // Apply CSS variable for scale
-            container.style.setProperty('--scale-factor', scale);
-        }
-        window.addEventListener('resize', scaleContainer);
-        scaleContainer(); // Initial scale
-
-        // --- DATA SOAL & TTS BAHASA INDONESIA ---
-        const examData = [
-            // STIMULUS 1 (Questions 1 - 5)
-            {
-                id: 1, type: 'pg',
-                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
-                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
-                category: "Literasi & Numerasi - C4",
-                question: "1. How much is the total cost of Mita's shopping (1 kg apples, 2 kg oranges, and 1 bunch of spinach)?",
-                options: ["A. Rp 51,000", "B. Rp 64,000", "C. Rp 69,000", "D. Rp 74,000"],
-                ttsIndo: "Stimulus satu. Di kedai buah dan sayuran Pak Ahmad. Pada sabtu pagi, Mita dan ibunya pergi ke kedai buah Pak Ahmad di Pasar Rambutan. Pak Ahmad menjual buah segar dan sayuran dengan daftar harga berikut: Apel 28 ribu rupiah per kilogram. Jeruk 18 ribu rupiah per kilogram. Anggur 34 ribu rupiah per kilogram. Bawang putih 12 ribu rupiah per kantong. Bayam 5 ribu rupiah per ikat. Susu 10 ribu rupiah per kotak. Mita ingin membeli 1 kilogram apel, 2 kilogram jeruk, dan 1 ikat bayam. Ibunya membawa total uang 100 ribu rupiah. Pertanyaan nomor 1. Berapakah total biaya belanjaan Mita untuk 1 kilogram apel, 2 kilogram jeruk, dan 1 ikat bayam? Pilihan A, 51 ribu rupiah. Pilihan B, 64 ribu rupiah. Pilihan C, 69 ribu rupiah. Pilihan D, 74 ribu rupiah."
-            },
-            {
-                id: 2, type: 'pg',
-                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
-                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
-                category: "Numerasi - C4",
-                question: "2. How much change (sisa uang) will Mita's mother receive from her Rp 100,000 note?",
-                options: ["A. Rp 26,000", "B. Rp 31,000", "C. Rp 36,000", "D. Rp 41,000"],
-                ttsIndo: "Berdasarkan stimulus satu tentang belanjaan Mita. Pertanyaan nomor 2. Berapakah uang kembalian atau sisa uang yang akan diterima ibu Mita dari uang 100 ribu rupiah miliknya? Pilihan A, 26 ribu rupiah. Pilihan B, 31 ribu rupiah. Pilihan C, 36 ribu rupiah. Pilihan D, 41 ribu rupiah."
-            },
-            {
-                id: 3, type: 'pg',
-                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
-                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
-                category: "Literasi Kebahasaan - C3",
-                question: "3. What is the correct quantifier used for buying green leaves like spinach?",
-                options: ["A. A kilo of spinach", "B. A bunch of spinach", "C. A bottle of spinach", "D. A glass of spinach"],
-                ttsIndo: "Masih pada stimulus satu. Pertanyaan nomor 3. Apakah satuan takaran yang tepat digunakan untuk membeli sayuran daun hijau seperti bayam dalam bahasa Inggris? Pilihan A, A kilo of spinach. Pilihan B, A bunch of spinach. Pilihan C, A bottle of spinach. Pilihan D, A glass of spinach."
-            },
-            {
-                id: 4, type: 'pg',
-                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
-                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
-                category: "Evaluasi Anggaran - C5",
-                question: "4. If Mita's mother decides to add 1 bag of garlic (Rp 12,000) and 1 box of milk (Rp 10,000) to her shopping list, is her Rp 100,000 money enough?",
-                options: ["A. No, she needs Rp 1,000 more.", "B. Yes, and she will have Rp 9,000 left.", "C. Yes, and she will have Rp 15,000 left.", "D. No, she needs Rp 10,000 more."],
-                ttsIndo: "Pertanyaan nomor 4 terkait stimulus satu. Jika ibu Mita memutuskan untuk menambahkan 1 kantong bawang putih seharga 12 ribu rupiah dan 1 kotak susu seharga 10 ribu rupiah ke daftar belanjanya, apakah uang 100 ribu rupiahnya cukup? Pilihan A, Tidak, dia butuh seribu rupiah lagi. Pilihan B, Ya, dan dia akan memiliki sisa 9 ribu rupiah. Pilihan C, Ya, dan dia akan memiliki sisa 15 ribu rupiah. Pilihan D, Tidak, dia butuh 10 ribu rupiah lagi."
-            },
-            {
-                id: 5, type: 'pg',
-                stimulusTitle: "STIMULUS 1: At Pak Ahmad's Fruit and Grocery Stand",
-                stimulusText: "On Saturday morning, Mita and her mother go to Pak Ahmad's fruit stand at Pasar Rambutan. Pak Ahmad sells fresh fruits and groceries with the following price list:\n• Apples: Rp 28,000 / kg | • Oranges: Rp 18,000 / kg | • Grapes: Rp 34,000 / kg\n• Garlic: Rp 12,000 / bag | • Spinach: Rp 5,000 / bunch | • Milk: Rp 10,000 / box\nMita wants to buy 1 kg of apples, 2 kg of oranges, and 1 bunch of spinach. Her mother brings a total money of Rp 100,000.",
-                category: "Analisis Data - C4",
-                question: "5. Which item has the highest price per kilogram at Pak Ahmad's stand?",
-                options: ["A. Apples", "B. Oranges", "C. Grapes", "D. Garlic"],
-                ttsIndo: "Pertanyaan nomor 5 dari stimulus satu. Barang manakah yang memiliki harga paling tinggi per kilogram di kedai Pak Ahmad? Pilihan A, Apel. Pilihan B, Jeruk. Pilihan C, Anggur. Pilihan D, Bawang putih."
-            },
-
-            // STIMULUS 2 (Questions 6 - 8)
-            {
-                id: 6, type: 'pg',
-                stimulusTitle: "STIMULUS 2: In the Kitchen with Pipit",
-                stimulusText: "Pipit and her mother are preparing Sayur Bening in the kitchen. First, Pipit washes two stalks of celery and two bowls of spinach. Then, her mother boils water in a pot. After the water boils, Pipit puts the spinach into the pot. She adds 1 pinch of salt and 2 spoons of sugar to make the soup tasty. Pipit says, \"If we put 5 spoons of salt instead of 1 pinch of salt, the soup will taste very salty!\"",
-                category: "Sekuensial / Langkah Kerja - C4",
-                question: "6. What should Pipit do right after the water in the pot boils?",
-                options: ["A. Wash two stalks of celery.", "B. Serve the soup into two bowls.", "C. Put the spinach into the boiling water and add seasoning.", "D. Turn off the stove immediately."],
-                ttsIndo: "Stimulus dua. Di dapur bersama Pipit. Pipit dan ibunya sedang menyiapkan Sayur Bening di dapur. Pertama, Pipit mencuci dua batang seledri dan dua mangkuk bayam. Kemudian, ibunya merebus air di dalam panci. Setelah air mendidih, Pipit memasukkan bayam ke dalam panci. Dia menambahkan satu jumput garam dan dua sendok gula agar supnya enak. Pipit berkata, jika kita memasukkan 5 sendok garam, bukan 1 jumput garam, supnya akan terasa sangat asin. Pertanyaan nomor 6. Apa yang harus Pipit lakukan tepat setelah air di panci mendidih? Pilihan A, Mencuci dua batang seledri. Pilihan B, Menyajikan sup ke dalam dua mangkuk. Pilihan C, Memasukkan bayam ke dalam air mendidih dan menambahkan bumbu. Pilihan D, Segera mematikan kompor."
-            },
-            {
-                id: 7, type: 'pg',
-                stimulusTitle: "STIMULUS 2: In the Kitchen with Pipit",
-                stimulusText: "Pipit and her mother are preparing Sayur Bening in the kitchen. First, Pipit washes two stalks of celery and two bowls of spinach. Then, her mother boils water in a pot. After the water boils, Pipit puts the spinach into the pot. She adds 1 pinch of salt and 2 spoons of sugar to make the soup tasty. Pipit says, \"If we put 5 spoons of salt instead of 1 pinch of salt, the soup will taste very salty!\"",
-                category: "Literasi Takaran - C3",
-                question: "7. How many bowls of spinach did Pipit prepare for the soup?",
-                options: ["A. One bowl", "B. Two bowls", "C. Three bowls", "D. Four bowls"],
-                ttsIndo: "Berdasarkan stimulus dua tentang resep Pipit. Pertanyaan nomor 7. Berapa mangkuk bayam yang disiapkan Pipit untuk sup tersebut? Pilihan A, Satu mangkuk. Pilihan B, Dua mangkuk. Pilihan C, Tiga mangkuk. Pilihan D, Empat mangkuk."
-            },
-            {
-                id: 8, type: 'pg',
-                stimulusTitle: "STIMULUS 2: In the Kitchen with Pipit",
-                stimulusText: "Pipit and her mother are preparing Sayur Bening in the kitchen. First, Pipit washes two stalks of celery and two bowls of spinach. Then, her mother boils water in a pot. After the water boils, Pipit puts the spinach into the pot. She adds 1 pinch of salt and 2 spoons of sugar to make the soup tasty. Pipit says, \"If we put 5 spoons of salt instead of 1 pinch of salt, the soup will taste very salty!\"",
-                category: "Sebab-Akibat - C4",
-                question: "8. What will happen to the soup if Pipit puts 5 spoons of salt into the pot?",
-                options: ["A. The soup will taste sweet.", "B. The soup will taste very salty.", "C. The soup will taste bitter.", "D. The soup will become sour."],
-                ttsIndo: "Pertanyaan nomor 8 terkait stimulus dua. Apa yang akan terjadi pada sup jika Pipit memasukkan 5 sendok garam ke dalam panci? Pilihan A, Sup akan terasa manis. Pilihan B, Sup akan terasa sangat asin. Pilihan C, Sup akan terasa pahit. Pilihan D, Sup akan menjadi asam."
-            },
-
-            // STIMULUS 3 (Questions 9 - 10)
-            {
-                id: 9, type: 'pg',
-                stimulusTitle: "STIMULUS 3: Visiting Bara's House and School Library",
-                stimulusText: "Ferdinand wants to visit Bara's house after school. Bara gives him the directions: \"From our school on Garuda Street, go straight until you find the market. Turn right to Merpati Street. Go straight on Merpati Street, and my house is in front of the beach\".\nOn the way, Bara and Ferdinand stop at the school library. In the library, students can read books quietly and borrow books politely, but they cannot eat snacks, drink, or run around.",
-                category: "Literasi Spasial - C4",
-                question: "9. Where is Bara's house located based on the directions given?",
-                options: ["A. Beside the market on Garuda Street.", "B. In front of the beach at the end of Merpati Street.", "C. Behind the school library.", "D. Between the grocery store and the bank."],
-                ttsIndo: "Stimulus tiga. Mengunjungi rumah Bara dan perpustakaan sekolah. Ferdinand ingin mengunjungi rumah Bara sepulang sekolah. Bara memberinya petunjuk arah. Dari sekolah kita di Jalan Garuda, lurus terus sampai kamu menemukan pasar. Belok kanan ke Jalan Merpati. Lurus terus di Jalan Merpati, dan rumahku ada di depan pantai. Dalam perjalanan, mereka mampir ke perpustakaan. Di sana siswa boleh membaca dan meminjam buku dengan tenang, tapi tidak boleh makan, minum, atau berlarian. Pertanyaan nomor 9. Di manakah letak rumah Bara berdasarkan petunjuk yang diberikan? Pilihan A, Di sebelah pasar di Jalan Garuda. Pilihan B, Di depan pantai di ujung Jalan Merpati. Pilihan C, Di belakang perpustakaan sekolah. Pilihan D, Di antara toko kelontong dan bank."
-            },
-            {
-                id: 10, type: 'pg',
-                stimulusTitle: "STIMULUS 3: Visiting Bara's House and School Library",
-                stimulusText: "Ferdinand wants to visit Bara's house after school. Bara gives him the directions: \"From our school on Garuda Street, go straight until you find the market. Turn right to Merpati Street. Go straight on Merpati Street, and my house is in front of the beach\".\nOn the way, Bara and Ferdinand stop at the school library. In the library, students can read books quietly and borrow books politely, but they cannot eat snacks, drink, or run around.",
-                category: "Analisis Aturan - C4",
-                question: "10. Which activity is PERMITTED (diperbolehkan) inside the school library?",
-                options: ["A. Eating roasted corn and drinking ice tea.", "B. Running around between book shelves.", "C. Reading books quietly and borrowing them politely.", "D. Speaking very loudly with friends."],
-                ttsIndo: "Pertanyaan nomor 10 dari stimulus tiga. Kegiatan manakah yang diperbolehkan di dalam perpustakaan sekolah? Pilihan A, Makan jagung bakar dan minum es teh. Pilihan B, Berlarian di antara rak buku. Pilihan C, Membaca buku dengan tenang dan meminjamnya dengan sopan. Pilihan D, Berbicara dengan sangat keras bersama teman-teman."
-            },
-
-            // MATCHING SECTION (Questions 11 - 15 formatted as direct questions)
-            {
-                id: 11, type: 'matching_adapted',
-                stimulusTitle: "BAGIAN B: MENJODOHKAN",
-                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
-                category: "Menjodohkan",
-                question: "11. A quantifier for a bunch of leafy green vegetables",
-                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
-                ttsIndo: "Bagian B, Menjodohkan. Pilihlah jawaban yang tepat. Pertanyaan nomor 11. Kata takaran dalam bahasa Inggris untuk seikat sayuran daun hijau. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
-            },
-            {
-                id: 12, type: 'matching_adapted',
-                stimulusTitle: "BAGIAN B: MENJODOHKAN",
-                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
-                category: "Menjodohkan",
-                question: "12. Taste of food when you add two spoons of sugar",
-                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
-                ttsIndo: "Pertanyaan nomor 12. Rasa makanan ketika kamu menambahkan dua sendok gula. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
-            },
-            {
-                id: 13, type: 'matching_adapted',
-                stimulusTitle: "BAGIAN B: MENJODOHKAN",
-                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
-                category: "Menjodohkan",
-                question: "13. A direction phrase to change way to the right side",
-                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
-                ttsIndo: "Pertanyaan nomor 13. Frasa penunjuk arah untuk mengubah jalan ke sisi kanan. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
-            },
-            {
-                id: 14, type: 'matching_adapted',
-                stimulusTitle: "BAGIAN B: MENJODOHKAN",
-                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
-                category: "Menjodohkan",
-                question: "14. Preposition used when a building is directly facing the beach",
-                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
-                ttsIndo: "Pertanyaan nomor 14. Kata depan yang digunakan ketika sebuah bangunan menghadap langsung ke pantai. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
-            },
-            {
-                id: 15, type: 'matching_adapted',
-                stimulusTitle: "BAGIAN B: MENJODOHKAN",
-                stimulusText: "Pilihlah pasangan yang tepat dari pilihan yang tersedia untuk frasa di bawah ini.",
-                category: "Menjodohkan",
-                question: "15. A quantifier for liquid items like milk or juice",
-                options: ["A. Turn right", "B. A bunch of spinach", "C. Sweet", "D. In front of", "E. A box of milk"],
-                ttsIndo: "Pertanyaan nomor 15. Kata takaran untuk benda cair seperti susu atau jus. Pilihan A, turn right. Pilihan B, a bunch of spinach. Pilihan C, sweet. Pilihan D, in front of. Pilihan E, a box of milk."
-            },
-
-            // TRUE / FALSE SECTION (Questions 16 - 20)
-            {
-                id: 16, type: 'tf',
-                stimulusTitle: "BAGIAN C: BENAR - SALAH",
-                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
-                category: "Benar - Salah",
-                question: "16. The price of 1 kg of oranges at Pak Ahmad's stand is Rp 18,000.",
-                options: ["True (Benar)", "False (Salah)"],
-                ttsIndo: "Bagian C, Benar atau Salah. Pertanyaan nomor 16. Harga satu kilogram jeruk di kedai Pak Ahmad adalah 18 ribu rupiah. Pilihan A, Benar. Pilihan B, Salah."
-            },
-            {
-                id: 17, type: 'tf',
-                stimulusTitle: "BAGIAN C: BENAR - SALAH",
-                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
-                category: "Benar - Salah",
-                question: "17. To cook Sayur Bening, Pipit adds three spoons of chili powder to make it spicy.",
-                options: ["True (Benar)", "False (Salah)"],
-                ttsIndo: "Pertanyaan nomor 17. Untuk memasak Sayur Bening, Pipit menambahkan tiga sendok bubuk cabai agar pedas. Pilihan A, Benar. Pilihan B, Salah."
-            },
-            {
-                id: 18, type: 'tf',
-                stimulusTitle: "BAGIAN C: BENAR - SALAH",
-                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
-                category: "Benar - Salah",
-                question: "18. Students are allowed to eat snacks and drink milk freely inside the school library.",
-                options: ["True (Benar)", "False (Salah)"],
-                ttsIndo: "Pertanyaan nomor 18. Siswa diizinkan makan camilan dan minum susu dengan bebas di dalam perpustakaan sekolah. Pilihan A, Benar. Pilihan B, Salah."
-            },
-            {
-                id: 19, type: 'tf',
-                stimulusTitle: "BAGIAN C: BENAR - SALAH",
-                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
-                category: "Benar - Salah",
-                question: "19. If Mita buys 1 kg of apples (Rp 28,000) and 2 kg of oranges (Rp 36,000), the cost is Rp 64,000.",
-                options: ["True (Benar)", "False (Salah)"],
-                ttsIndo: "Pertanyaan nomor 19. Jika Mita membeli satu kilogram apel seharga 28 ribu dan dua kilogram jeruk seharga 36 ribu, maka biayanya adalah 64 ribu rupiah. Pilihan A, Benar. Pilihan B, Salah."
-            },
-            {
-                id: 20, type: 'tf',
-                stimulusTitle: "BAGIAN C: BENAR - SALAH",
-                stimulusText: "Tentukan apakah pernyataan berikut BENAR (True) atau SALAH (False) berdasarkan stimulus bacaan sebelumnya!",
-                category: "Benar - Salah",
-                question: "20. Bara's house is located in front of the beach at the end of Merpati Street.",
-                options: ["True (Benar)", "False (Salah)"],
-                ttsIndo: "Pertanyaan nomor 20. Rumah Bara terletak di depan pantai di ujung Jalan Merpati. Pilihan A, Benar. Pilihan B, Salah."
-            }
+        const QUESTIONS = [
+          { id: 1, type: 'PG', stimulus: 'Kegiatan Bazaar Kewirausahaan SDN 4 Rambutan\n\nDalam rangka kegiatan P5, siswa Kelas 5 SDN 4 Rambutan menggelar bazaar sekolah. Kelompok Asep berhasil menjual hasil karya kerajinan tangan dan memperoleh total uang hasil penjualan sebesar Rp85.420,00. Uang tersebut terdiri dari beberapa lembaran pecahan rupiah.', text: 'Pada bilangan 85.420, angka 5 menempati nilai tempat ...', options: ['Puluh ribuan', 'Ribuan', 'Ratusan', 'Puluhan'], answer: 1, score: 3 },
+          { id: 2, type: 'PG', stimulus: 'Kegiatan Bazaar Kewirausahaan SDN 4 Rambutan...', text: 'Bentuk dekomposisi berdasarkan nilai tempat dari total hasil penjualan Rp85.420,00 yang tepat adalah ...', options: ['80.000 + 5.000 + 400 + 20 + 0', '80.000 + 500 + 40 + 2 + 0', '8.000 + 500 + 400 + 20 + 0', '85.000 + 400 + 200 + 0'], answer: 0, score: 3 },
+          { id: 3, type: 'PG', stimulus: 'Literasi-Numerasi (Penggalangan Dana Sosial):\nSiswa Kelas 5A dan 5B mengumpulkan dana peduli bencana alam. Kelas 5A mengumpulkan uang sebesar Rp38.500,00 dan Kelas 5B mengumpulkan Rp43.250,00. Dari total uang yang terkumpul, Panitia menyalurkan Rp65.000,00 untuk membeli paket sembako.', text: 'Sisa uang bantuan peduli bencana yang belum terpakai adalah ...', options: ['Rp15.750,00', 'Rp16.750,00', 'Rp26.750,00', 'Rp81.750,00'], answer: 1, score: 3 },
+          { id: 4, type: 'PG', text: 'Perhatikan kelompok bilangan berikut: (21, 23, 27, 29)\nDi antara bilangan-bilangan di atas, pasangan bilangan yang keduanya merupakan bilangan prima adalah ...', options: ['21 dan 23', '21 dan 27', '23 dan 29', '27 dan 29'], answer: 2, score: 3 },
+          { id: 5, type: 'PG', text: 'Perkalian faktor-faktor prima (faktorisasi prima) dari bilangan 60 menggunakan pohon faktor adalah ...', options: ['2 x 3 x 5', '2² x 3 x 5', '2 x 3² x 5', '2² x 5²'], answer: 1, score: 3 },
+          { id: 6, type: 'PG', stimulus: 'HOTS - Analisis (Jadwal Ekstrakurikuler Berulang):\nAndi dan Budi mengikuti ekstrakurikuler pramuka dan pencak silat. Andi berlatih setiap 4 hari sekali, sedangkan Budi berlatih setiap 6 hari sekali.', text: 'Jika pada tanggal 2 Oktober mereka berlatih bersama untuk pertama kalinya, pada tanggal berapakah mereka akan berlatih bersama-sama lagi untuk kedua kalinya?', options: ['10 Oktober', '12 Oktober', '14 Oktober', '26 Oktober'], answer: 2, score: 3 },
+          { id: 7, type: 'PG', stimulus: 'HOTS - Pemecahan Masalah (Paket Bingkisan Sembako):\nIbu Guru menyiapkan 24 pensil dan 36 buku tulis untuk dijadikan bingkisan hadiah murid berprestasi. Setiap paket bingkisan harus berisi pensil dan buku tulis dengan jumlah yang sama banyak tanpa ada sisa.', text: 'Jumlah paket bingkisan terbanyak yang dapat dibuat oleh Ibu Guru adalah ...', options: ['6 paket', '8 paket', '12 paket', '24 paket'], answer: 2, score: 3 },
+          { id: 8, type: 'PG', stimulus: 'Numerasi (Panjang Pita Prakarya):\nTiga orang siswa menyiapkan pita untuk kerajinan tangan. Siti memiliki pita sepanjang 3/4 meter, Dayu 2/3 meter, dan Lani 5/6 meter.', text: 'Urutan nama siswa dari yang memiliki pita paling panjang hingga yang paling pendek adalah ...', options: ['Lani, Siti, Dayu', 'Siti, Dayu, Lani', 'Dayu, Siti, Lani', 'Lani, Dayu, Siti'], answer: 0, score: 3 },
+          { id: 9, type: 'PG', text: 'Ibu Nisa membeli 1/2 kg gula pasir dan 3/4 kg tepung terigu untuk keperluan praktik memasak di sekolah. Total berat seluruh bahan yang dibeli Ibu Nisa adalah ...', options: ['4/6 kg', '1 kg', '1 1/4 kg', '1 1/2 kg'], answer: 2, score: 3 },
+          { id: 10, type: 'PG', text: 'Pak Doni memiliki sebidang tanah kas desa seluas 4/5 hektar. Sebanyak 1/2 hektar dari tanah tersebut ditanami jagung, sedangkan sisanya ditanami kedelai. Luas tanah yang ditanami kedelai adalah ...', options: ['3/10 hektar', '3/5 hektar', '5/10 hektar', '1/3 hektar'], answer: 0, score: 3 },
+          { id: 11, type: 'Menjodohkan', text: 'Nilai tempat angka 5 pada bilangan 65.420.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 1, score: 4 },
+          { id: 12, type: 'Menjodohkan', text: 'Kelipatan Persekutuan Terkecil (KPK) dari 6 dan 8.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 3, score: 4 },
+          { id: 13, type: 'Menjodohkan', text: 'Faktor Persekutuan Terbesar (FPB) dari 18 dan 24.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 0, score: 4 },
+          { id: 14, type: 'Menjodohkan', text: 'Hasil dari penjumlahan pecahan 2/5 + 1/3.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 4, score: 4 },
+          { id: 15, type: 'Menjodohkan', text: 'Bentuk paling sederhana dari pecahan 8/12.', options: ['6', 'Ribuan (5.000)', '2/3', '24', '11/15'], answer: 2, score: 4 },
+          { id: 16, type: 'BS', stimulus: 'Program literasi dan numerasi rutin setiap minggu.', text: 'Bilangan 47.250 jika ditulis dalam bentuk kata/sebutan dibaca "Empat puluh tujuh ribu dua ratus lima puluh".', options: ['BENAR', 'SALAH'], answer: 0, score: 10 },
+          { id: 17, type: 'BS', text: 'Bilangan 17, 19, dan 21 seluruhnya merupakan kelompok bilangan prima di bawah 30.', options: ['BENAR', 'SALAH'], answer: 1, score: 10 },
+          { id: 18, type: 'BS', text: 'Kelipatan Persekutuan Terkecil (KPK) dari dua bilangan prima 3 dan 5 adalah 15.', options: ['BENAR', 'SALAH'], answer: 0, score: 10 },
+          { id: 19, type: 'BS', text: 'Nilai pecahan 3/5 lebih kecil daripada nilai pecahan 2/3.', options: ['BENAR', 'SALAH'], answer: 0, score: 10 },
+          { id: 20, type: 'BS', text: 'Pak Ahmad memiliki tali sepanjang 3/4 meter. Setelah dipotong sepanjang 1/2 meter, sisa panjang tali Pak Ahmad adalah 1/4 meter.', options: ['BENAR', 'SALAH'], answer: 0, score: 10 }
         ];
 
-        // --- STATE VARIABLES ---
-        let currentIndex = 0;
-        const TIME_LIMIT = 120; // 2 minutes per question
-        let timeLeft = TIME_LIMIT;
-        let timerInterval;
-        let selectedAnswers = new Array(examData.length).fill(null);
-        let ttsActive = false;
+        const TIMER_DURATION = 120; // 120 seconds per question
 
-        // --- DOM ELEMENTS ---
-        const screens = {
-            start: document.getElementById('start-screen'),
-            exam: document.getElementById('exam-screen'),
-            end: document.getElementById('end-screen')
-        };
-        const elements = {
-            stimulusPanel: document.getElementById('stimulus-panel'),
-            questionPanel: document.getElementById('question-panel'),
-            stimulusTitle: document.getElementById('stimulus-title'),
-            stimulusContent: document.getElementById('stimulus-content'),
-            questionCategory: document.getElementById('question-category'),
-            questionText: document.getElementById('question-text'),
-            optionsContainer: document.getElementById('options-container'),
-            currentNum: document.getElementById('current-question-num'),
-            timerDisplay: document.getElementById('timer-display'),
-            btnPrev: document.getElementById('btn-prev'),
-            btnNext: document.getElementById('btn-next'),
-            ttsIndicator: document.getElementById('tts-indicator')
-        };
+        function UjianSekolahApp() {
+          const [view, setView] = useState('login'); // 'login', 'exam', 'result'
+          const [student, setStudent] = useState({ name: '', absen: '' });
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [answers, setAnswers] = useState({});
+          const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
 
-        // --- TTS LOGIC ---
-        const synth = window.speechSynthesis;
-        function playTTS(text) {
-            if (synth.speaking) {
-                synth.cancel();
+          useEffect(() => {
+            injectGlobalStyles();
+          }, []);
+
+          // Timer Effect
+          useEffect(() => {
+            let timer;
+            if (view === 'exam') {
+              timer = setInterval(() => {
+                setTimeLeft((prev) => {
+                  if (prev <= 1) {
+                    handleNextAuto();
+                    return TIMER_DURATION;
+                  }
+                  return prev - 1;
+                });
+              }, 1000);
             }
-            if (!text) return;
+            return () => clearInterval(timer);
+          }, [view, currentIndex]);
 
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'id-ID'; // Read in Indonesian
-            utterance.rate = 0.9; // Slightly slower for clarity
-            
-            utterance.onstart = () => {
-                elements.ttsIndicator.classList.remove('hide');
-            };
-            utterance.onend = () => {
-                elements.ttsIndicator.classList.add('hide');
-            };
-            utterance.onerror = () => {
-                elements.ttsIndicator.classList.add('hide');
-            };
-
-            synth.speak(utterance);
-        }
-
-        function stopTTS() {
-            if (synth.speaking) {
-                synth.cancel();
-            }
-            elements.ttsIndicator.classList.add('hide');
-        }
-
-        // --- TIMER LOGIC ---
-        function formatTime(seconds) {
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeLeft = TIME_LIMIT;
-            updateTimerDisplay();
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    autoAdvance();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            elements.timerDisplay.textContent = formatTime(timeLeft);
-            if (timeLeft <= 10) {
-                elements.timerDisplay.classList.add('timer-warning');
+          const handleNextAuto = () => {
+            if (currentIndex < QUESTIONS.length - 1) {
+              setCurrentIndex((prev) => prev + 1);
             } else {
-                elements.timerDisplay.classList.remove('timer-warning');
+              setView('result');
             }
-        }
+          };
 
-        function autoAdvance() {
-            // Time is up, move to next automatically
-            if (currentIndex < examData.length - 1) {
-                goToQuestion(currentIndex + 1);
+          const handleStart = (e) => {
+            e.preventDefault();
+            if (student.name.trim() && student.absen.trim()) {
+              setView('exam');
+              setCurrentIndex(0);
+              setTimeLeft(TIMER_DURATION);
+              setAnswers({});
+            }
+          };
+
+          const handleSelectOption = (optionIndex) => {
+            setAnswers({ ...answers, [currentIndex]: optionIndex });
+          };
+
+          const handleNext = () => {
+            if (currentIndex < QUESTIONS.length - 1) {
+              setCurrentIndex((prev) => prev + 1);
+              setTimeLeft(TIMER_DURATION);
             } else {
-                finishExam();
+              setView('result');
             }
-        }
+          };
 
-        // --- RENDER LOGIC ---
-        function renderQuestion(index) {
-            const data = examData[index];
-            elements.currentNum.textContent = index + 1;
-
-            // Handle Navigation Buttons
-            elements.btnPrev.disabled = index === 0;
-            elements.btnPrev.style.opacity = index === 0 ? '0.3' : '1';
-            elements.btnPrev.style.cursor = index === 0 ? 'not-allowed' : 'pointer';
-            
-            if (index === examData.length - 1) {
-                elements.btnNext.innerHTML = 'SELESAI <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-                elements.btnNext.classList.replace('bg-blue-600', 'bg-green-600');
-                elements.btnNext.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
-            } else {
-                elements.btnNext.innerHTML = 'LANJUT <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>';
-                elements.btnNext.classList.replace('bg-green-600', 'bg-blue-600');
-                elements.btnNext.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
-            }
-
-            // Render Stimulus if exists
-            if (data.stimulusText) {
-                elements.stimulusPanel.classList.remove('hide');
-                elements.questionPanel.classList.remove('w-full');
-                elements.questionPanel.classList.add('w-1/2');
-                elements.stimulusTitle.textContent = data.stimulusTitle;
-                elements.stimulusContent.textContent = data.stimulusText;
-            } else {
-                elements.stimulusPanel.classList.add('hide');
-                elements.questionPanel.classList.remove('w-1/2');
-                elements.questionPanel.classList.add('w-full');
-            }
-
-            // Render Question
-            elements.questionCategory.textContent = data.category;
-            elements.questionText.textContent = data.question;
-
-            // Render Options
-            elements.optionsContainer.innerHTML = '';
-            const labels = ['A', 'B', 'C', 'D', 'E'];
-            
-            data.options.forEach((optText, i) => {
-                const optDiv = document.createElement('div');
-                const isSelected = selectedAnswers[index] === i;
-                
-                // Extract label letter if it exists in the string (e.g. "A. Apple" -> "A")
-                let displayLabel = labels[i];
-                let displayOptText = optText;
-                
-                // UI Styling
-                optDiv.className = `p-6 rounded-2xl border-4 cursor-pointer text-2xl transition-all duration-200 flex items-center shadow-sm ${
-                    isSelected 
-                    ? 'border-blue-500 bg-blue-50 text-blue-900 shadow-md transform scale-[1.01]' 
-                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50 text-gray-700'
-                }`;
-                
-                optDiv.onclick = () => selectOption(index, i);
-
-                const labelSpan = document.createElement('span');
-                labelSpan.className = `option-label text-xl ${isSelected ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`;
-                labelSpan.textContent = displayLabel;
-
-                const textSpan = document.createElement('span');
-                textSpan.className = 'font-semibold';
-                textSpan.textContent = displayOptText;
-
-                optDiv.appendChild(labelSpan);
-                optDiv.appendChild(textSpan);
-                elements.optionsContainer.appendChild(optDiv);
-            });
-
-            // Start Timer for this question
-            startTimer();
-            
-            // Trigger TTS reading
-            playTTS(data.ttsIndo);
-        }
-
-        function selectOption(qIndex, optIndex) {
-            selectedAnswers[qIndex] = optIndex;
-            // Re-render options to update UI selection state without resetting timer or TTS
-            const optionsDivs = elements.optionsContainer.children;
-            for (let i = 0; i < optionsDivs.length; i++) {
-                const div = optionsDivs[i];
-                const label = div.querySelector('.option-label');
-                if (i === optIndex) {
-                    div.className = 'p-6 rounded-2xl border-4 cursor-pointer text-2xl transition-all duration-200 flex items-center shadow-md border-blue-500 bg-blue-50 text-blue-900 transform scale-[1.01]';
-                    label.className = 'option-label text-xl bg-blue-500 text-white';
-                } else {
-                    div.className = 'p-6 rounded-2xl border-4 cursor-pointer text-2xl transition-all duration-200 flex items-center shadow-sm border-gray-200 bg-white hover:border-blue-300 hover:bg-gray-50 text-gray-700';
-                    label.className = 'option-label text-xl bg-gray-200 text-gray-700';
-                }
-            }
-        }
-
-        function goToQuestion(index) {
-            stopTTS(); // Stop reading current before moving
-            currentIndex = index;
-            renderQuestion(currentIndex);
-        }
-
-        function finishExam() {
-            stopTTS();
-            clearInterval(timerInterval);
-            screens.exam.classList.add('hide');
-            screens.end.classList.remove('hide');
-            
-            // Optional: Announce end in Indonesian
-            playTTS("Ujian telah selesai. Terima kasih.");
-        }
-
-        // --- EVENT LISTENERS ---
-        document.getElementById('btn-start').addEventListener('click', () => {
-            // User interaction required to start audio context
-            // Initialize empty speech just to unlock
-            const unlockUtterance = new SpeechSynthesisUtterance('');
-            synth.speak(unlockUtterance);
-            
-            screens.start.classList.add('hide');
-            screens.exam.classList.remove('hide');
-            
-            // Initialize first question
-            renderQuestion(0);
-        });
-
-        elements.btnNext.addEventListener('click', () => {
-            if (currentIndex < examData.length - 1) {
-                goToQuestion(currentIndex + 1);
-            } else {
-                finishExam();
-            }
-        });
-
-        elements.btnPrev.addEventListener('click', () => {
+          const handlePrev = () => {
             if (currentIndex > 0) {
-                goToQuestion(currentIndex - 1);
+              setCurrentIndex((prev) => prev - 1);
+              setTimeLeft(TIMER_DURATION);
             }
-        });
+          };
 
+          const calculateScore = () => {
+            let total = 0;
+            QUESTIONS.forEach((q, index) => {
+              if (answers[index] === q.answer) {
+                total += q.score;
+              }
+            });
+            return total;
+          };
+
+          const formatTime = (seconds) => {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+          };
+
+          if (view === 'login') {
+            return (
+              <div className="flex items-center justify-center h-screen w-screen bg-gradient-to-b from-sky-300 to-sky-100 p-4">
+                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border-4 border-sky-400 transform transition-all">
+                  <div className="text-center mb-6">
+                    <h1 className="text-4xl font-black text-sky-600 mb-2 tracking-tight">Halo Teman! 👋</h1>
+                    <p className="text-gray-500 font-semibold">Siap untuk mulai ujian hari ini?</p>
+                  </div>
+                  
+                  <form onSubmit={handleStart} className="flex flex-col gap-5">
+                    <div>
+                      <label className="block text-gray-700 font-bold mb-2 ml-1 text-sm">Nama Lengkap</label>
+                      <input 
+                        type="text" 
+                        required
+                        className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl p-3 focus:outline-none focus:border-sky-500 focus:bg-white transition-colors font-semibold"
+                        placeholder="Tulis namamu..."
+                        value={student.name}
+                        onChange={(e) => setStudent({ ...student, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 font-bold mb-2 ml-1 text-sm">Nomor Absen</label>
+                      <input 
+                        type="number" 
+                        required
+                        className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl p-3 focus:outline-none focus:border-sky-500 focus:bg-white transition-colors font-semibold"
+                        placeholder="Contoh: 12"
+                        value={student.absen}
+                        onChange={(e) => setStudent({ ...student, absen: e.target.value })}
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      className="mt-4 w-full bg-orange-400 hover:bg-orange-500 text-white font-black text-xl py-4 rounded-2xl border-b-8 border-orange-600 active:border-b-0 active:translate-y-2 transition-all shadow-lg"
+                    >
+                      MULAI UJIAN 🚀
+                    </button>
+                  </form>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'result') {
+            const finalScore = calculateScore();
+            return (
+              <div className="flex flex-col items-center justify-center h-screen w-screen bg-gradient-to-b from-green-300 to-green-100 p-4">
+                <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border-4 border-green-500 text-center flex flex-col items-center">
+                  <div className="text-6xl mb-4">🏆</div>
+                  <h1 className="text-4xl font-black text-green-600 mb-2">Hore, Selesai!</h1>
+                  <p className="text-lg text-gray-600 font-bold mb-6">Kerja bagus, <span className="text-sky-600">{student.name}</span> (Absen: {student.absen})</p>
+                  
+                  <div className="bg-green-50 rounded-2xl p-6 w-full mb-8 border-2 border-green-200">
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-sm mb-2">Nilai Akhir Kamu</p>
+                    <p className="text-6xl font-black text-green-600">{finalScore}</p>
+                    <p className="text-gray-400 font-bold mt-2">dari 100</p>
+                  </div>
+
+                  <button 
+                    onClick={() => {
+                      setView('login');
+                      setStudent({ name: '', absen: '' });
+                    }}
+                    className="w-full bg-sky-500 hover:bg-sky-400 text-white font-black text-xl py-4 rounded-2xl border-b-8 border-sky-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg"
+                  >
+                    Selesai
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
+          const currentQ = QUESTIONS[currentIndex];
+          const isAnswered = answers[currentIndex] !== undefined;
+
+          return (
+            <div className="flex flex-col h-screen w-screen bg-blue-50">
+              {/* Header Panel */}
+              <header className="flex-none bg-white p-4 shadow-sm border-b-4 border-gray-200 flex justify-between items-center z-10">
+                <div className="flex flex-col">
+                  <span className="font-extrabold text-gray-400 text-xs uppercase tracking-wider">Soal</span>
+                  <span className="font-black text-sky-600 text-xl md:text-2xl">{currentIndex + 1} <span className="text-gray-300">/ {QUESTIONS.length}</span></span>
+                </div>
+                <div className="flex items-center gap-2 bg-rose-100 px-4 py-2 rounded-xl border-2 border-rose-200 shadow-sm">
+                  <span className="text-rose-500 text-xl font-black">⏱️</span>
+                  <span className={`font-black text-xl md:text-2xl ${timeLeft <= 30 ? 'text-rose-600 animate-pulse' : 'text-rose-500'}`}>
+                    {formatTime(timeLeft)}
+                  </span>
+                </div>
+              </header>
+
+              {/* Main Content Area */}
+              <main className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden gap-4">
+                
+                {currentQ.stimulus && (
+                  <div className="flex-none max-h-[30vh] overflow-y-auto bg-amber-50 p-4 md:p-5 rounded-2xl border-2 border-amber-200 shadow-inner">
+                    <p className="text-sm md:text-base text-gray-700 font-semibold whitespace-pre-wrap leading-relaxed">
+                      {currentQ.stimulus}
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex-none">
+                  <h2 className="text-lg md:text-2xl font-black text-slate-800 leading-snug whitespace-pre-wrap">
+                    {currentQ.text}
+                  </h2>
+                </div>
+
+                <div className="flex-1 overflow-y-auto py-2">
+                  <div className={`grid gap-3 md:gap-4 h-full content-start ${currentQ.type === 'BS' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2'}`}>
+                    {currentQ.options.map((opt, idx) => {
+                      const isSelected = answers[currentIndex] === idx;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectOption(idx)}
+                          className={`
+                            text-left p-4 md:p-5 rounded-2xl font-bold text-sm md:text-lg transition-all
+                            border-b-4 md:border-b-[6px] outline-none
+                            ${isSelected 
+                              ? 'bg-sky-400 text-white border-sky-600 transform translate-y-1 border-b-0 md:translate-y-[6px] shadow-none' 
+                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 active:border-b-0 active:translate-y-1 shadow-sm'}
+                          `}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className={`flex-none w-8 h-8 rounded-full flex items-center justify-center font-black text-sm 
+                              ${isSelected ? 'bg-sky-500 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                              {String.fromCharCode(65 + idx)}
+                            </span>
+                            <span className="flex-1 leading-tight">{opt}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </main>
+
+              {/* Footer Navigation */}
+              <footer className="flex-none bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t-4 border-gray-200 flex justify-between items-center gap-4 z-10">
+                <button
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  className={`flex-1 md:flex-none md:w-32 py-3 rounded-2xl font-black text-base border-b-4 transition-all
+                    ${currentIndex === 0 
+                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
+                      : 'bg-indigo-100 text-indigo-600 border-indigo-300 hover:bg-indigo-200 active:border-b-0 active:translate-y-1'}`}
+                >
+                  ⬅️ KEMBALI
+                </button>
+
+                <button
+                  onClick={handleNext}
+                  className={`flex-1 md:flex-none md:w-48 py-3 rounded-2xl font-black text-base border-b-4 transition-all text-white
+                    ${currentIndex === QUESTIONS.length - 1 
+                      ? 'bg-green-500 border-green-700 hover:bg-green-400 active:border-b-0 active:translate-y-1'
+                      : 'bg-sky-500 border-sky-700 hover:bg-sky-400 active:border-b-0 active:translate-y-1'}`}
+                >
+                  {currentIndex === QUESTIONS.length - 1 ? 'SELESAI 🏁' : 'LANJUT ➡️'}
+                </button>
+              </footer>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<UjianSekolahApp />);
     </script>
 </body>
 </html>
