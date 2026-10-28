@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ujian Sekolah - SDN 4 Rambutan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -38,14 +37,15 @@
                 overflow: hidden;
                 background-color: #f0f9ff;
                 width: 100vw;
-                height: 100vh;
+                height: 100vh; /* fallback */
+                height: 100dvh; /* FIX: agar tombol bawah tidak terpotong URL bar browser HP */
               }
               #root {
                 width: 100%;
                 height: 100%;
               }
               
-              /* Scrollbar custom untuk anak-anak (opsional, tapi mempermanis) */
+              /* Scrollbar custom untuk anak-anak */
               ::-webkit-scrollbar {
                 width: 12px;
               }
@@ -103,10 +103,10 @@
             injectGlobalStyles();
           }, []);
 
-          // TTS Effect - Membaca soal otomatis tiap ganti soal
+          // TTS Effect
           useEffect(() => {
             if (view === 'exam' && isAudioEnabled && window.speechSynthesis) {
-              window.speechSynthesis.cancel(); // hentikan bacaan sblmnya
+              window.speechSynthesis.cancel();
               
               const currentQ = QUESTIONS[currentIndex];
               let textToRead = "";
@@ -122,16 +122,14 @@
                 textToRead += huruf + ". " + opt + ". ";
               });
 
-              // Replace math symbols for better reading
-              textToRead = textToRead.replace(/\//g, " per "); // 3/4 -> 3 per 4
+              textToRead = textToRead.replace(/\//g, " per ");
               textToRead = textToRead.replace(/\+/g, " tambah ");
               textToRead = textToRead.replace(/x/g, " dikali ");
 
               const utterance = new SpeechSynthesisUtterance(textToRead);
               utterance.lang = 'id-ID';
-              utterance.rate = 0.85; // Sedikit dilambatkan agar anak SD mudah mendengar
+              utterance.rate = 0.85; 
               
-              // Memberikan jeda singkat sebelum mulai agar transisi smooth
               setTimeout(() => {
                 if (window.speechSynthesis && isAudioEnabled && view === 'exam') {
                     window.speechSynthesis.speak(utterance);
@@ -228,7 +226,7 @@
 
           if (view === 'login') {
             return (
-              <div className="flex items-center justify-center h-screen w-screen bg-gradient-to-b from-sky-300 to-sky-100 p-4">
+              <div className="flex items-center justify-center h-[100dvh] w-screen bg-gradient-to-b from-sky-300 to-sky-100 p-4">
                 <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border-4 border-sky-400 transform transition-all">
                   <div className="text-center mb-6">
                     <h1 className="text-4xl font-black text-sky-600 mb-2 tracking-tight">Halo Teman! 👋</h1>
@@ -259,7 +257,6 @@
                       />
                     </div>
                     
-                    {/* Audio Toggle Info di Login */}
                     <div className="flex items-center justify-center gap-3 bg-blue-50 p-3 rounded-xl border-2 border-blue-200 mt-2">
                         <span className="text-2xl">{isAudioEnabled ? '🔊' : '🔇'}</span>
                         <span className="text-sm font-bold text-blue-800">
@@ -283,7 +280,7 @@
           if (view === 'result') {
             const finalScore = calculateScore();
             return (
-              <div className="flex flex-col items-center justify-center h-screen w-screen bg-gradient-to-b from-green-300 to-green-100 p-4">
+              <div className="flex flex-col items-center justify-center h-[100dvh] w-screen bg-gradient-to-b from-green-300 to-green-100 p-4">
                 <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border-4 border-green-500 text-center flex flex-col items-center">
                   <div className="text-7xl mb-4">🏆</div>
                   <h1 className="text-4xl md:text-5xl font-black text-green-600 mb-2">Hore, Selesai!</h1>
@@ -313,7 +310,7 @@
           const isAnswered = answers[currentIndex] !== undefined;
 
           return (
-            <div className="flex flex-col h-screen w-screen bg-blue-50">
+            <div className="flex flex-col h-[100dvh] w-screen bg-blue-50">
               {/* Header Panel */}
               <header className="flex-none bg-white p-3 md:p-4 shadow-sm border-b-4 border-gray-200 flex justify-between items-center z-10">
                 <div className="flex items-center gap-3 md:gap-5">
@@ -321,7 +318,6 @@
                       <span className="font-extrabold text-gray-400 text-xs md:text-sm uppercase tracking-wider">Soal</span>
                       <span className="font-black text-sky-600 text-2xl md:text-3xl">{currentIndex + 1} <span className="text-gray-300">/ {QUESTIONS.length}</span></span>
                     </div>
-                    {/* Tombol Toggle Audio */}
                     <button 
                         onClick={toggleAudio}
                         className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl border-b-4 transition-all text-xl md:text-2xl shadow-sm
@@ -345,7 +341,6 @@
               {/* Main Content Area */}
               <main className="flex-1 flex flex-col p-3 md:p-6 overflow-hidden gap-3 md:gap-5 min-h-0">
                 
-                {/* Stimulus Area - Diberikan overflow dan flex-shrink agar bisa mengecil jika diperlukan */}
                 {currentQ.stimulus && (
                   <div className="flex-shrink max-h-[35vh] overflow-y-auto bg-amber-50 p-4 md:p-6 rounded-3xl border-2 md:border-4 border-amber-200 shadow-inner">
                     <p className="text-[clamp(1rem,2.5vw,1.25rem)] text-gray-700 font-bold whitespace-pre-wrap leading-relaxed">
@@ -354,14 +349,12 @@
                   </div>
                 )}
 
-                {/* Question Area */}
                 <div className="flex-none">
                   <h2 className="text-[clamp(1.25rem,3.5vw,2rem)] font-black text-slate-800 leading-snug whitespace-pre-wrap">
                     {currentQ.text}
                   </h2>
                 </div>
 
-                {/* Options Area - Mengisi sisa ruang dan bisa discroll jika content terlalu tinggi di layar kecil */}
                 <div className="flex-1 overflow-y-auto overflow-x-hidden p-1">
                   <div className={`grid gap-3 md:gap-5 h-auto content-start pb-2 ${currentQ.type === 'BS' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2'}`}>
                     {currentQ.options.map((opt, idx) => {
@@ -392,8 +385,8 @@
                 </div>
               </main>
 
-              {/* Footer Navigation */}
-              <footer className="flex-none bg-white p-3 md:p-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t-4 border-gray-200 flex justify-between items-center gap-4 z-10">
+              {/* Footer Navigation (Tombol Lanjut & Kembali) */}
+              <footer className="flex-none bg-white p-4 md:p-5 pb-6 md:pb-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] border-t-4 border-gray-200 flex justify-between items-center gap-4 z-10">
                 <button
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
